@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Danh sách nhân viên{% endblock %}
+{% block content %}
+<div class="section-card">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2 class="section-title">Danh sách nhân viên</h2>
+    <a href="{{ url_for('main.add_employee') }}" class="btn btn-success">
+      <i class="bi bi-plus-circle"></i> Thêm mới
+    </a>
+  </div>
+
+  <table class="table table-bordered mt-3">
+    <thead>
+      <tr>
+        <th>Mã số</th>
+        <th>Họ và tên</th>
+        <th>Tổ</th>
+        <th>Phòng ban</th>
+        <th>Loại HĐ</th>
+        <th>Hành động</th>
+        <th>Mã chấm công</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.code }}</td>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.team }}</td>
+        <td>{{ emp.department }}</td>
+        <td>{{ emp.contract_type }}</td>
+        <td>
+          <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="btn btn-sm btn-warning mb-1">
+            <i class="bi bi-pencil"></i> Sửa
+          </a>
+          <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+              <i class="bi bi-trash"></i> Xóa
+   </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Bảng chấm công{% endblock %}
+{% block content %}
+<div class="timesheet-wrapper">
+  <h2 class="page-title">Bảng chấm công bằng máy</h2>
+  <div class="timesheet-period">
+    <strong>Kỳ công:</strong> {{ att_meta.period }}
+  </div>
+  <div class="d-flex justify-content-end mb-2">
+  <a href="{{ url_for('main.payroll', filename=filename) }}" class="btn btn-primary">
+    <i class="bi bi-table"></i> Bảng công tính lương
+  </a>
+
+  <form method="POST" action="{{ url_for('main.import_payroll', filename=filename) }}" class="ms-2">
+    <button type="submit" class="btn btn-success">
+      <i class="bi bi-database"></i> Import dữ liệu vào Database
+    </button>
+  </form>
+</div>
+
+
+  <div class="timesheet-table-container">
+    <table class="table table-bordered table-hover timesheet-table">
+      <thead>
+        <tr>
+          <th>Chi tiết</th>
+          {% for col in cols %}
+          <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>
+            <button 
+              class="btn btn-detail"
+              data-emp='{{ {"Mã": row[0], "Tên": row[1], "Phòng ban": row[2], "days": row[3:] } | tojson }}'>
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
+          {% for cell in row %}
+          <td>{{ cell|safe }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Thêm Nhân viên{% endblock %}
+{% block content %}
+<div class="section-card">
+  <h2 class="section-title">Thêm Nhân viên mới</h2>
+
+  <form method="post" class="mt-3">
+    <div class="mb-3">
+      <label class="form-label">Mã số</label>
+      <input type="text" name="code" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Họ và tên</label>
+      <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tổ</label>
+      <input type="text" name="team" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Phòng ban</label>
+      <input type="text" name="department" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Loại HĐ</label>
+      <input type="text" name="contract_type" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a href="{{ url_for('main.employees') }}" class="btn btn-secondary">Hủy</a>
+  </form>
+</div>
+{% endblock %}

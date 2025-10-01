@@ -1,0 +1,46 @@
+/* ====== Payroll styles ====== */
+:root {
+  --sticky-cols: 7; /* số cột cần cố định */
+}
+
+/* Payroll table */
+.payroll-table thead tr:nth-child(1) th {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #252323;
+}
+.payroll-table thead tr:nth-child(2) th {
+  position: sticky;
+  top: 40px; /* bằng chiều cao hàng đầu */
+  z-index: 49;
+  background: #2c2a2a;
+}
+.payroll-table th,
+.payroll-table td {
+  white-space: nowrap;
+  border: 1px solid #18191a;
+  padding: 6px 10px;
+}
+
+/* Sticky col */
+.payroll-table th.sticky-col,
+.payroll-table td.sticky-col {
+  position: sticky;
+  background: #0f0f0f;
+  z-index: 40;
+  box-shadow: 2px 0 3px rgba(0,0,0,0.1);
+}
+.payroll-table thead th.sticky-col {
+  z-index: 60;
+}
+
+/* Highlight */
+.highlight-col {
+  background-color: #0f0f0f !important;
+  font-weight: 700;
+}
+.highlight-sunday {
+  background-color: #f8d7da !important;
+  font-weight: 700;
+}

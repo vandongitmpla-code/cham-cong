@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Chấm công in ký{% endblock %}
+
+{% block content %}
+  <!-- Nút in -->
+  <div class="mb-3 text-end">
+    <button class="btn btn-primary" onclick="window.print()">
+      <i class="bi bi-printer"></i> In bảng
+    </button>
+  </div>
+
+<div class="print-container">
+
+  <!-- Thông tin công ty -->
+  <table class="table table-borderless w-100 mb-1">
+    <tr>
+      <td class="text-start"><strong>Tên công ty:</strong> {{ company.name }}</td>
+    </tr>
+    <tr>
+      <td class="text-start"><strong>Mã số thuế:</strong> {{ company.tax }}</td>
+    </tr>
+    <tr>
+      <td class="text-start"><strong>Địa chỉ:</strong> {{ company.address }}</td>
+    </tr>
+    <tr>
+      <td class="text-center fw-bold fs-6">{{ company.title }}</td>
+    </tr>
+  </table>
+
+  <!-- Bảng chấm công -->
+  <div class="table-responsive">
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table-light">
+        <tr>
+          {% for col in cols %}
+          <th>{{ col }}</th>
+          {% endfor %}
+          <th></th> {# Cột để hiển thị icon chi tiết, không có chữ #}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          {% for i in range(row|length - 1) %}
+            {% set colname = cols[i] %}
+            {% set cell = row[i] %}
+
+            {% if colname == "Số ngày nghỉ không lương" %}
+              <td>
+                {{ cell.count }}
+                {% if cell.sundays %}
+                <i class="bi bi-info-circle text-danger ms-1 blink-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Nghỉ CN các ngày: {{ cell.sundays | join(', ') }}"></i>
+                {% endif %}
+              </td>
+            {% elif colname == "Ghi chú" %}
+              <td class="note-cell" data-emp="{{ row[1] }}">
+                {% if cell == "ICON_ONLY" or (cell is string and cell.endswith("|||ICON")) %}
+                  {% if cell != "ICON_ONLY" %}
+                    {{ cell.replace("|||ICON", "") }}
+                  {% endif %}
+                  <i class="bi bi-pencil-square text-primary ms-1 note-icon"
+                    title="Thêm ghi chú"
+                    style="cursor:pointer;"></i>
+                  <input type="text"
+                        class="note-input form-control form-control-sm mt-1 d-none"
+                        placeholder="Nhập ghi chú...">
+                {% else %}
+                  {{ cell }}
+                {% endif %}
+              </td>
+            {% else %}
+              <td>{{ cell }}</td>
+            {% endif %}
+          {% endfor %}
+
+          {# Cột icon chi tiết #}
+          <td>
+            <i class="bi bi-eye text-info btn-detail"
+              style="cursor:pointer;"
+              data-emp='{{ row[-1] | tojson | safe }}'
+              title="Xem chi tiết"></i>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal chi tiết -->
+<div id="detailModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <h3 id="modalTitle"></h3>
+    <div id="modalTableWrapper"></div>
+  </div>
+</div>
+
+<!-- Xuất weekdays + day_count cho JS -->
+<script id="timesheet-data" type="application/json">
+{{ {"weekdays": weekdays|default({}), "day_count": day_count|default(31)} | tojson | safe }}
+</script>
+
+<script>
+(function(){
+  try {
+    const el = document.getElementById('timesheet-data');
+    const raw = el ? el.textContent.trim() : null;
+    if (!raw) {
+      window.__TIMESHEET__ = { weekdays: {}, day_count: 31 };
+      return;
+    }
+    const cfg = JSON.parse(raw);
+    cfg.weekdays = cfg.weekdays || {};
+    cfg.day_count = Number(cfg.day_count) || 31;
+    window.__TIMESHEET__ = cfg;
+  } catch (err) {
+    console.error("Error parsing timesheet config:", err);
+    window.__TIMESHEET__ = { weekdays: {}, day_count: 31 };
+  }
+})();
+</script>
+
+<style>
+.print-container {
+  font-size: 14px;
+}
+@media print {
+  .btn { display: none !important; }
+  body { margin: 20px; }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  // Tooltip
+  const els = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  els.forEach(e => new bootstrap.Tooltip(e, {container: 'body'}));
+
+  // Ghi chú động
+  document.querySelectorAll(".note-cell").forEach(cell => {
+    const icon = cell.querySelector(".note-icon");
+    const input = cell.querySelector(".note-input");
+
+    if(icon){
+      icon.addEventListener("click", () => {
+        const span = cell.querySelector("span.note-text");
+        if(span){
+          input.value = span.textContent.trim();
+          span.remove();
+        }
+        icon.classList.add("d-none");
+        input.classList.remove("d-none");
+        input.focus();
+      });
+
+      input.addEventListener("blur", () => {
+        let value = input.value.trim();
+        if(value !== ""){
+          input.classList.add("d-none");
+          icon.classList.remove("d-none");
+          let span = document.createElement("span");
+          span.classList.add("note-text");
+          span.textContent = value;
+          cell.insertBefore(span, icon);
+        }else{
+          input.classList.add("d-none");
+          icon.classList.remove("d-none");
+        }
+      });
+
+      input.addEventListener("keypress", e => {
+        if(e.key === "Enter"){ input.blur(); }
+      });
+
+      cell.addEventListener("mouseenter", () => { icon.classList.remove("d-none"); });
+      cell.addEventListener("mouseleave", () => {
+        if(input.value.trim() !== ""){ icon.classList.add("d-none"); }
+      });
+    }
+  });
+});
+</script>
+
+<!-- Script chi tiết -->
+<script src="{{ url_for('static', filename='js/timesheet.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,468 @@
+/* Base */
+body {
+  background-color: #f5f8fa;
+  color: #333;
+  font-family: 'Nunito', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header */
+.site-header {
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+.site-header .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+}
+.site-header nav a {
+  margin-left: 24px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+.site-header nav a:hover {
+  color: #007bff;
+}
+
+/* Container main */
+.main-content {
+  padding: 40px 20px;
+}
+
+/* Card chung cho các section */
+.section-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px; /* bo tròn mềm mại */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); /* đổ bóng nhẹ */
+  margin: 20px auto;
+  max-width: 700px;
+  text-align: center;
+}
+
+/* Tiêu đề nổi bật chung */
+.section-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ff6600; /* cam nổi bật */
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 50%;
+  height: 3px;
+  background: #ff6600;
+  margin: 8px auto 0;
+  border-radius: 2px;
+}
+
+
+/* Buttons */
+/* Kiểu nút chung cho toàn hệ thống */
+.btn-custom {
+  background-color: #ff6600;   /* nền cam */
+  color: #ffffff;              /* chữ trắng */
+  border: none;
+  border-radius: 6px;          /* bo tròn nhẹ */
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-custom:hover {
+  background-color: #e65c00;   /* cam đậm khi hover */
+  transform: translateY(-2px);
+}
+
+.btn-custom:active {
+  background-color: #cc5200;
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  text-transform: capitalize; /* Viết hoa chữ cái đầu tiên */
+}
+
+
+
+
+/* Toàn bộ trang timesheet mở rộng */
+.timesheet-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Bảng full màn hình */
+.table-responsive {
+  overflow-x: auto; /* nếu nhiều ngày vẫn có scroll ngang */
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th, 
+.table td {
+  padding: 8px 10px;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid #dee2e6;
+}
+
+/* Header nổi bật */
+.table-header th {
+  background-color: #f97316; /* cam */
+  color: #fff;
+  font-weight: 600;
+  text-transform: capitalize;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+
+/* Utilities */
+.text-center { text-align: center; }
+.mt-4 { margin-top: 1.5rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+
+/* Style chung cho input file */
+input[type="file"] {
+  display: inline-block;
+  padding: 10px;
+  border: 2px solid #007bff;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Tùy chỉnh nút "Choose File" trên Chrome, Edge */
+input[type="file"]::file-selector-button {
+  background-color: #007bff; /* xanh dương */
+  color: #fff;              /* chữ trắng */
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;       /* bo tròn mềm mại */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: #0056b3; /* xanh đậm khi hover */
+}
+
+/* Safari/Firefox cũ fallback */
+input[type="file"]::-webkit-file-upload-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #0056b3;
+}
+
+/* ====== NAVBAR ====== */
+.navbar-custom {
+  background: #ffffff;
+  padding: 12px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 100;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ff6600;
+  text-decoration: none;
+}
+
+/* Hamburger icon */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: #333;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Menu items */
+.navbar-menu {
+  display: flex;
+  gap: 16px;
+}
+
+.navbar-menu a {
+  padding: 8px 18px;
+  background: #ff6600;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-menu a:hover {
+  background: #e65c00;
+  transform: translateY(-2px);
+}
+
+/* ====== Responsive (ẩn menu khi nhỏ) ====== */
+@media (max-width: 768px) {
+  .navbar-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .navbar-menu.active {
+    display: flex;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}
+
+/* Toàn màn hình */
+.timesheet-wrapper {
+  width: 100%;
+  height: 94vh; /* chiếm toàn bộ chiều cao */
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container cho bảng */
+.timesheet-table-container {
+  flex: 1;
+  overflow: auto; /* có scroll ngang + dọc */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Bảng */
+.timesheet-table {
+  border-collapse: collapse;
+  width: max-content; /* tự giãn vừa nội dung */
+  min-width: 100%;    /* không nhỏ hơn full width */
+  font-size: 14px;
+}
+
+/* Ô */
+.timesheet-table th,
+.timesheet-table td {
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  text-align: center;
+  white-space: nowrap; /* giữ nội dung 1 dòng */
+}
+
+/* Header cố định */
+.timesheet-table thead th {
+  position: sticky;
+  top: 0;  /* dính trên cùng */
+  background: #f97316;
+  color: #fff;
+  z-index: 5;
+}
+
+/* Cố định 3 cột đầu tiên */
+.timesheet-table th:nth-child(1),
+.timesheet-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+  background: #fff;
+  z-index: 4;
+  min-width: 80px; /* có thể chỉnh */
+}
+
+.timesheet-table th:nth-child(2),
+.timesheet-table td:nth-child(2) {
+  position: sticky;
+  left: 80px; /* cộng dồn với cột 1 */
+  background: #fff;
+  z-index: 4;
+  min-width: 160px;
+}
+
+.timesheet-table th:nth-child(3),
+.timesheet-table td:nth-child(3) {
+  position: sticky;
+  left: 240px; /* cộng dồn với cột 1 + 2 */
+  background: #fff;
+  z-index: 4;
+  min-width: 120px;
+}
+
+/* Giữ màu cam cho header 3 cột đầu */
+.timesheet-table thead th:nth-child(-n+3) {
+  background: #f97316;
+  color: #fff;
+  z-index: 6;
+}
+
+/* Nút chi tiết */
+.btn-detail {
+  background: #f97316;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Modal cơ bản */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: rgba(0,0,0,0.5);
+  padding-top: 40px;
+}
+
+.modal-content {
+  background: #fff;
+  margin: 20px auto;
+  padding: 18px;
+  border-radius: 10px;
+  width: 95%;
+  max-width: 1100px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+}
+
+.modal-close {
+  float: right;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Bảng trong modal */
+.modal-table th,
+.modal-table td {
+  padding: 6px 8px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.modal-table thead th {
+  background: #f97316;
+  color: #fff;
+}
+
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translat/* ====== Attendance Print Styles ====== */
+
+/* Container in attendance_print */
+.print-container {
+  font-size: 14px;
+}
+
+/* Table riêng cho attendance_print */
+.attendance-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+.attendance-table th,
+.attendance-table td {
+  border: 1px solid #dee2e6;
+  padding: 8px 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Header nổi bật */
+.attendance-table thead th {
+  background-color: #f97316 !important;
+  color: #fff !important;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Highlight CN */
+.attendance-table .highlight-sunday {
+  background-color: #ffe0e0 !important;
+  color: #a80000;
+  font-weight: bold;
+}
+
+/* Highlight thống kê */
+.attendance-table .highlight-col {
+  background-color: #fff3cd !important;
+  font-weight: bold;
+}
+
+/* Icon chi tiết */
+.attendance-table .btn-detail {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #0d6efd;
+  transition: transform 0.2s, color 0.2s;
+  background: none !important;
+  border: none !important;
+}
+.attendance-table .btn-detail:hover {
+  color: #6610f2;
+  transform: scale(1.2);
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
