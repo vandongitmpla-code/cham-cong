@@ -818,3 +818,4 @@ def attendance_print(filename):
         flash(f"Lỗi khi tạo bảng chấm công in ký: {e}", "danger")
         return redirect(url_for("main.index"))
 # Test auto commit
+# Test auto commit
