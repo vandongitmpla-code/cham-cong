@@ -471,6 +471,17 @@ def update_att_code(emp_id):
         flash("Mã chấm công không được để trống!", "warning")
         return redirect(url_for("main.employees"))
 
+    new_att_code = new_att_code.strip()
+
+    # Kiểm tra trùng
+    exists = Employee.query.filter(
+        Employee.att_code == new_att_code,
+        Employee.id != emp_id
+    ).first()
+    if exists:
+        flash("Mã chấm công đã tồn tại cho nhân viên khác!", "danger")
+        return redirect(url_for("main.employees"))
+
     emp.att_code = new_att_code
     try:
         db.session.commit()
@@ -480,6 +491,7 @@ def update_att_code(emp_id):
         flash(f"Lỗi khi cập nhật mã chấm công: {e}", "danger")
 
     return redirect(url_for("main.employees"))
+
 
 
 #bảng công tính lương

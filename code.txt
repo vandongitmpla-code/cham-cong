@@ -1,0 +1,7 @@
+môi trường ảo
+python -m venv .venv
+.venv\Scripts\activate
+
+clone dự án trên githup
+git clone https://github.com/vandongitmpla-code/cham-cong.git
+
