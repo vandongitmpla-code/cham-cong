@@ -819,3 +819,4 @@ def attendance_print(filename):
         return redirect(url_for("main.index"))
 # Test auto commit
 # Test auto commit
+# Test auto commit
