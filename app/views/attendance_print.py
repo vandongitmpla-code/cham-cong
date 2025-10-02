@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 import os
 from werkzeug.utils import secure_filename
 from app.utils.cleaning import clean_attendance_data
-
 from flask import send_file
 from . import bp
 from app.models import db
