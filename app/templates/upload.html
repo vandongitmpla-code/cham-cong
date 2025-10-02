@@ -107,39 +107,5 @@
     fileSize.textContent = humanSize(f.size);
   });
 </script>
-<script>
-document.getElementById("fileInput").addEventListener("change", function() {
-  const file = this.files[0];
-  if (!file) return;
-
-  let formData = new FormData();
-  formData.append("file", file);
-
-  fetch("{{ url_for('main.preview_excel') }}", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.error) {
-      document.getElementById("previewBox").innerHTML =
-        `<div class="text-danger">Lỗi: ${data.error}</div>`;
-    } else {
-      let html = `<table class="table table-bordered table-sm"><thead><tr>`;
-      data.cols.forEach(c => html += `<th>${c}</th>`);
-      html += `</tr></thead><tbody>`;
-      data.rows.forEach(r => {
-        html += "<tr>";
-        data.cols.forEach(c => html += `<td>${r[c] ?? ""}</td>`);
-        html += "</tr>";
-      });
-      html += "</tbody></table>";
-      document.getElementById("previewBox").innerHTML = html;
-    }
-  });
-});
-</script>
-
-<div id="previewBox" class="mt-3"></div>
 
 {% endblock %}
