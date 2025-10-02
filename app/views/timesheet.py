@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash,
 import os, re, datetime
 import pandas as pd
 from app.utils.cleaning import clean_attendance_data
