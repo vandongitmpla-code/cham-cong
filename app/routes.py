@@ -829,3 +829,17 @@ def attendance_print(filename):
         print("Error in attendance_print route:", e, flush=True)
         flash(f"Lỗi khi tạo bảng chấm công in ký: {e}", "danger")
         return redirect(url_for("main.index"))
+@bp.route("/preview_excel", methods=["POST"])
+def preview_excel():
+    import pandas as pd
+    file = request.files.get("file")
+    if not file:
+        return {"error": "Không có file"}, 400
+
+    try:
+        df = pd.read_excel(file)
+        preview = df.head(5).to_dict(orient="records")  # lấy 5 dòng đầu
+        cols = list(df.columns)
+        return {"cols": cols, "rows": preview}
+    except Exception as e:
+        return {"error": str(e)}, 400
