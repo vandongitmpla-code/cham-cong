@@ -15,8 +15,6 @@ def import_payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
     file_path = os.path.join(upload_folder, filename)
 
-    from datetime import datetime
-    import re
 
     try:
         data = clean_attendance_data(file_path)
