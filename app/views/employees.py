@@ -4,7 +4,7 @@ import datetime
 import pandas as pd
 from flask import send_file
 import io
-from app.models import Employee,  db
+from app.models import Employee, db
 import re
 
 @bp.route("/import_employees", methods=["POST"])
