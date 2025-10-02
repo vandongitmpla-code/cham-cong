@@ -829,6 +829,3 @@ def attendance_print(filename):
         print("Error in attendance_print route:", e, flush=True)
         flash(f"Lỗi khi tạo bảng chấm công in ký: {e}", "danger")
         return redirect(url_for("main.index"))
-# Test auto commit
-# Test auto commit
-# Test auto commit
