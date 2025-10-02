@@ -1,0 +1,40 @@
+/* ====== Report (upload thành công) ====== */
+
+.report-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 40px 20px;
+  text-align: center;
+  max-width: 600px;
+  margin: 50px auto;
+}
+
+.report-icon {
+  font-size: 64px;
+  color: #28a745; /* xanh lá thành công */
+  margin-bottom: 20px;
+}
+
+.report-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.report-filename {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 8px;
+}
+
+.report-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.report-actions .btn-custom {
+  min-width: 180px;
+}
