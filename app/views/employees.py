@@ -2,7 +2,6 @@ from flask import render_template, request, redirect, url_for, flash
 from . import bp
 from app.models import Employee, db
 
-
 @bp.route("/import_employees", methods=["POST"])
 def import_employees():
     from app.models import Employee, db
