@@ -2,7 +2,6 @@ from flask import render_template, request, redirect, url_for, flash
 from . import bp
 import datetime
 import pandas as pd
-from flask import send_file
 import io
 from app.models import Employee, db
 import re
