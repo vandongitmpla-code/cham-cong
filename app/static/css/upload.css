@@ -131,3 +131,51 @@
   .file-drop { padding: 18px; gap:8px; }
   .file-label, .btn-upload { padding: 8px 12px; font-size: 0.95rem; }
 }
+/* ====== Import nhân viên Section ====== */
+.section-card {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+  max-width: 800px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.section-card .section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ff6600;
+  margin-bottom: 20px;
+}
+
+.section-card form input[type="file"] {
+  display: block;
+  margin: 0 auto;
+  padding: 10px;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.section-card form input[type="file"]:hover {
+  border-color: #ff6600;
+}
+
+.section-card .btn-custom {
+  margin-top: 16px;
+  font-size: 0.95rem;
+}
+
+/* Link xem danh sách nhân viên */
+.section-card .btn {
+  margin-top: 12px;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+}
+
+.section-card .btn i {
+  margin-right: 6px;
+}
