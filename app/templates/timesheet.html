@@ -35,7 +35,13 @@
       <tbody>
         {% for row in rows %}
         <tr>
-        
+          <td>
+            <button 
+              class="btn btn-detail"
+              data-emp='{{ {"Mã": row[0], "Tên": row[1], "Phòng ban": row[2], "days": row[3:] } | tojson }}'>
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
           {% for cell in row %}
           <td>{{ cell|safe }}</td>
           {% endfor %}
