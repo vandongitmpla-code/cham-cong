@@ -1,11 +1,11 @@
-# Web framework
+# Web framework (giữ version cố định để tránh xung đột)
 Flask==2.3.3
 Werkzeug==2.3.7
 Jinja2==3.1.2
 itsdangerous==2.1.2
 
-# Database ORM
-SQLAlchemy==2.0.21
+# Database ORM (giữ bản ổn định tránh lỗi TypingOnly)
+SQLAlchemy==1.4.49
 Flask-SQLAlchemy==3.0.5
 
 # Migration
@@ -18,11 +18,14 @@ Mako==1.2.4
 # Utilities
 click==8.1.7
 
-# Data processing
-pandas==2.1.1
-openpyxl==3.1.2
-xlrd==2.0.1
+# Data processing (để tự chọn version mới nhất)
+pandas
+openpyxl
+xlrd
+
+# PostgreSQL driver
+psycopg2-binary
 
 # Optional (highlight, debug)
-pygments==2.16.1
-python-dotenv==1.0.0
+pygments
+python-dotenv

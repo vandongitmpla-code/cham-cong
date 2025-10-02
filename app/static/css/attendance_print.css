@@ -1,0 +1,32 @@
+/* ===== Attendance Print ===== */
+.print-container {
+  font-size: 14px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.print-container table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+}
+.print-container th,
+.print-container td {
+  border: 1px solid #dee2e6;
+  padding: 6px 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+.print-container thead th {
+  background: #f97316;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Khi in */
+@media print {
+  .btn { display: none !important; }
+  body { background: #fff !important; margin: 20px; }
+  .print-container { box-shadow: none; padding: 0; }
+}

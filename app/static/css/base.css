@@ -1,4 +1,4 @@
-/* ====== Base (nền tảng) ====== */
+/* ===== Base Layout ===== */
 body {
   background-color: #f5f8fa;
   color: #333;
@@ -8,7 +8,7 @@ body {
   padding: 0;
 }
 
-/* ====== Header ====== */
+/* ===== Header ===== */
 .site-header {
   background: #ffffff;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -31,18 +31,12 @@ body {
   margin-left: 24px;
   color: #2c3e50;
   font-weight: 500;
-  text-decoration: none;
 }
 .site-header nav a:hover {
   color: #007bff;
 }
 
-/* ====== Container main ====== */
-.main-content {
-  padding: 40px 20px;
-}
-
-/* ====== Card chung ====== */
+/* ===== Card chung ===== */
 .section-card {
   background: #ffffff;
   padding: 30px;
@@ -53,26 +47,7 @@ body {
   text-align: center;
 }
 
-/* ====== Tiêu đề ====== */
-.section-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #ff6600;
-  margin-bottom: 20px;
-  position: relative;
-  display: inline-block;
-}
-.section-title::after {
-  content: "";
-  display: block;
-  width: 50%;
-  height: 3px;
-  background: #ff6600;
-  margin: 8px auto 0;
-  border-radius: 2px;
-}
-
-/* ====== Buttons ====== */
+/* ===== Buttons ===== */
 .btn-custom {
   background-color: #ff6600;
   color: #ffffff;
@@ -84,45 +59,13 @@ body {
   text-transform: capitalize;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: inline-block;
   text-align: center;
   text-decoration: none;
 }
-.btn-custom:hover {
-  background-color: #e65c00;
-  transform: translateY(-2px);
-}
-.btn-custom:active {
-  background-color: #cc5200;
-  transform: translateY(0);
-}
+.btn-custom:hover { background-color: #e65c00; transform: translateY(-2px); }
+.btn-custom:active { background-color: #cc5200; transform: translateY(0); }
 
-/* ====== File input ====== */
-input[type="file"] {
-  display: inline-block;
-  padding: 10px;
-  border: 2px solid #007bff;
-  border-radius: 6px;
-  background-color: #f9f9f9;
-  color: #333;
-  font-size: 14px;
-  cursor: pointer;
-}
-input[type="file"]::file-selector-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: 500;
-}
-input[type="file"]::file-selector-button:hover {
-  background-color: #0056b3;
-}
-
-/* ====== Navbar ====== */
+/* ===== Navbar ===== */
 .navbar-custom {
   background: #ffffff;
   padding: 12px 24px;
@@ -138,64 +81,4 @@ input[type="file"]::file-selector-button:hover {
   font-weight: 700;
   color: #ff6600;
   text-decoration: none;
-}
-
-/* Hamburger icon */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-}
-.hamburger span {
-  width: 25px;
-  height: 3px;
-  background: #333;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-/* Menu items */
-.navbar-menu {
-  display: flex;
-  gap: 16px;
-}
-.navbar-menu a {
-  padding: 8px 18px;
-  background: #ff6600;
-  color: #fff;
-  border-radius: 6px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-.navbar-menu a:hover {
-  background: #e65c00;
-  transform: translateY(-2px);
-}
-
-/* Responsive menu */
-@media (max-width: 768px) {
-  .navbar-menu {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 12px;
-    border-radius: 8px;
-  }
-  .navbar-menu.active {
-    display: flex;
-  }
-  .hamburger {
-    display: flex;
-  }
-}
-
-/* ====== Flash message fix ====== */
-.alert {
-  margin-bottom: 1rem;
 }

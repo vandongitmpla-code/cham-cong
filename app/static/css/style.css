@@ -61,7 +61,6 @@ body {
   position: relative;
   display: inline-block;
 }
-
 .section-title::after {
   content: "";
   display: block;
@@ -72,14 +71,13 @@ body {
   border-radius: 2px;
 }
 
-
 /* Buttons */
 /* Kiểu nút chung cho toàn hệ thống */
 .btn-custom {
-  background-color: #ff6600;   /* nền cam */
-  color: #ffffff;              /* chữ trắng */
+  background-color: #ff6600; /* nền cam */
+  color: #ffffff; /* chữ trắng */
   border: none;
-  border-radius: 6px;          /* bo tròn nhẹ */
+  border-radius: 6px; /* bo tròn nhẹ */
   padding: 10px 20px;
   font-size: 16px;
   font-weight: 600;
@@ -90,23 +88,17 @@ body {
   text-align: center;
   text-decoration: none;
 }
-
 .btn-custom:hover {
-  background-color: #e65c00;   /* cam đậm khi hover */
+  background-color: #e65c00; /* cam đậm khi hover */
   transform: translateY(-2px);
 }
-
 .btn-custom:active {
   background-color: #cc5200;
   transform: translateY(0);
 }
-
 .btn-secondary {
   text-transform: capitalize; /* Viết hoa chữ cái đầu tiên */
 }
-
-
-
 
 /* Toàn bộ trang timesheet mở rộng */
 .timesheet-container {
@@ -118,14 +110,12 @@ body {
 .table-responsive {
   overflow-x: auto; /* nếu nhiều ngày vẫn có scroll ngang */
 }
-
 .table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
-
-.table th, 
+.table th,
 .table td {
   padding: 8px 10px;
   text-align: center;
@@ -144,11 +134,16 @@ body {
   z-index: 2;
 }
 
-
 /* Utilities */
-.text-center { text-align: center; }
-.mt-4 { margin-top: 1.5rem; }
-.mb-4 { margin-bottom: 1.5rem; }
+.text-center {
+  text-align: center;
+}
+.mt-4 {
+  margin-top: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
 
 /* Style chung cho input file */
 input[type="file"] {
@@ -161,19 +156,17 @@ input[type="file"] {
   font-size: 14px;
   cursor: pointer;
 }
-
 /* Tùy chỉnh nút "Choose File" trên Chrome, Edge */
 input[type="file"]::file-selector-button {
   background-color: #007bff; /* xanh dương */
-  color: #fff;              /* chữ trắng */
+  color: #fff; /* chữ trắng */
   border: none;
   padding: 8px 16px;
-  border-radius: 6px;       /* bo tròn mềm mại */
+  border-radius: 6px; /* bo tròn mềm mại */
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-weight: 500;
 }
-
 input[type="file"]::file-selector-button:hover {
   background-color: #0056b3; /* xanh đậm khi hover */
 }
@@ -188,7 +181,6 @@ input[type="file"]::-webkit-file-upload-button {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 input[type="file"]::-webkit-file-upload-button:hover {
   background-color: #0056b3;
 }
@@ -197,14 +189,13 @@ input[type="file"]::-webkit-file-upload-button:hover {
 .navbar-custom {
   background: #ffffff;
   padding: 12px 24px;
-  box-shadow: 0 2px 8px rgba(68, 3, 221, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
   z-index: 100;
 }
-
 .navbar-brand {
   font-size: 1.5rem;
   font-weight: 700;
@@ -219,7 +210,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   gap: 5px;
   cursor: pointer;
 }
-
 .hamburger span {
   width: 25px;
   height: 3px;
@@ -233,7 +223,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   display: flex;
   gap: 16px;
 }
-
 .navbar-menu a {
   padding: 8px 18px;
   background: #ff6600;
@@ -243,7 +232,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   text-decoration: none;
   transition: all 0.3s ease;
 }
-
 .navbar-menu a:hover {
   background: #e65c00;
   transform: translateY(-2px);
@@ -262,11 +250,9 @@ input[type="file"]::-webkit-file-upload-button:hover {
     padding: 12px;
     border-radius: 8px;
   }
-
   .navbar-menu.active {
     display: flex;
   }
-
   .hamburger {
     display: flex;
   }
@@ -294,7 +280,7 @@ input[type="file"]::-webkit-file-upload-button:hover {
 .timesheet-table {
   border-collapse: collapse;
   width: max-content; /* tự giãn vừa nội dung */
-  min-width: 100%;    /* không nhỏ hơn full width */
+  min-width: 100%; /* không nhỏ hơn full width */
   font-size: 14px;
 }
 
@@ -310,7 +296,7 @@ input[type="file"]::-webkit-file-upload-button:hover {
 /* Header cố định */
 .timesheet-table thead th {
   position: sticky;
-  top: 0;  /* dính trên cùng */
+  top: 0; /* dính trên cùng */
   background: #f97316;
   color: #fff;
   z-index: 5;
@@ -325,7 +311,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   z-index: 4;
   min-width: 80px; /* có thể chỉnh */
 }
-
 .timesheet-table th:nth-child(2),
 .timesheet-table td:nth-child(2) {
   position: sticky;
@@ -334,7 +319,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   z-index: 4;
   min-width: 160px;
 }
-
 .timesheet-table th:nth-child(3),
 .timesheet-table td:nth-child(3) {
   position: sticky;
@@ -375,7 +359,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   background: rgba(0,0,0,0.5);
   padding-top: 40px;
 }
-
 .modal-content {
   background: #fff;
   margin: 20px auto;
@@ -385,7 +368,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   max-width: 1100px;
   box-shadow: 0 6px 24px rgba(0,0,0,0.2);
 }
-
 .modal-close {
   float: right;
   font-size: 22px;
@@ -399,70 +381,165 @@ input[type="file"]::-webkit-file-upload-button:hover {
   white-space: nowrap;
   vertical-align: middle;
 }
-
 .modal-table thead th {
   background: #f97316;
   color: #fff;
 }
-
-
+#
 @keyframes fadeIn {
   from {opacity: 0; transform: translateY(-20px);}
-  to {opacity: 1; transform: translat/* ====== Attendance Print Styles ====== */
-  }
-}
-/* Container in attendance_print */
-.print-container {
-  font-size: 14px;
+  to {opacity: 1; transform: translateY(0);}
 }
 
-/* Table riêng cho attendance_print */
-.attendance-table {
+/* Container trong modal để có scroll ngang */
+.modal-table-container {
+  max-width: 100%;
+
+overflow-x: auto;
+}
+
+/* Bảng trong modal */
+.modal-table {
+  min-width: 1200px; /* để cột không quá hẹp */
   border-collapse: collapse;
-  width: 100%;
-  font-size: 14px;
 }
-.attendance-table th,
-.attendance-table td {
-  border: 1px solid #dee2e6;
-  padding: 8px 10px;
-  text-align: center;
-  vertical-align: middle;
+.modal-table th,
+.modal-table td {
+  white-space: nowrap;
+  padding: 6px 10px;
 }
 
-/* Header nổi bật */
-.attendance-table thead th {
-  background-color: #f97316 !important;
-  color: #fff !important;
-  font-weight: 600;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.timesheet-day-x {
+  background: #dff3e0;
+  color: #19692c;
+  font-weight: 700;
+}
+.timesheet-day-half {
+  background: #fff3cd;
+  color: #7a4b00;
+}
+.timesheet-day-v {
+  background: #f8d7da;
+  color: #7a1b1b;
+}
+.timesheet-day-warn {
+  background: #fff3cd;
+  color: #856404;
+}
+.timesheet-day-warn i {
+  font-size: 1rem;
 }
 
-/* Highlight CN */
-.attendance-table .highlight-sunday {
-  background-color: #ffe0e0 !important;
+/* hiệu ứng cảnh báo nhấp nháy đỏ khi hover */
+.timesheet-day-warn i:hover {
+  color: red !important;
+  animation: blinkRed 0.8s infinite alternate;
+}
+@keyframes blinkRed {
+  from { opacity: 1; }
+  to { opacity: 0.4; }
+}
+
+/* Highlight 3 cột thống kê */
+.highlight-col {
+  background-color: #fff3cd !important; /* xanh nhạt */
+  font-weight: bold;
+  color: #a7c8c9;
+}
+
+/* Highlight cột Chủ nhật */
+.highlight-sunday {
+  background-color: #ffe0e0 !important; /* đỏ nhạt */
   color: #a80000;
   font-weight: bold;
 }
 
-/* Highlight thống kê */
-.attendance-table .highlight-col {
+/* Payroll highlight styles */
+.highlight-col {
   background-color: #fff3cd !important;
-  font-weight: bold;
+  font-weight: 700;
+}
+.highlight-sunday {
+  background-color: #f8d7da !important;
+  font-weight: 700;
+}
+.timesheet-day-x {
+  color: #030303;
+  font-weight: 700;
+}
+.timesheet-day-half {
+  color: #7a4b00;
+}
+.timesheet-day-v {
+  color: #7a1b1b;
 }
 
-/* Icon chi tiết */
-.attendance-table .btn-detail {
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #0d6efd;
-  transition: transform 0.2s, color 0.2s;
-  background: none !important;
-  border: none !important;
+.blink-red {
+  animation: blinkRed 1s infinite;
 }
-.attendance-table .btn-detail:hover {
-  color: #6610f2;
-  transform: scale(1.2);
+@keyframes blinkRed {
+  0%, 100% { color: #ffc107 }
+  50% { color: red }
+}
+
+/* Tùy chỉnh cho payroll table */
+.table-responsive {
+  max-height: 750px; /* Giới hạn chiều cao */
+  width: 100%; /* chiếm 90% container */
+  margin: auto; /* căn giữa */
+  overflow-y: auto; /* Thêm thanh cuộn dọc */
+  overflow-x: auto; /* Vẫn cho cuộn ngang */
+  border: 1px solid #dee2e6; /* Thêm viền ngoài */
+  padding: 5px; /* Khoảng cách */
+}
+
+:root {
+  --sticky-cols: 7; /* số cột cần cố định */
+}
+
+/* Hàng header cố định */
+.payroll-table thead tr:nth-child(1) th {
+  position: sticky;
+  top: 0;
+  z-index: 50; /* cao nhất */
+  background: #fff;
+}
+.payroll-table thead tr:nth-child(2) th {
+  position: sticky;
+  top: 40px; /* bằng chiều cao hàng đầu */
+  z-index: 49;
+  background: #fff;
+}
+
+/* Cột sticky */
+.payroll-table th,
+.payroll-table td {
+  white-space: nowrap;
+}
+.payroll-table th.sticky-col,
+.payroll-table td.sticky-col {
+  position: sticky;
+  background: #fff;
+  z-index: 40; /* cao hơn các cell thường */
+  box-shadow: 2px 0 3px rgba(0,0,0,0.1);
+}
+.payroll-table thead th.sticky-col {
+  z-index: 60; /* header sticky-cột phải cao hơn nữa */
+}
+
+.highlight-col {
+  background-color: #fff3cd !important;
+  font-weight: 700;
+}
+.highlight-sunday {
+  background-color: #f8d7da !important;
+  font-weight: 700;
+}
+
+.blink-icon {
+  animation: blink 1.2s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
 }
