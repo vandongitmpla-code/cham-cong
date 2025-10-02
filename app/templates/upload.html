@@ -32,3 +32,46 @@
   </form>
 </div>
 {% endblock %}
+{% block extra_js %}
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const fileDrop = document.getElementById('fileDrop');
+  const fileMeta = document.getElementById('fileMeta');
+  const fileName = document.getElementById('fileName');
+  const fileSize = document.getElementById('fileSize');
+
+  function humanSize(bytes){
+    if(bytes < 1024) return bytes + ' B';
+    if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1024/1024).toFixed(2) + ' MB';
+  }
+
+  fileDrop.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if(!f) return;
+    fileMeta.style.display = 'flex';
+    fileName.textContent = f.name;
+    fileSize.textContent = humanSize(f.size);
+  });
+
+  // Drag & drop
+  ['dragenter','dragover'].forEach(evt => {
+    fileDrop.addEventListener(evt, (e)=>{ e.preventDefault(); fileDrop.classList.add('dragover'); });
+  });
+  ['dragleave','drop'].forEach(evt => {
+    fileDrop.addEventListener(evt, (e)=>{ e.preventDefault(); fileDrop.classList.remove('dragover'); });
+  });
+  fileDrop.addEventListener('drop', (e)=>{
+    const dt = e.dataTransfer;
+    if(!dt) return;
+    const f = dt.files[0];
+    if(!f) return;
+    fileInput.files = dt.files; // set file input
+    fileMeta.style.display = 'flex';
+    fileName.textContent = f.name;
+    fileSize.textContent = humanSize(f.size);
+  });
+</script>
+{% endblock %}
