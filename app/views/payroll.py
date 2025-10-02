@@ -10,8 +10,6 @@ from app.models import Employee, Payroll, db
 bp = Blueprint("main", __name__)
 
 
-
-
 # Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
