@@ -138,32 +138,3 @@ def update_att_code(emp_id):
     return redirect(url_for("main.employees"))
 
 
-@bp.route("/employees/<int:emp_id>/update_att_code", methods=["POST"])
-def update_att_code(emp_id):
-    emp = Employee.query.get_or_404(emp_id)
-    new_att_code = request.form.get("att_code")
-
-    if not new_att_code:
-        flash("Mã chấm công không được để trống!", "warning")
-        return redirect(url_for("main.employees"))
-
-    new_att_code = new_att_code.strip()
-
-    # Check trùng mã
-    exists = Employee.query.filter(
-        Employee.att_code == new_att_code,
-        Employee.id != emp_id
-    ).first()
-    if exists:
-        flash("Mã chấm công đã tồn tại cho nhân viên khác!", "danger")
-        return redirect(url_for("main.employees"))
-
-    emp.att_code = new_att_code
-    try:
-        db.session.commit()
-        flash("Cập nhật mã chấm công thành công!", "success")
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Lỗi khi cập nhật mã chấm công: {e}", "danger")
-
-    return redirect(url_for("main.employees"))
