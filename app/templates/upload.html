@@ -142,25 +142,5 @@ document.getElementById("fileInput").addEventListener("change", function() {
 
 <div id="previewBox" class="mt-3"></div>
 
-document.getElementById("uploadForm").addEventListener("submit", function(e) {
-  const file = document.getElementById("fileInput").files[0];
-  if (!file) {
-    alert("Vui lòng chọn file Excel!");
-    e.preventDefault();
-    return;
-  }
-  const allowed = [".xls", ".xlsx"];
-  const maxSize = 5 * 1024 * 1024; // 5MB
-
-  let ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
-  if (!allowed.includes(ext)) {
-    alert("Chỉ chấp nhận file Excel (.xls, .xlsx)");
-    e.preventDefault();
-  }
-  if (file.size > maxSize) {
-    alert("Dung lượng file quá lớn (tối đa 5MB)");
-    e.preventDefault();
-  }
-});
 
 {% endblock %}
