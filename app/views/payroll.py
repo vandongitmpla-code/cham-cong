@@ -6,8 +6,8 @@ from app.utils.cleaning import clean_attendance_data
 import pandas as pd
 from flask import send_file
 import io
-from app.models import Employee,  Payroll, db
-
+from app.models import Employee, AttendanceLog, Payroll, db
+import re
 
 # Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
