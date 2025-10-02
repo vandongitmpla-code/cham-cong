@@ -136,6 +136,8 @@ def update_att_code(emp_id):
         flash(f"Lỗi khi cập nhật mã chấm công: {e}", "danger")
 
     return redirect(url_for("main.employees"))
+
+
 @bp.route("/employees/<int:emp_id>/update_att_code", methods=["POST"])
 def update_att_code(emp_id):
     emp = Employee.query.get_or_404(emp_id)
