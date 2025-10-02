@@ -56,3 +56,24 @@
   from { opacity: 1; }
   to { opacity: 0.4; }
 }
+
+/* ===== Nút xem chi tiết (dùng chung nhiều trang) ===== */
+.btn-detail {
+  background: #f97316;  /* Cam */
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-detail:hover {
+  background: #e65c00;
+  transform: scale(1.05);
+}
+
+.btn-detail i {
+  font-size: 1rem;
+}
