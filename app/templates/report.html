@@ -1,6 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Upload Thành Công{% endblock %}
-{% block content %}
+{% block title %}Bảng chấm công in ký{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_print.css') }}">
+{% endblock %}
 <div class="card text-center">
   <div class="mb-3">
     <span style="font-size: 48px; color: #28a745;">✔️</span>
