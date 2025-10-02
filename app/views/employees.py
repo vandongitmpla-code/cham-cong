@@ -1,4 +1,4 @@
-from flask import  render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash
 from . import bp
 from werkzeug.utils import secure_filename
 from app.utils.cleaning import clean_attendance_data
