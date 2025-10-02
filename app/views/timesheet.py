@@ -191,5 +191,3 @@ def import_timesheet(filename):
         flash(f"Lỗi khi import timesheet: {e}", "danger")
 
     return redirect(url_for("main.timesheet", filename=filename))
-
-
