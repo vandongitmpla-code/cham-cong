@@ -1,4 +1,4 @@
-from flask import  redirect, url_for, flash
+from flask import redirect, url_for, flash
 import os
 from app.utils.cleaning import clean_attendance_data
 import pandas as pd
