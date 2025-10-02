@@ -185,3 +185,33 @@
   flex-direction: column;
   justify-content: center;
 }
+/* Nút hành động */
+.btn-upload {
+  background: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.btn-upload:hover {
+  background: #e65c00;
+}
+
+.btn-cancel,
+.btn-view {
+  background: #6c757d; /* xám nhạt */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-cancel:hover,
+.btn-view:hover {
+  background: #5a6268;
+}
