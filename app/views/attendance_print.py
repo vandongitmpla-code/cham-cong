@@ -7,7 +7,7 @@ import pandas as pd
 from flask import send_file
 from . import bp
 from app.models import Employee, AttendanceLog, Payroll, db
-import re
+
 
 #bảng công tính lương
 @bp.route("/payroll/<filename>")
