@@ -27,5 +27,5 @@ xlrd
 psycopg2-binary
 
 # Optional (highlight, debug)
-pygments
+3pygments
 python-dotenv
