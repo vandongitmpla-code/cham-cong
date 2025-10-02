@@ -1,0 +1,58 @@
+/* ===== Color & Day Status Styles ===== */
+
+/* Nghỉ phép (X) */
+.timesheet-day-x {
+  background: #dff3e0;
+  color: #19692c;
+  font-weight: 700;
+}
+
+/* Nghỉ nửa ngày (0.5) */
+.timesheet-day-half {
+  background: #fff3cd;
+  color: #7a4b00;
+}
+
+/* Vắng (V) */
+.timesheet-day-v {
+  background: #f8d7da;
+  color: #7a1b1b;
+}
+
+/* Cảnh báo */
+.timesheet-day-warn {
+  background: #fff3cd;
+  color: #856404;
+}
+.timesheet-day-warn i:hover {
+  color: red !important;
+  animation: blinkRed 0.8s infinite alternate;
+}
+
+/* Highlight cột thống kê */
+.highlight-col {
+  background-color: #fff3cd !important;
+  font-weight: 700;
+}
+
+/* Highlight Chủ nhật */
+.highlight-sunday {
+  background-color: #f8d7da !important;
+  font-weight: 700;
+  color: #a80000;
+}
+
+/* Hiệu ứng blink đỏ */
+.blink-icon {
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+@keyframes blinkRed {
+  from { opacity: 1; }
+  to { opacity: 0.4; }
+}
