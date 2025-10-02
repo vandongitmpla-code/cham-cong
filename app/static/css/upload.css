@@ -179,3 +179,9 @@
 .section-card .btn i {
   margin-right: 6px;
 }
+.section-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
