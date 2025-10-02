@@ -28,4 +28,4 @@ psycopg2-binary
 
 # Optional (highlight, debug)
 pygments
-#python-dotenv
+python-dotenv
