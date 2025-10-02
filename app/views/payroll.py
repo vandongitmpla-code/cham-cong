@@ -12,7 +12,6 @@ from . import bp
 def import_payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
     file_path = os.path.join(upload_folder, filename)
-
     try:
         data = clean_attendance_data(file_path)
         df = data["att_log"]
