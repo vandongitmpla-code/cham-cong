@@ -11,7 +11,7 @@ def create_app():
 
     with app.app_context():
         from app import models       # import models sau khi db đã init
-        from .routes import bp       # import blueprint
+        from app.views import bp      # import blueprint
         app.register_blueprint(bp)
 
     return app
