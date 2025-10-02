@@ -116,7 +116,22 @@
   padding: 8px 14px;
   border-radius: 8px;
 }
-
+.btn-cancel,
+.btn-view {
+  background: #6c757d; /* xám nhạt */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-cancel:hover,
+.btn-view:hover {
+  background: #5a6268;
+}
 /* Thông báo lỗi / thành công */
 .upload-msg {
   margin-top: 12px;
