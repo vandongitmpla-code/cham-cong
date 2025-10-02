@@ -6,7 +6,7 @@ import datetime
 import pandas as pd
 from flask import send_file
 import io
-from app.models import Employee, AttendanceLog, Payroll, db
+from app.models import Employee, Payroll, db
 import re
 from datetime import datetime
 
