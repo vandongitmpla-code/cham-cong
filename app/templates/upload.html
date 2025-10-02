@@ -54,22 +54,10 @@
           <div class="size" id="fileSizeEmp"></div>
         </div>
 
-        .btn-cancel,
-.btn-view {
-  background: #6c757d; /* xám nhạt */
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
-  transition: 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-.btn-cancel:hover,
-.btn-view:hover {
-  background: #5a6268;
-}
+        <div class="upload-actions">
+          <button type="submit" class="btn-upload">Import</button>
+          <a href="{{ url_for('main.employees') }}" class="btn-cancel">Xem danh sách</a>
+        </div>
         <div id="importMsg" class="upload-msg"></div>
       </form>
     </div>
