@@ -6,7 +6,7 @@ import datetime
 import pandas as pd
 from flask import send_file
 from . import bp
-from app.models import Employee, AttendanceLog, Payroll, db
+from app.models import db
 
 
 #bảng công tính lương
