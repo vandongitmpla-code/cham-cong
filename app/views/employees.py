@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from . import bp
 import pandas as pd
 from app.models import Employee, db
-import re
+
 
 @bp.route("/import_employees", methods=["POST"])
 def import_employees():
