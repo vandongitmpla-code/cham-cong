@@ -1,8 +1,6 @@
 from flask import  render_template, redirect, url_for, flash
 import os
-
 from app.utils.cleaning import clean_attendance_data
-from flask import send_file
 from . import bp
 from app.models import db
 
