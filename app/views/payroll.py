@@ -8,10 +8,6 @@ from datetime import datetime
 from . import bp
 
 
-
-
-
-
 # Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
