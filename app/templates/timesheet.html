@@ -1,5 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Bảng chấm công{% endblock %}
+{% block title %}Bảng chấm công in ký{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_print.css') }}">
+{% endblock %}
 {% block content %}
 <div class="timesheet-wrapper">
   <h2 class="page-title">Bảng chấm công bằng máy</h2>
