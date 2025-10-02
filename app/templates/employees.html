@@ -17,8 +17,8 @@
         <th>Tổ</th>
         <th>Phòng ban</th>
         <th>Loại HĐ</th>
-        <th>Hành động</th>
         <th>Mã chấm công</th>
+        <th>Hành động</th>
       </tr>
     </thead>
     <tbody>
@@ -29,6 +29,15 @@
         <td>{{ emp.team }}</td>
         <td>{{ emp.department }}</td>
         <td>{{ emp.contract_type }}</td>
+        <td>
+          <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" class="d-flex">
+            <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
+                   class="form-control form-control-sm me-1" placeholder="Nhập mã">
+            <button type="submit" class="btn btn-sm btn-primary">
+              <i class="bi bi-save"></i>
+            </button>
+          </form>
+        </td>
         <td>
           <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="btn btn-sm btn-warning mb-1">
             <i class="bi bi-pencil"></i> Sửa
