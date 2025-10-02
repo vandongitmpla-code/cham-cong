@@ -1,0 +1,133 @@
+/* static/css/upload.css */
+
+/* Card chính của trang upload */
+.upload-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+  padding: 28px;
+  max-width: 800px;
+  margin: 36px auto;
+  text-align: center;
+}
+
+/* Tiêu đề */
+.upload-card .title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ff6600;
+  margin-bottom: 12px;
+}
+
+/* Mô tả nhỏ */
+.upload-card .subtitle {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* Khu vực kéo thả */
+.file-drop {
+  border: 2px dashed #dfe7ee;
+  border-radius: 10px;
+  padding: 28px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
+  cursor: pointer;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* trạng thái khi hover / drag */
+.file-drop:hover,
+.file-drop.dragover {
+  border-color: #ff8a33;
+  box-shadow: 0 8px 30px rgba(255,102,0,0.06);
+  background: #fffaf6;
+}
+
+/* icon to ở vùng drop */
+.file-drop .icon {
+  font-size: 40px;
+  color: #ff6600;
+}
+
+/* mô tả trong vùng drop */
+.file-drop .hint {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Ẩn input file gốc, dùng label làm button */
+.file-input {
+  display: none;
+}
+.file-label {
+  display: inline-block;
+  margin-top: 8px;
+  background: #ff6600;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s ease, transform .08s ease;
+  text-decoration: none;
+}
+.file-label:hover { background: #e65c00; transform: translateY(-1px); }
+
+/* Thông tin file sau khi chọn */
+.file-meta {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: #333;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+}
+.file-meta .name { font-weight:600; }
+.file-meta .size { color:#777; font-size:0.85rem; }
+
+/* Nút Upload */
+.upload-actions {
+  margin-top: 18px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  align-items:center;
+}
+.btn-upload {
+  background: #198754;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-upload:hover { background: #157347; transform: translateY(-1px); }
+.btn-cancel {
+  background: transparent;
+  border: 1px solid #dee2e6;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+/* Thông báo lỗi / thành công */
+.upload-msg {
+  margin-top: 12px;
+  font-size: 0.95rem;
+}
+.upload-msg.error { color: #d9534f; }
+.upload-msg.ok { color: #28a745; }
+
+/* Hỗ trợ responsive */
+@media (max-width: 720px) {
+  .upload-card { padding: 18px; margin: 18px; }
+  .file-drop { padding: 18px; gap:8px; }
+  .file-label, .btn-upload { padding: 8px 12px; font-size: 0.95rem; }
+}
