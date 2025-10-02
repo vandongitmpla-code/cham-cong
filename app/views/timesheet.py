@@ -7,7 +7,6 @@ from . import bp
 from flask import  render_template, redirect, url_for, flash
 import os
 from app.utils.cleaning import clean_attendance_data
-import datetime
 import pandas as pd
 from app.models import Employee, AttendanceLog, Payroll, db
 import re
