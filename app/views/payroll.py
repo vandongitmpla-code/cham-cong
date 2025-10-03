@@ -131,6 +131,7 @@ def payroll(filename):
         print("Error in payroll route:", e, flush=True)
         flash(f"Lỗi khi tạo Bảng công tính lương: {e}", "danger")
         return redirect(url_for("main.index"))
+    
 # Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
