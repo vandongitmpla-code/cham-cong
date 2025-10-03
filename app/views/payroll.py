@@ -133,7 +133,6 @@ def payroll(filename):
         return redirect(url_for("main.index"))
 # Import dữ liệu Payroll
 
-
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
