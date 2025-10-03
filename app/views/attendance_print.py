@@ -6,7 +6,6 @@ from app.models import db
 
 
 
-
 @bp.route("/attendance_print/<filename>")
 def attendance_print(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
