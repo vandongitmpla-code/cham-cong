@@ -127,11 +127,11 @@ def payroll(filename):
             day_count=day_count
         )
 
-        except Exception as e:
-            print("Error in payroll route:", e, flush=True)
-            flash(f"Lỗi khi tạo Bảng công tính lương: {e}", "danger")
-            return redirect(url_for("main.index"))
-        
+    except Exception as e:
+        print("Error in payroll route:", e, flush=True)
+        flash(f"Lỗi khi tạo Bảng công tính lương: {e}", "danger")
+        return redirect(url_for("main.index"))
+    
 
 # Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
