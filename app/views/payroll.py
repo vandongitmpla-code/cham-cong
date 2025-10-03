@@ -117,7 +117,7 @@ def payroll(filename):
         # sắp xếp theo tên (cột index 1)
         records = sorted(records, key=lambda r: (r[1] or "").lower())
 
-        return render_template(
+    return render_template(
             "payroll.html",
             filename=filename,
             cols=cols,
@@ -132,7 +132,7 @@ def payroll(filename):
         flash(f"Lỗi khi tạo Bảng công tính lương: {e}", "danger")
         return redirect(url_for("main.index"))
     
-    
+
 # Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
