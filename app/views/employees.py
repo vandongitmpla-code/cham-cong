@@ -137,4 +137,3 @@ def update_att_code(emp_id):
 
     return redirect(url_for("main.employees"))
 
-

@@ -31,7 +31,7 @@
 .payroll-table th,
 .payroll-table td {
   padding: 8px 12px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #2d3842;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
@@ -50,7 +50,7 @@
   position: sticky;
   top: 40px; /* chiều cao hàng đầu */
   background: #f97316;
-  color: #fff;
+  color: #fffdfd;
   z-index: 49;
 }
 
@@ -58,9 +58,9 @@
 .payroll-table th.sticky-col,
 .payroll-table td.sticky-col {
   position: sticky;
-  background: #fff;
+  background: #ffffff;
   z-index: 40;
-  box-shadow: 2px 0 3px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 3px rgb(255, 255, 255);
 }
 
 /* 3 cột đầu tiên sticky */
@@ -86,8 +86,9 @@
   left: 180px;
   min-width: 150px;
   z-index: 41;
-  background: #fff;
+  background: #ffffff;
 }
+
 
 /* Highlight cột thống kê */
 .highlight-col {
