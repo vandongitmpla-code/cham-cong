@@ -117,7 +117,7 @@ def payroll(filename):
         # sắp xếp theo tên (cột index 1)
         records = sorted(records, key=lambda r: (r[1] or "").lower())
 
-    return render_template(
+        return render_template(
             "payroll.html",
             filename=filename,
             cols=cols,
