@@ -324,40 +324,58 @@ def import_payroll(filename):
                     ngay_vang += 1
 
             # --- Ghi chú chi tiết theo định dạng ---
-            cn_days = []
-            le_days = []
-            nghi_days = []
+cn_days = []
+le_days = []
+nghi_days = []
 
-            for d in day_numbers:
-                wd = (weekdays.get(d, "") or "").lower()
-                is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
-                is_holiday = d in holiday_days
-                status = daily_status.get(d, "")
+for d in day_numbers:
+    wd = (weekdays.get(d, "") or "").lower()
+    is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
+    is_holiday = d in holiday_days
+    status = daily_status.get(d, "")
 
-                # Chủ nhật có làm
-                if is_sunday and status == "x":
-                    cn_days.append(d)
+    # Chủ nhật có làm
+    if is_sunday and status == "x":
+        cn_days.append(d)
 
-                # Làm ngày lễ
-                if is_holiday and status == "x":
-                    le_days.append(d)
+    # Làm ngày lễ
+    if is_holiday and status == "x":
+        le_days.append(d)
 
-                # Nghỉ (v)
-                if status == "v":
-                    nghi_days.append(d)
+    # Nghỉ (v)
+    if status == "v":
+        nghi_days.append(d)
 
-            # Tạo ghi chú chi tiết
-            parts = []
-            if cn_days:
-                parts.append(f"Tăng ca {len(cn_days)} ngày CN: {','.join(str(d) for d in cn_days)}")
-            if le_days:
-                parts.append(f"Làm {len(le_days)} ngày Lễ: {','.join(f'{d:02d}/{month:02d}' for d in le_days)}")
-            if nghi_days:
-                parts.append(f"Nghỉ ngày: {','.join(f'{d:02d}/{month:02d}/{year}' for d in nghi_days)}")
+# Tạo ghi chú chi tiết
+parts = []
+if cn_days:
+    parts.append(f"Tăng ca {len(cn_days)} ngày CN: {','.join(str(d) for d in cn_days)}")
+if le_days:
+    parts.append(f"Làm {len(le_days)} ngày Lễ: {','.join(f'{d:02d}/{month:02d}' for d in le_days)}")
+if nghi_days:
+    parts.append(f"Nghỉ ngày: {','.join(f'{d:02d}/{month:02d}/{year}' for d in nghi_days)}")
 
-            ghi_chu = " / ".join(parts)
+ghi_chu = " / ".join(parts)
 
-            records.append(record)
+# ✅ Tạo bản ghi PayrollRecord
+record = PayrollRecord(
+    employee_id=emp.id,
+    period=period,
+    ngay_cong=ngay_cong,
+    ngay_vang=ngay_vang,
+    chu_nhat=chu_nhat,
+    le_tet=le_tet,
+    tang_ca_nghi=tang_ca_nghi,
+    tang_ca_tuan=tang_ca_tuan,
+    ghi_chu=ghi_chu,
+    raw_data=daily_status,  # lưu dữ liệu ngày theo dạng JSON
+    to=emp.to,
+    phong_ban=emp.phong_ban,
+    loai_hd=emp.loai_hd
+)
+
+# ✅ Thêm vào danh sách lưu batch
+records.append(record)
 
         db.session.bulk_save_objects(records)
         db.session.commit()
