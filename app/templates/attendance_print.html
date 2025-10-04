@@ -42,56 +42,56 @@
       </thead>
       <tbody>
         {% for row in rows %}
-<tr>
-  {% set payroll = row[-1] %}
-  {% for i in range(row|length - 1) %}
-    {% set colname = cols[i] %}
-    {% set cell = row[i] %}
+        <tr>
+          {% set payroll = row[-1] %}
+          {% for i in range(row|length - 1) %}
+            {% set colname = cols[i] %}
+            {% set cell = row[i] %}
 
-    {% if colname == "Số ngày/giờ làm việc quy định trong tháng" %}
-      <td>{{ payroll.ngay_cong if payroll else "" }}</td>
+            {% if colname == "Số ngày/giờ làm việc quy định trong tháng" %}
+              <td>{{ payroll.ngay_cong if payroll else "" }}</td>
 
-    {% elif colname == "Số ngày nghỉ không lương" %}
-      <td>
-        {{ payroll.ngay_vang if payroll else "" }}
-        {% if payroll and payroll.chu_nhat %}
-        <i class="bi bi-info-circle text-danger ms-1 blink-icon"
-           data-bs-toggle="tooltip"
-           data-bs-placement="top"
-           title="Nghỉ CN các ngày: {{ payroll.chu_nhat }}"></i>
-        {% endif %}
-      </td>
+            {% elif colname == "Số ngày nghỉ không lương" %}
+              <td>
+                {{ payroll.ngay_vang if payroll else "" }}
+                {% if payroll and payroll.chu_nhat %}
+                <i class="bi bi-info-circle text-danger ms-1 blink-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Nghỉ CN các ngày: {{ payroll.chu_nhat }}"></i>
+                {% endif %}
+              </td>
 
-    {% elif colname == "Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)" %}
-      <td>{{ payroll.tang_ca_nghi if payroll else "" }}</td>
+            {% elif colname == "Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)" %}
+              <td>{{ payroll.tang_ca_nghi if payroll else "" }}</td>
 
-    {% elif colname == "Ghi chú" %}
-      <td class="note-cell" data-emp="{{ row[1] }}">
-        {% if payroll and payroll.ghi_chu %}
-          {{ payroll.ghi_chu }}
-        {% else %}
-          <i class="bi bi-pencil-square text-primary ms-1 note-icon"
-             title="Thêm ghi chú"
-             style="cursor:pointer;"></i>
-          <input type="text"
-                 class="note-input form-control form-control-sm mt-1 d-none"
-                 placeholder="Nhập ghi chú...">
-        {% endif %}
-      </td>
+            {% elif colname == "Ghi chú" %}
+              <td class="note-cell" data-emp="{{ row[1] }}">
+                {% if payroll and payroll.ghi_chu %}
+                  {{ payroll.ghi_chu }}
+                {% else %}
+                  <i class="bi bi-pencil-square text-primary ms-1 note-icon"
+                    title="Thêm ghi chú"
+                    style="cursor:pointer;"></i>
+                  <input type="text"
+                        class="note-input form-control form-control-sm mt-1 d-none"
+                        placeholder="Nhập ghi chú...">
+                {% endif %}
+              </td>
 
-    {% else %}
-      <td>{{ cell }}</td>
-    {% endif %}
-  {% endfor %}
+            {% else %}
+              <td>{{ cell }}</td>
+            {% endif %}
+          {% endfor %}
 
-  <td>
-    <i class="bi bi-eye text-info btn-detail"
-       style="cursor:pointer;"
-       data-emp='{{ row[-2] | tojson | safe }}'
-       title="Xem chi tiết"></i>
-  </td>
-</tr>
-{% endfor %}
+          <td>
+            <i class="bi bi-eye text-info btn-detail"
+              style="cursor:pointer;"
+              data-emp='{{ row[-2] | tojson | safe }}'
+              title="Xem chi tiết"></i>
+          </td>
+        </tr>
+        {% endfor %}
 
       </tbody>
     </table>
