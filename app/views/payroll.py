@@ -353,21 +353,21 @@ def import_payroll(filename):
             ghi_chu = " / ".join(parts)
 
             # --- tạo object và append (khớp model PayrollRecord của bạn) ---
-            record = PayrollRecord(
-                employee_id=emp.id,
-                period=period,
-                ngay_cong=ngay_cong,
-                ngay_vang=ngay_vang,
-                chu_nhat=x_chu_nhat,
-                le_tet=x_le,
-                tang_ca_nghi=tang_ca_nghi,
-                tang_ca_tuan=tang_ca_tuan,
-                ghi_chu=ghi_chu,
-                raw_data=daily_status,
-                to=getattr(emp, "team", None),
-                phong_ban=getattr(emp, "department", None),
-                loai_hd=getattr(emp, "contract_type", None)
-            )
+                record = PayrollRecord(
+                    employee_id=emp.id,
+                    period=period,
+                    ngay_cong=ngay_cong,
+                    ngay_vang=ngay_vang,
+                    chu_nhat=x_chu_nhat,
+                    le_tet=x_le,
+                    tang_ca_nghi=tang_ca_nghi,
+                    tang_ca_tuan=tang_ca_tuan,
+                    ghi_chu=ghi_chu,
+                    raw_data=daily_status,
+                    to=getattr(emp, "team", None),
+                    phong_ban=getattr(emp, "department", None),
+                    loai_hd=getattr(emp, "contract_type", None)
+                )
             records.append(record)
 
 
