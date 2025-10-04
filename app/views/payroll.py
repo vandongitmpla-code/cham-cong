@@ -358,12 +358,9 @@ def import_payroll(filename):
 
             ghi_chu = " / ".join(parts)
 
-            # 🔹 GÁN GHI CHÚ VÀO RECORD
-            record.note = ghi_chu
 
-            db.session.bulk_save_objects(records)
-            db.session.commit()
-
+        db.session.bulk_save_objects(records)
+        db.session.commit()
 
         flash(f"Đã import {len(records)} bản ghi payroll vào Database!", "success")
 
