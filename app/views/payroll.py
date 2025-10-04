@@ -368,7 +368,7 @@ def import_payroll(filename):
                 phong_ban=getattr(emp, "department", None),
                 loai_hd=getattr(emp, "contract_type", None)
             )
-            records.append(record)
+        records.append(record)
 
 
         # --- Lưu vào DB ---
