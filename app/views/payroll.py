@@ -354,6 +354,7 @@ def import_payroll(filename):
             # --- Tạo bản ghi PayrollRecord ---
             record = PayrollRecord(
                 employee_id=emp.id,
+                
                 period=period,
                 ngay_cong=ngay_cong,
                 ngay_vang=ngay_vang,
