@@ -374,8 +374,8 @@ def import_payroll(filename):
                     loai_hd=emp.loai_hd
                 )
 
-    # ✅ Thêm vào danh sách lưu batch
-    records.append(record)
+        # ✅ Thêm vào danh sách lưu batch
+        records.append(record)
 
         db.session.bulk_save_objects(records)
         db.session.commit()
