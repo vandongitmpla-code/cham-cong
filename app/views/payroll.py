@@ -6,6 +6,8 @@ import calendar
 from datetime import datetime, timedelta
 from app.models import Employee, Payroll, db
 from . import bp
+from app.models import Employee, Payroll, Holiday, db
+
 
 def _parse_holidays_for_month(holidays_config, ref_date):
     """
