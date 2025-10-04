@@ -10,22 +10,27 @@ def holidays():
     return render_template("holidays.html", holidays=holidays)
 
 # Thêm ngày lễ
-@bp.route("/holidays/add", methods=["GET", "POST"])
+@bp.route("/add_holiday", methods=["POST"])
 def add_holiday():
-    if request.method == "POST":
-        date_str = request.form.get("date")
-        name = request.form.get("name")
-        try:
-            holiday_date = datetime.strptime(date_str, "%Y-%m-%d").date()
-            holiday = Holiday(date=holiday_date, name=name)
-            db.session.add(holiday)
-            db.session.commit()
-            flash("Thêm ngày lễ thành công!", "success")
-            return redirect(url_for("main.holidays"))
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Lỗi khi thêm ngày lễ: {e}", "danger")
-    return render_template("add_holiday.html")
+    try:
+        date_str = request.form.get("holiday_date")
+        name = request.form.get("holiday_name") or "Ngày lễ"
+
+        if not date_str:
+            flash("Vui lòng chọn ngày lễ!", "danger")
+            return redirect(url_for("main.payroll"))
+
+        holiday_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        holiday = Holiday(date=holiday_date, name=name)
+
+        db.session.add(holiday)
+        db.session.commit()
+        flash("Thêm ngày lễ thành công!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi thêm ngày lễ: {e}", "danger")
+
+    return redirect(url_for("main.payroll", filename=request.args.get("filename")))
 
 # Xóa ngày lễ
 @bp.route("/holidays/delete/<int:holiday_id>", methods=["POST"])
