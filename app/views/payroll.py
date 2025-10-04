@@ -300,3 +300,26 @@ def import_payroll(filename):
         flash(f"Lỗi khi import payroll: {e}", "danger")
 
     return redirect(url_for("main.payroll", filename=filename))
+@bp.route("/add_holiday", methods=["POST"])
+def add_holiday():
+    try:
+        date_str = request.form.get("holiday_date")
+        name = request.form.get("holiday_name")
+
+        if not date_str:
+            flash("Vui lòng chọn ngày lễ!", "warning")
+            return redirect(url_for("main.payroll"))
+
+        holiday_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        holiday = Holiday(date=holiday_date, name=name or "")
+
+        db.session.add(holiday)
+        db.session.commit()
+        flash("Thêm ngày lễ thành công!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi thêm ngày lễ: {e}", "danger")
+
+    # quay lại payroll (bạn có filename từ hidden input)
+    filename = request.args.get("filename")
+    return redirect(url_for("main.payroll", filename=filename))
