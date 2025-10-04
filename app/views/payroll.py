@@ -195,6 +195,7 @@ def payroll(filename):
             period=period_str,
             weekdays=weekdays,
             day_count=len(day_numbers)
+            
         )
 
     except Exception as e:
