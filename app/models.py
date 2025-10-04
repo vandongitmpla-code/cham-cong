@@ -53,6 +53,5 @@ class Holiday(db.Model):
     date = db.Column(db.Date, nullable=False, unique=True)
     name = db.Column(db.String(100))
 
-
     def __repr__(self):
         return f"<Holiday {self.date} - {self.name}>"
