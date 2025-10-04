@@ -136,68 +136,68 @@ def payroll(filename):
         # --- Lấy danh sách ngày lễ từ cấu hình (nếu có) ---
         holidays_config = current_app.config.get("PAYROLL_HOLIDAYS", [])
       # --- Lấy holidays từ DB theo tháng kỳ công ---
-    holidays = []
-    holiday_days = set()
-    if start_date:
-        holidays = Holiday.query.filter(
-            db.extract("year", Holiday.date) == start_date.year,
-            db.extract("month", Holiday.date) == start_date.month
-        ).all()
-        holiday_days = {h.date.day for h in holidays}
+        holidays = []
+        holiday_days = set()
+        if start_date:
+            holidays = Holiday.query.filter(
+                db.extract("year", Holiday.date) == start_date.year,
+                db.extract("month", Holiday.date) == start_date.month
+            ).all()
+            holiday_days = {h.date.day for h in holidays}
 
-    # --- Tạo dữ liệu bảng payroll ---
-    cols = ["Mã", "Tên", "Phòng ban", "Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] + [str(d) for d in day_numbers]
-    records = []
-    for _, row in df.iterrows():
-        emp_id = row.get("Mã", "") or ""
-        emp_name = row.get("Tên", "") or ""
-        emp_dept = row.get("Phòng ban", "") or ""
+        # --- Tạo dữ liệu bảng payroll ---
+        cols = ["Mã", "Tên", "Phòng ban", "Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] + [str(d) for d in day_numbers]
+        records = []
+        for _, row in df.iterrows():
+            emp_id = row.get("Mã", "") or ""
+            emp_name = row.get("Tên", "") or ""
+            emp_dept = row.get("Phòng ban", "") or ""
 
-        tong_x = 0
-        x_chu_nhat = 0
-        x_le = 0
-        ngay_vang = 0
-        day_statuses = []
+            tong_x = 0
+            x_chu_nhat = 0
+            x_le = 0
+            ngay_vang = 0
+            day_statuses = []
 
-        for d in day_numbers:
-            key = str(d)
-            val = row.get(key, "") if key in df.columns else ""
-            status = _render_status(val)
-            day_statuses.append(status)
+            for d in day_numbers:
+                key = str(d)
+                val = row.get(key, "") if key in df.columns else ""
+                status = _render_status(val)
+                day_statuses.append(status)
 
-            if status == "x":
-                tong_x += 1
-                if d in holiday_days:
-                    x_le += 1
-                else:
-                    wd = (weekdays.get(d, "") or "").lower()
-                    if "chủ" in wd or "cn" in wd or "sun" in wd:
-                        x_chu_nhat += 1
-            elif status == "v":
-                ngay_vang += 1
+                if status == "x":
+                    tong_x += 1
+                    if d in holiday_days:
+                        x_le += 1
+                    else:
+                        wd = (weekdays.get(d, "") or "").lower()
+                        if "chủ" in wd or "cn" in wd or "sun" in wd:
+                            x_chu_nhat += 1
+                elif status == "v":
+                    ngay_vang += 1
 
-        # công thức tính ngày công
-        ngay_cong = tong_x - x_chu_nhat - (x_le * 2)
-        if ngay_cong < 0:
-            ngay_cong = 0
+            # công thức tính ngày công
+            ngay_cong = tong_x - x_chu_nhat - (x_le * 2)
+            if ngay_cong < 0:
+                ngay_cong = 0
 
-        row_list = [emp_id, emp_name, emp_dept, ngay_cong, ngay_vang, x_chu_nhat, x_le] + day_statuses
-        records.append(row_list)
+            row_list = [emp_id, emp_name, emp_dept, ngay_cong, ngay_vang, x_chu_nhat, x_le] + day_statuses
+            records.append(row_list)
 
-    # sắp xếp theo tên
-    records = sorted(records, key=lambda r: (r[1] or "").lower())
+        # sắp xếp theo tên
+        records = sorted(records, key=lambda r: (r[1] or "").lower())
 
-    return render_template(
-        "payroll.html",
-        filename=filename,
-        cols=cols,
-        rows=records,
-        period=period_str,
-        weekdays=weekdays,
-        day_count=len(day_numbers),
-        holidays=holidays,         # ✅ truyền holidays để hiển thị
-        holiday_days=holiday_days  # ✅ truyền list ngày lễ cho highlight
-    )
+        return render_template(
+            "payroll.html",
+            filename=filename,
+            cols=cols,
+            rows=records,
+            period=period_str,
+            weekdays=weekdays,
+            day_count=len(day_numbers),
+            holidays=holidays,         # ✅ truyền holidays để hiển thị
+            holiday_days=holiday_days  # ✅ truyền list ngày lễ cho highlight
+        )
     except Exception as e:
         print("Error in payroll route:", e, flush=True)
         flash(f"Lỗi khi tạo Bảng công tính lương: {e}", "danger")
