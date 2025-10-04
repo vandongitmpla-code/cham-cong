@@ -7,6 +7,7 @@ import re
 from datetime import datetime, timedelta
 from . import bp
 
+
 # bảng công tính lương
 @bp.route("/payroll/<filename>")
 def payroll(filename):
