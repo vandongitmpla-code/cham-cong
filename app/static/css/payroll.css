@@ -86,10 +86,41 @@
   z-index: 42;
 }
 
-/* Highlight cột thống kê */
-.highlight-col {
-  background-color: #d1e7dd !important; /* bootstrap success-light */
-  font-weight: 600;
+/* Sticky cho các cột thống kê */
+.payroll-table th:nth-child(4),
+.payroll-table td:nth-child(4) {
+  position: sticky;
+  left: 330px;  /* 60 + 120 + 150 = 330 */
+  min-width: 120px;
+  z-index: 43;
+  background: #fff;
+}
+
+.payroll-table th:nth-child(5),
+.payroll-table td:nth-child(5) {
+  position: sticky;
+  left: 450px; /* 330 + 120 */
+  min-width: 120px;
+  z-index: 43;
+  background: #fff;
+}
+
+.payroll-table th:nth-child(6),
+.payroll-table td:nth-child(6) {
+  position: sticky;
+  left: 570px; /* 450 + 120 */
+  min-width: 120px;
+  z-index: 43;
+  background: #fff;
+}
+
+.payroll-table th:nth-child(7),
+.payroll-table td:nth-child(7) {
+  position: sticky;
+  left: 690px; /* 570 + 120 */
+  min-width: 120px;
+  z-index: 43;
+  background: #fff;
 }
 
 /* Chủ nhật */
