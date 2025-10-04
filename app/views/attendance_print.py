@@ -70,7 +70,8 @@ def attendance_print(filename):
         payroll_records = {}
         if period_month:
             recs = PayrollRecord.query.filter_by(period=period_month).all()
-            payroll_records = {rec.employee_code.strip(): rec for rec in recs}
+            payroll_records = { (rec.employee_code or "").strip(): rec for rec in recs }
+
 
         def render_status(cell_val):
             s = "" if cell_val is None else str(cell_val)
