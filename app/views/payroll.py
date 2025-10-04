@@ -8,7 +8,7 @@ from app.models import Employee, Payroll, db
 from . import bp
 from app.models import Employee, Payroll, Holiday, db
 from flask import request
-from app.models import Holiday
+
 
 def _parse_holidays_for_month(holidays_config, ref_date):
     """
