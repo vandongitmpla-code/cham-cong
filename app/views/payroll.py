@@ -282,14 +282,24 @@ def import_payroll(filename):
                 return "0.5"
             return ""
 
-        # --- xử lý 1 nhân viên: tính status từng ngày---
-         tong_x = 0
-            x_chu_nhat = 0
-            x_le = 0
+        # --- Tạo danh sách PayrollRecord ---
+        records = []
+        for _, row in df.iterrows():
+            emp_code = str(row.get("Mã", "")).strip()
+            emp = Employee.query.filter(
+                (Employee.code == emp_code) | (Employee.att_code == emp_code)
+            ).first()
+            if not emp:
+                continue
+
+            ngay_cong = 0
             ngay_vang = 0
+            chu_nhat = 0
+            le_tet = 0
+            tang_ca_nghi = 0
+            tang_ca_tuan = 0
             daily_status = {}
 
-            # đếm tong_x / x_chu_nhat / x_le / ngay_vang, đồng thời lưu daily_status
             for d in day_numbers:
                 key = str(d)
                 status = render_status(row.get(key, ""))
@@ -300,24 +310,17 @@ def import_payroll(filename):
                 is_holiday = d in holiday_days
 
                 if status == "x":
-                    tong_x += 1
                     if is_sunday:
-                        x_chu_nhat += 1
-                    if is_holiday:
-                        x_le += 1
+                        chu_nhat += 1
+                        tang_ca_nghi += 8
+                    elif is_holiday:
+                        le_tet += 1
+                    else:
+                        ngay_cong += 1
+                elif status == "0.5" and not is_sunday:
+                    ngay_cong += 0.5
                 elif status == "v":
                     ngay_vang += 1
-                # 'warn' và '0.5' không thay đổi tong_x theo logic payroll gốc
-
-            # --- theo công thức của bạn ---
-            ngay_cong = tong_x - x_chu_nhat - (x_le * 2)
-            if ngay_cong < 0:
-                ngay_cong = 0
-
-            # lượng giờ tăng ca CN theo logic cũ (8h/ngày CN làm)
-            tang_ca_nghi = x_chu_nhat * 8
-            # tang_ca_tuan giữ 0 (nếu có logic khác bạn có thể điều chỉnh)
-            tang_ca_tuan = 0
 
             # --- Ghi chú chi tiết theo định dạng ---
             cn_days = []
@@ -330,15 +333,10 @@ def import_payroll(filename):
                 is_holiday = d in holiday_days
                 status = daily_status.get(d, "")
 
-                # Chủ nhật có làm
                 if is_sunday and status == "x":
                     cn_days.append(d)
-
-                # Làm ngày lễ
                 if is_holiday and status == "x":
                     le_days.append(d)
-
-                # Nghỉ (v)
                 if status == "v":
                     nghi_days.append(d)
 
@@ -352,24 +350,23 @@ def import_payroll(filename):
 
             ghi_chu = " / ".join(parts)
 
-            # --- tạo object và append (khớp model PayrollRecord của bạn) ---
+            # --- Tạo đối tượng PayrollRecord ---
             record = PayrollRecord(
                 employee_id=emp.id,
                 period=period,
                 ngay_cong=ngay_cong,
                 ngay_vang=ngay_vang,
-                chu_nhat=x_chu_nhat,
-                le_tet=x_le,
+                chu_nhat=chu_nhat,
+                le_tet=le_tet,
                 tang_ca_nghi=tang_ca_nghi,
                 tang_ca_tuan=tang_ca_tuan,
                 ghi_chu=ghi_chu,
                 raw_data=daily_status,
-                to=getattr(emp, "team", None),
+                to=getattr(emp, "to", None),
                 phong_ban=getattr(emp, "department", None),
                 loai_hd=getattr(emp, "contract_type", None)
             )
             records.append(record)
-
 
         # --- Lưu vào DB ---
         db.session.bulk_save_objects(records)
