@@ -382,18 +382,6 @@ def import_payroll(filename):
     return redirect(url_for("main.payroll", filename=filename))
 
 
-        # --- Lưu vào DB ---
-        db.session.bulk_save_objects(records)
-        db.session.commit()
-
-        flash(f"Đã import {len(records)} bản ghi payroll vào Database!", "success")
-
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Lỗi khi import payroll: {e}", "danger")
-
-    return redirect(url_for("main.payroll", filename=filename))
-
 
 # Thêm ngày lễ
 @bp.route("/add_holiday", methods=["POST"])
