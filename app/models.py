@@ -50,8 +50,9 @@ class Holiday(db.Model):
     __tablename__ = "holidays"
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date, nullable=False, unique=True)   # ngày lễ
-    name = db.Column(db.String(100))                         # mô tả, ví dụ "Quốc khánh"
+    date = db.Column(db.Date, nullable=False, unique=True)
+    name = db.Column(db.String(100))
+
 
     def __repr__(self):
         return f"<Holiday {self.date} - {self.name}>"
