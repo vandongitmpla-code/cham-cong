@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Quản lý Ngày lễ{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Danh sách ngày lễ</h2>
+  <a href="{{ url_for('main.add_holiday') }}" class="btn btn-primary mb-3">➕ Thêm ngày lễ</a>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Ngày</th>
+        <th>Tên</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for h in holidays %}
+      <tr>
+        <td>{{ h.date.strftime("%d/%m/%Y") }}</td>
+        <td>{{ h.name }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('main.delete_holiday', holiday_id=h.id) }}" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
