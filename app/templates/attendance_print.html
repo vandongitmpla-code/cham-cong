@@ -48,9 +48,15 @@
             {% set cell = row[i] %}
 
             {% if colname == "Số ngày nghỉ không lương" %}
-            <td>{{ cell }}</td>
-              {% endif %}
-           
+              <td>
+                {{ cell.count }}
+                {% if cell.sundays %}
+                <i class="bi bi-info-circle text-danger ms-1 blink-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Nghỉ CN các ngày: {{ cell.sundays | join(', ') }}"></i>
+                {% endif %}
+              </td>
             {% elif colname == "Ghi chú" %}
               <td class="note-cell" data-emp="{{ row[1] }}">
                 {% if cell == "ICON_ONLY" or (cell is string and cell.endswith("|||ICON")) %}
