@@ -105,28 +105,20 @@
 </div>
 
 <!-- Modal nhập ngày lễ -->
-<div class="modal fade" id="holidayModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Nhập số ngày lễ tết</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div id="holidayInputs">
-          <div class="input-group mb-2">
-            <input type="number" min="1" class="form-control holiday-day" placeholder="Nhập ngày (VD: 2)">
-            <button class="btn btn-outline-secondary btn-add-day">Thêm ngày</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button id="btnHolidayDone" class="btn btn-primary">Xong</button>
-        <button id="btnHolidayEdit" class="btn btn-secondary" style="display:none;">Sửa</button>
+<form method="POST" action="{{ url_for('main.add_holiday') }}">
+  <div class="modal-body">
+    <div id="holidayInputs">
+      <div class="input-group mb-2">
+        <input type="date" name="holiday_date" class="form-control" required>
+        <input type="text" name="holiday_name" class="form-control" placeholder="Tên ngày lễ (VD: Quốc khánh)">
       </div>
     </div>
   </div>
-</div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary">Lưu</button>
+  </div>
+</form>
+
 
 <!-- Tooltip khởi tạo -->
 <script>
