@@ -287,7 +287,7 @@ def import_payroll(filename):
         x_chu_nhat = 0
         x_le = 0
         ngay_vang = 0
-            daily_status = {}
+        daily_status = {}
 
             # đếm tong_x / x_chu_nhat / x_le / ngay_vang, đồng thời lưu daily_status
             for d in day_numbers:
