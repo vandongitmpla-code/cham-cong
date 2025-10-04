@@ -3,6 +3,8 @@ import os
 from datetime import datetime, timedelta
 from . import bp
 from app.models import db, PayrollRecord
+from app.utils.cleaning import clean_attendance_data
+        import re
 
 
 @bp.route("/attendance_print/<filename>")
