@@ -42,7 +42,7 @@
 /* Header sticky */
 .payroll-table thead tr:nth-child(1) th {
   position: sticky;
-  top: 30;
+  top: ;
   background: #0d6efd; /* bootstrap primary */
   color: #fff;
   z-index: 50;
