@@ -45,3 +45,12 @@ class Payroll(db.Model):
 
     def __repr__(self):
         return f"<Payroll emp={self.employee_id}, month={self.month}, days={self.working_days}, salary={self.salary}>"
+class Holiday(db.Model):
+    __tablename__ = "holidays"
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False, unique=True)   # ngày lễ
+    name = db.Column(db.String(100))                         # mô tả, ví dụ "Quốc khánh"
+
+    def __repr__(self):
+        return f"<Holiday {self.date} - {self.name}>"
