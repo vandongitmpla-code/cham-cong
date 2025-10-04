@@ -3,7 +3,11 @@ import os
 from app.utils.cleaning import clean_attendance_data
 from . import bp
 from app.models import db
-
+import os
+    from datetime import datetime, timedelta
+    import re
+    from app.models import Employee
+    from app.extensions import db
 
 
 @bp.route("/attendance_print/<filename>")
