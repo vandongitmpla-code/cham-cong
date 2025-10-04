@@ -135,13 +135,13 @@ def payroll(filename):
         # --- Lấy danh sách ngày lễ từ cấu hình (nếu có) ---
         holidays_config = current_app.config.get("PAYROLL_HOLIDAYS", [])
        # --- Lấy danh sách ngày lễ từ DB ---
-            holiday_days = set()
-            if start_date:
-                holidays = Holiday.query.filter(
-                    db.extract('year', Holiday.date) == start_date.year,
-                    db.extract('month', Holiday.date) == start_date.month
-                ).all()
-                holiday_days = {h.date.day for h in holidays}
+        holiday_days = set()
+        if start_date:
+            holidays = Holiday.query.filter(
+                db.extract('year', Holiday.date) == start_date.year,
+                db.extract('month', Holiday.date) == start_date.month
+            ).all()
+            holiday_days = {h.date.day for h in holidays}
 
         # --- Tạo dữ liệu bảng payroll ---
         cols = ["Mã", "Tên", "Phòng ban", "Ngày công", "Ngày vắng", "Chủ nhật"] + [str(d) for d in day_numbers]
