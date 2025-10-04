@@ -108,21 +108,18 @@
 <div class="modal fade" id="holidayModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="POST" action="{{ url_for('main.add_holiday', filename=filename) }}">
-        <div class="modal-header">
-          <h5 class="modal-title">Thêm ngày lễ</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="input-group mb-2">
-            <input type="date" name="holiday_date" class="form-control" required>
-            <input type="text" name="holiday_name" class="form-control" placeholder="Tên ngày lễ (VD: Quốc khánh)">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Lưu</button>
-        </div>
-      </form>
+      <form method="POST" action="{{ url_for('main.add_holiday') }}?filename={{ filename }}">
+  <div class="modal-body">
+    <div class="input-group mb-2">
+      <input type="date" name="holiday_date" class="form-control" required>
+      <input type="text" name="holiday_name" class="form-control" placeholder="Tên ngày lễ (VD: Quốc khánh)">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary">Lưu</button>
+  </div>
+</form>
+
     </div>
   </div>
 </div>
