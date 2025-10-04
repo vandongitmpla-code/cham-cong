@@ -7,7 +7,7 @@ from datetime import datetime
 from app.models import  db
 from . import bp
 from app.models import  Holiday, db
-from flask import request
+from flask import request, record
 
 
 def _parse_holidays_for_month(holidays_config, ref_date):
