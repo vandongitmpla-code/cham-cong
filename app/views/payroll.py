@@ -375,7 +375,7 @@ for d in day_numbers:
         )
 
         # ✅ Thêm vào danh sách lưu batch
-        records.append(record)
+     records.append(record)
 
         db.session.bulk_save_objects(records)
         db.session.commit()
