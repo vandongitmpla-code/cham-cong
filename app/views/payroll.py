@@ -1,13 +1,9 @@
-from flask import redirect, url_for, flash, render_template, current_app
-import os
-from app.utils.cleaning import clean_attendance_data
 import re
-import calendar
-from datetime import datetime
-from app.models import  db
-from . import bp
-from app.models import  Holiday, db
-from flask import request, record
+    import calendar
+    from datetime import datetime
+    from app.models import Employee, PayrollRecord, Holiday, db
+    from app.utils.cleaning import clean_attendance_data
+    from flask import flash, redirect, url_for
 
 
 def _parse_holidays_for_month(holidays_config, ref_date):
