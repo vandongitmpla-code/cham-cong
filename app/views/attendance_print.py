@@ -181,7 +181,7 @@ def attendance_print(filename):
                 ghi_chu_val,        # Ghi chú
                 "",                  # bắt đầu tính phép
                 "",                  # phép tồn
-                
+                payroll_record              # <-- thêm PayrollRecord vào cuối row
                 emp_db.team if emp_db else "",
                 {
                     "Mã": emp_code,
