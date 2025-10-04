@@ -4,7 +4,7 @@ from app.utils.cleaning import clean_attendance_data
 import re
 import calendar
 from datetime import datetime, timedelta
-from app.models import Employee, Payroll, db
+from app.models import  db
 from . import bp
 from app.models import Employee, Payroll, Holiday, db
 from flask import request, record
