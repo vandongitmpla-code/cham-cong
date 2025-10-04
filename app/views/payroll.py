@@ -6,7 +6,7 @@ import calendar
 from datetime import datetime, timedelta
 from app.models import  db
 from . import bp
-from app.models import Employee, Payroll, Holiday, db
+from app.models import  Holiday, db
 from flask import request, record
 
 
