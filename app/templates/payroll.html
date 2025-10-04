@@ -14,7 +14,7 @@
     <!-- Nút hành động -->
     <div class="d-flex justify-content-end mb-3">
       <!-- Nút Ngày Lễ Tết -->
-      <button id="btnHolidays" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#holidayModal">
+      <button id="btnHolidays" class="btn btn-warning me-2">
         <i class="bi bi-calendar-event"></i> Ngày Lễ tết
       </button>
 
@@ -30,22 +30,6 @@
         </button>
       </form>
     </div>
-
-    <!-- Danh sách ngày lễ từ DB -->
-    {% if holidays %}
-    <div class="alert alert-info">
-      <strong>Ngày lễ đã lưu:</strong>
-      <ul class="mb-0">
-        {% for h in holidays %}
-          <li>{{ h.date.strftime("%d/%m/%Y") }} - {{ h.name }}
-            <form method="POST" action="{{ url_for('main.delete_holiday', holiday_id=h.id, filename=filename) }}" class="d-inline">
-              <button type="submit" class="btn btn-sm btn-danger">Xóa</button>
-            </form>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
 
     <!-- Bảng -->
     <div class="table-responsive shadow-sm rounded-3">
@@ -71,7 +55,7 @@
               {% if col.isdigit() %}
                 {% set d = col|int %}
                 {% set wd = weekdays.get(d, "") %}
-                <th class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
+                <th class="{% if wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
                   {{ wd }}
                 </th>
               {% elif col == "Chủ nhật" %}
@@ -94,11 +78,11 @@
                   <td class="highlight-col fw-bold">{{ cell }}</td>
                 {% elif colname == "Chủ nhật" %}
                   <td class="highlight-col">{{ cell }}</td>
-                  <td class="highlight-col holiday-count">{{ row[cols.index("Lễ, tết")] }}</td>
+                  <td class="highlight-col holiday-count">0</td>
                 {% elif colname.isdigit() %}
                   {% set d = colname|int %}
                   {% set wd = weekdays.get(d, "") %}
-                  <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
+                  <td class="{% if wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
                     {% if cell == 'warn' %}
                       <i class="bi bi-exclamation-triangle-fill text-warning blink-red"
                          data-bs-toggle="tooltip"
@@ -124,27 +108,181 @@
 <div class="modal fade" id="holidayModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="POST" action="{{ url_for('main.add_holiday', filename=filename) }}">
-        <div class="modal-header">
-          <h5 class="modal-title">Thêm Ngày Lễ</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <form method="POST" action="{{ url_for('main.add_holiday') }}?filename={{ filename }}">
+      <div class="modal-body">
+        <div class="input-group mb-2">
+          <input type="date" name="holiday_date" class="form-control" required>
+          <input type="text" name="holiday_name" class="form-control" placeholder="Tên ngày lễ (VD: Quốc khánh)">
         </div>
-        <div class="modal-body">
-          <div class="mb-2">
-            <input type="date" name="holiday_date" class="form-control" required>
-          </div>
-          <div class="mb-2">
-            <input type="text" name="holiday_name" class="form-control" placeholder="Tên ngày lễ (VD: Quốc khánh)">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Lưu</button>
-        </div>
-      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Lưu</button>
+      </div>
+    </form>
     </div>
   </div>
 </div>
+<div class="mb-3">
+  <h6><i class="bi bi-calendar-event"></i> Danh sách ngày lễ đã nhập:</h6>
+  {% if holidays %}
+    <ul class="list-group">
+      {% for h in holidays %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ h.date.strftime("%d/%m/%Y") }} - {{ h.name or "Không tên" }}
+          <a href="{{ url_for('main.delete_holiday', holiday_id=h.id, filename=filename) }}" 
+             class="btn btn-sm btn-danger">
+            <i class="bi bi-trash"></i> Xóa
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">Chưa có ngày lễ nào.</p>
+  {% endif %}
+</div>
 
+
+<!-- Tooltip khởi tạo -->
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const els = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    els.forEach(e => new bootstrap.Tooltip(e, {container: 'body'}));
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const stickyCols = parseInt(getComputedStyle(document.documentElement)
+                      .getPropertyValue("--sticky-cols"), 10);
+  const table = document.querySelector(".payroll-table");
+  if (!table) return;
+
+  const headerCells = table.querySelectorAll("thead tr:first-child th");
+  let offset = 0;
+
+  for (let i = 0; i < stickyCols && i < headerCells.length; i++) {
+    const colIndex = i + 1;
+    const width = headerCells[i].offsetWidth;
+
+    const cells = table.querySelectorAll(
+      `thead th:nth-child(${colIndex}), 
+       thead tr:nth-child(2) th:nth-child(${colIndex}),
+       tbody td:nth-child(${colIndex})`
+    );
+
+    const zIndex = 200 + (stickyCols - i);
+
+    cells.forEach(cell => {
+      cell.classList.add("sticky-col");
+      cell.style.left = offset + "px";
+      cell.style.zIndex = zIndex;
+      cell.style.background = "#fff";
+    });
+
+    offset += width;
+  }
+
+  // === Ngày Lễ ===
+  const btnHolidays = document.getElementById("btnHolidays");
+  const holidayModal = new bootstrap.Modal(document.getElementById("holidayModal"));
+  const btnHolidayDone = document.getElementById("btnHolidayDone");
+  const btnHolidayEdit = document.getElementById("btnHolidayEdit");
+  const holidayInputs = document.getElementById("holidayInputs");
+
+  let savedDays = [];
+
+  btnHolidays.addEventListener("click", () => {
+    holidayModal.show();
+  });
+
+  holidayInputs.addEventListener("click", function(e){
+    if(e.target.classList.contains("btn-add-day")){
+      e.preventDefault();
+      const div = document.createElement("div");
+      div.className = "input-group mb-2";
+      div.innerHTML = `
+        <input type="number" min="1" class="form-control holiday-day" placeholder="Nhập ngày (VD: 15)">
+        <button class="btn btn-outline-secondary btn-add-day">Thêm ngày</button>
+      `;
+      holidayInputs.appendChild(div);
+    }
+  });
+
+  btnHolidayDone.addEventListener("click", function(){
+    savedDays = Array.from(document.querySelectorAll(".holiday-day"))
+      .map(inp => parseInt(inp.value, 10))
+      .filter(v => !isNaN(v));
+
+    if(savedDays.length === 0) {
+      holidayModal.hide();
+      return;
+    }
+
+    applyHolidays(savedDays);
+    holidayModal.hide();
+    btnHolidayEdit.style.display = "inline-block";
+  });
+
+  btnHolidayEdit.addEventListener("click", function(){
+    // reset modal với giá trị đã nhập trước đó
+    holidayInputs.innerHTML = "";
+    savedDays.forEach(d => {
+      const div = document.createElement("div");
+      div.className = "input-group mb-2";
+      div.innerHTML = `
+        <input type="number" min="1" class="form-control holiday-day" value="${d}">
+        <button class="btn btn-outline-secondary btn-add-day">Thêm ngày</button>
+      `;
+      holidayInputs.appendChild(div);
+    });
+    if(savedDays.length === 0){
+      holidayInputs.innerHTML = `
+        <div class="input-group mb-2">
+          <input type="number" min="1" class="form-control holiday-day" placeholder="Nhập ngày (VD: 2)">
+          <button class="btn btn-outline-secondary btn-add-day">Thêm ngày</button>
+        </div>
+      `;
+    }
+    holidayModal.show();
+  });
+
+  function applyHolidays(days){
+    const headers = table.querySelectorAll("thead tr:first-child th");
+
+    // reset highlight
+    table.querySelectorAll("thead tr th, tbody tr td").forEach(c => {
+      if(c.classList.contains("holiday-mark")) {
+        c.classList.remove("highlight-sunday", "holiday-mark");
+      }
+    });
+
+    // highlight ngày lễ
+    days.forEach(d => {
+      const colIndex = Array.from(headers).findIndex(h => h.textContent.trim() == d);
+      if(colIndex >= 0){
+        table.querySelectorAll(`thead tr th:nth-child(${colIndex+1}), tbody tr td:nth-child(${colIndex+1})`)
+             .forEach(c => { c.classList.add("highlight-sunday", "holiday-mark"); });
+      }
+    });
+
+    // tính số ngày lễ có "x"
+    const rows = table.querySelectorAll("tbody tr");
+    rows.forEach(row => {
+      let count = 0;
+      days.forEach(d => {
+        const colIndex = Array.from(headers).findIndex(h => h.textContent.trim() == d);
+        if(colIndex >= 0){
+          const cell = row.querySelector(`td:nth-child(${colIndex+1})`);
+          if(cell && cell.textContent.trim().toLowerCase() === "x"){
+            count++;
+          }
+        }
+      });
+      const holidayCell = row.querySelector(".holiday-count");
+      if(holidayCell) holidayCell.textContent = count;
+    });
+  }
+});
+</script>
 {% block styles %}
 <style>
   .payroll-table th,
@@ -156,11 +294,7 @@
   .payroll-table thead th {
     font-weight: 600;
   }
-  .highlight-holiday {
-    background-color: #f8d7da !important;
-    color: #842029;
-    font-weight: bold;
-  }
 </style>
 {% endblock %}
+
 {% endblock %}
