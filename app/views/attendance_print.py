@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash
 import os
 from datetime import datetime, timedelta
 from . import bp
-from app.models import db, PayrollRecord, Employee
+from app.models import db, PayrollRecord
 
 
 @bp.route("/attendance_print/<filename>")
@@ -60,24 +60,26 @@ def attendance_print(filename):
 
         # ---- Tạo dữ liệu bảng attendance_print ----
         rows = []
+        stt = 1
         for rec in records:
             rows.append([
-                rec.id,                       # STT
+                stt,                           # STT
                 rec.employee_code,            # Mã số
                 rec.employee_name,            # Họ và tên
                 rec.phong_ban,                # Phòng ban
                 rec.loai_hd,                  # Loại HĐ
-                26,                            # Số ngày/giờ làm việc quy định trong tháng (mặc định 26)
+                rec.ngay_cong,                # Số ngày/giờ làm việc quy định trong tháng
                 "",                            # Nghỉ phép năm
                 rec.ngay_vang,                # Số ngày nghỉ không lương
-                rec.ngay_cong,                 # Số ngày/giờ làm việc thực tế
+                rec.ngay_cong,                # Số ngày/giờ làm việc thực tế trong tháng
                 rec.tang_ca_nghi,             # Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)
                 rec.tang_ca_tuan,             # Số giờ làm việc tăng ca (ngày làm trong tuần)
-                rec.ghi_chu,                  # Ghi chú
+                rec.ghi_chu or "",            # Ghi chú
                 "", "",                       # Bắt đầu tính phép từ tháng / Số ngày phép còn tồn
                 rec.to,                       # Tổ
-                {}                             # Chi tiết (có thể thêm nếu cần)
+                {}                             # Chi tiết
             ])
+            stt += 1
 
         cols = [
             "STT", "Mã số", "Họ và tên", "Phòng ban", "Loại HĐ",
