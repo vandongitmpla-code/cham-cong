@@ -45,6 +45,7 @@ class Payroll(db.Model):
 
     def __repr__(self):
         return f"<Payroll emp={self.employee_id}, month={self.month}, days={self.working_days}, salary={self.salary}>"
+
 class Holiday(db.Model):
     __tablename__ = "holidays"
 
