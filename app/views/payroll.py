@@ -3,7 +3,7 @@ import os
 from app.utils.cleaning import clean_attendance_data
 import re
 import calendar
-from datetime import datetime, timedelta
+from datetime import datetime,
 from app.models import  db
 from . import bp
 from app.models import  Holiday, db
