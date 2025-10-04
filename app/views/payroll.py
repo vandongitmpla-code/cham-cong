@@ -207,101 +207,159 @@ def payroll(filename):
 # Import dữ liệu Payroll (dùng cùng logic)
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
+    import re
+    import calendar
+    from datetime import datetime
+    from app.models import Employee, PayrollRecord, Holiday
+    from flask import current_app, request
+
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
     file_path = os.path.join(upload_folder, filename)
+
     try:
         data = clean_attendance_data(file_path)
         df = data["att_log"]
 
-        # lấy kỳ công
+        # --- Lấy kỳ công ---
         period_str = ""
         att_meta = data.get("att_meta")
         if att_meta and len(att_meta) > 0:
             header_row = att_meta[0]
             for cell in header_row:
                 if isinstance(cell, str):
-                    m = re.search(r'\d{4}-\d{2}-\d{2}', cell)
+                    m = re.search(r'\d{4}-\d{2}-\d{2}\s*~\s*\d{4}-\d{2}-\d{2}', cell)
                     if m:
-                        period_str = cell
+                        period_str = m.group(0)
                         break
 
-        # lấy tháng (YYYY-MM)
-        month_str = ""
-        start_date = None
-        if period_str and "~" in period_str:
-            start_s, _ = period_str.split("~")
-            start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
-            month_str = start_date.strftime("%Y-%m")
+        if not period_str or "~" not in period_str:
+            flash("Không xác định được kỳ công trong file!", "danger")
+            return redirect(url_for("main.payroll", filename=filename))
 
-        # tạo day_numbers và weekdays giống /payroll
-        day_numbers = []
-        weekdays = {}
-        if start_date:
-            year = start_date.year
-            month = start_date.month
-            last_day = calendar.monthrange(year, month)[1]
-            day_numbers = list(range(1, last_day + 1))
-            weekday_names = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
-            for d in day_numbers:
-                dt = datetime(year, month, d)
-                weekdays[d] = weekday_names[dt.weekday()]
-        if not day_numbers:
-            day_numbers = sorted([int(c) for c in df.columns if str(c).isdigit()])
+        start_s, end_s = period_str.split("~")
+        start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
+        end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
+        period = start_date.strftime("%Y-%m")
 
-        # holidays từ config
-        holidays_config = current_app.config.get("PAYROLL_HOLIDAYS", [])
-        holiday_days = set()
-        if start_date:
-            holiday_days = _parse_holidays_for_month(holidays_config, start_date.date())
+        # --- Tạo danh sách ngày trong tháng ---
+        weekday_names = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
+        year, month = start_date.year, start_date.month
+        last_day = calendar.monthrange(year, month)[1]
+        day_numbers = list(range(1, last_day + 1))
+        weekdays = {d: weekday_names[datetime(year, month, d).weekday()] for d in day_numbers}
 
-        # xoá dữ liệu cũ payroll cùng tháng
-        db.session.query(Payroll).filter_by(month=month_str).delete()
+        # --- Lấy ngày lễ trong DB ---
+        holidays = Holiday.query.filter(
+            db.extract("year", Holiday.date) == year,
+            db.extract("month", Holiday.date) == month
+        ).all()
+        holiday_days = {h.date.day for h in holidays}
 
-        objs = []
+        # --- Xoá dữ liệu PayrollRecord cũ của kỳ này ---
+        PayrollRecord.query.filter_by(period=period).delete()
+
+        # --- Hàm tính status theo cell ---
+        def render_status(cell_val):
+            import re
+            s = "" if cell_val is None else str(cell_val)
+            times = re.findall(r'\d{1,2}:\d{2}', s)
+            if not times:
+                return "v"
+            if len(times) == 1:
+                return "warn"
+            def to_minutes(t):
+                hh, mm = t.split(":")
+                return int(hh) * 60 + int(mm)
+            mins = [to_minutes(t) for t in times]
+            first = min(mins)
+            last = max(mins)
+            if last < first:
+                last += 24 * 60
+            diff = last - first
+            if diff >= 7 * 60:
+                return "x"
+            if diff >= 3 * 60:
+                return "0.5"
+            return ""
+
+        # --- Tạo danh sách PayrollRecord ---
+        records = []
         for _, row in df.iterrows():
             emp_code = str(row.get("Mã", "")).strip()
-            emp = Employee.query.filter_by(code=emp_code).first()
+            emp = Employee.query.filter(
+                (Employee.code == emp_code) | (Employee.att_code == emp_code)
+            ).first()
             if not emp:
                 continue
 
-            tong_x = 0
-            x_chu_nhat = 0
-            x_le = 0
+            ngay_cong = 0
+            ngay_vang = 0
+            chu_nhat = 0
+            le_tet = 0
+            tang_ca_nghi = 0
+            tang_ca_tuan = 0
+            ghi_chu = ""
+            daily_status = {}
 
             for d in day_numbers:
                 key = str(d)
-                val = row.get(key, "") if key in df.columns else ""
-                status = _render_status(val)
+                status = render_status(row.get(key, ""))
+                daily_status[d] = status
+
+                wd = (weekdays.get(d, "") or "").lower()
+                is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
+                is_holiday = d in holiday_days
+
                 if status == "x":
-                    tong_x += 1
-                    if d in holiday_days:
-                        x_le += 1
+                    if is_sunday:
+                        chu_nhat += 1
+                        tang_ca_nghi += 8
+                    elif is_holiday:
+                        le_tet += 1
                     else:
-                        wd = (weekdays.get(d, "") or "").lower()
-                        if "chủ" in wd or "cn" in wd or "sun" in wd:
-                            x_chu_nhat += 1
+                        ngay_cong += 1
+                elif status == "0.5":
+                    if not is_sunday:
+                        ngay_cong += 0.5
+                elif status == "v":
+                    ngay_vang += 1
 
-            working_days = tong_x - x_chu_nhat - (x_le * 2)
-            if working_days < 0:
-                working_days = 0
+            # Ghi chú
+            if chu_nhat:
+                ghi_chu += f"Tăng ca {chu_nhat} CN "
+            if le_tet:
+                ghi_chu += f"/ Làm {le_tet} ngày Lễ"
+            if ngay_vang:
+                ghi_chu += f"/ Nghỉ {ngay_vang} ngày"
 
-            payroll = Payroll(
+            record = PayrollRecord(
                 employee_id=emp.id,
-                month=month_str,
-                working_days=working_days,
-                salary=emp.salary_base * working_days / 26.0
+                period=period,
+                ngay_cong=ngay_cong,
+                ngay_vang=ngay_vang,
+                chu_nhat=chu_nhat,
+                le_tet=le_tet,
+                tang_ca_nghi=tang_ca_nghi,
+                tang_ca_tuan=tang_ca_tuan,
+                ghi_chu=ghi_chu.strip(" /"),
+                raw_data=daily_status,
+                to=emp.team,
+                phong_ban=emp.department,
+                loai_hd=emp.contract_type
             )
-            objs.append(payroll)
+            records.append(record)
 
-        db.session.bulk_save_objects(objs)
+        db.session.bulk_save_objects(records)
         db.session.commit()
-        flash("Import Payroll thành công!", "success")
+
+        flash(f"Đã import {len(records)} bản ghi payroll vào Database!", "success")
 
     except Exception as e:
         db.session.rollback()
         flash(f"Lỗi khi import payroll: {e}", "danger")
 
     return redirect(url_for("main.payroll", filename=filename))
+
 
 
 # Thêm ngày lễ
