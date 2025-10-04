@@ -71,6 +71,8 @@ def attendance_print(filename):
         if period_month:
             recs = PayrollRecord.query.filter_by(period=period_month).all()
             payroll_records = { (rec.employee_code or "").strip(): rec for rec in recs }
+
+
         def render_status(cell_val):
             s = "" if cell_val is None else str(cell_val)
             times = re.findall(r'\d{1,2}:\d{2}', s)
@@ -167,30 +169,28 @@ def attendance_print(filename):
             ghi_chu_val = ghi_chu_val or ghi_chu
 
             rows.append([
-            idx + 1,
-            emp_code,
-            emp_name,
-            emp_dept,
-            emp_db.contract_type if emp_db else "",
-            ngay_cong_val,      # Số ngày/giờ làm việc quy định trong tháng
-            "",                  # nghỉ phép năm
-            ngay_vang_val,      # Số ngày nghỉ không lương
-            thuc_te,            # Số ngày/giờ làm việc thực tế trong tháng
-            tang_ca_nghi_val,   # Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)
-            "",                  # tăng ca trong tuần
-            ghi_chu_val,        # Ghi chú
-            "",                  # bắt đầu tính phép
-            "",                  # phép tồn
-            emp_db.team if emp_db else "",
-            {
-                "Mã": emp_code,
-                "Tên": emp_name,
-                "Phòng ban": emp_dept,
-                "days": days_raw
-            },
-            payroll_rec         # <-- Gắn PayrollRecord vào cuối row
-        ])
-
+                idx + 1,
+                emp_code,
+                emp_name,
+                emp_dept,
+                emp_db.contract_type if emp_db else "",
+                ngay_cong_val,      # Số ngày/giờ làm việc quy định trong tháng
+                "",                  # nghỉ phép năm
+                ngay_vang_val,      # Số ngày nghỉ không lương
+                thuc_te,            # Số ngày/giờ làm việc thực tế trong tháng
+                tang_ca_nghi_val,   # Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)
+                "",                  # tăng ca trong tuần
+                ghi_chu_val,        # Ghi chú
+                "",                  # bắt đầu tính phép
+                "",                  # phép tồn
+                emp_db.team if emp_db else "",
+                {
+                    "Mã": emp_code,
+                    "Tên": emp_name,
+                    "Phòng ban": emp_dept,
+                    "days": days_raw
+                }
+            ])
 
         cols = [
             "STT","Mã số","Họ và tên","Phòng ban","Loại HĐ",
