@@ -374,7 +374,7 @@ for d in day_numbers:
             loai_hd=emp.loai_hd
         )
 
-        # ✅ Thêm vào danh sách lưu batch
+ # ✅ Thêm vào danh sách lưu batch
      records.append(record)
 
         db.session.bulk_save_objects(records)
