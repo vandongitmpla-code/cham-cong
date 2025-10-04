@@ -304,26 +304,44 @@ def import_payroll(filename):
     return redirect(url_for("main.payroll", filename=filename))
 
 
+# Thêm ngày lễ
 @bp.route("/add_holiday", methods=["POST"])
 def add_holiday():
     try:
-        date_str = request.form.get("holiday_date")
-        name = request.form.get("holiday_name")
+        holiday_date = request.form.get("holiday_date")
+        holiday_name = request.form.get("holiday_name")
 
-        if not date_str:
-            flash("Vui lòng chọn ngày lễ!", "warning")
-            return redirect(url_for("main.payroll"))
+        if not holiday_date:
+            flash("Ngày lễ không được để trống", "danger")
+            return redirect(url_for("main.payroll", filename=request.args.get("filename")))
 
-        holiday_date = datetime.strptime(date_str, "%Y-%m-%d").date()
-        holiday = Holiday(date=holiday_date, name=name or "")
-
-        db.session.add(holiday)
+        # lưu vào DB
+        h = Holiday(
+            date=datetime.strptime(holiday_date, "%Y-%m-%d").date(),
+            name=holiday_name
+        )
+        db.session.add(h)
         db.session.commit()
         flash("Thêm ngày lễ thành công!", "success")
+
     except Exception as e:
         db.session.rollback()
         flash(f"Lỗi khi thêm ngày lễ: {e}", "danger")
 
-    # quay lại payroll (bạn có filename từ hidden input)
-    filename = request.args.get("filename")
+    return redirect(url_for("main.payroll", filename=request.args.get("filename")))
+
+
+# Xóa ngày lễ
+@bp.route("/delete_holiday/<int:holiday_id>", methods=["POST"])
+def delete_holiday(holiday_id):
+    filename = request.args.get("filename")  # lấy lại filename để redirect
+    try:
+        h = Holiday.query.get_or_404(holiday_id)
+        db.session.delete(h)
+        db.session.commit()
+        flash("Xóa ngày lễ thành công!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi xóa ngày lễ: {e}", "danger")
+
     return redirect(url_for("main.payroll", filename=filename))
