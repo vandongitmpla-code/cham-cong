@@ -291,8 +291,8 @@ def import_payroll(filename):
 
         # đếm tong_x / x_chu_nhat / x_le / ngay_vang, đồng thời lưu daily_status
         for d in day_numbers:
-                key = str(d)
-                status = render_status(row.get(key, ""))
+            key = str(d)
+            status = render_status(row.get(key, ""))
                 daily_status[d] = status
 
                 wd = (weekdays.get(d, "") or "").lower()
