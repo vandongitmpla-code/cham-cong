@@ -63,95 +63,75 @@
   font-weight: 500;
 }
 
-/* Sticky columns - áp dụng cho cả th và td */
-.payroll-table th.sticky-col,
-.payroll-table td.sticky-col {
-  position: sticky;
-  background: #fff;
-  box-shadow: 2px 0 4px rgba(0,0,0,0.05);
-}
-
 /* Mã */
 .payroll-table th:nth-child(1),
 .payroll-table td:nth-child(1) {
+  position: sticky;
   left: 0;
   min-width: 60px;
+  z-index: 45;
+  background: #fff;
 }
-.payroll-table th:nth-child(1) { z-index: 101; }
-.payroll-table td:nth-child(1) { z-index: 60; }
 
 /* Tên */
 .payroll-table th:nth-child(2),
 .payroll-table td:nth-child(2) {
+  position: sticky;
   left: 60px;
   min-width: 120px;
+  z-index: 45;
+  background: #fff;
 }
-.payroll-table th:nth-child(2) { z-index: 101; }
-.payroll-table td:nth-child(2) { z-index: 60; }
 
 /* Phòng ban */
 .payroll-table th:nth-child(3),
 .payroll-table td:nth-child(3) {
+  position: sticky;
   left: 180px;
   min-width: 150px;
+  z-index: 45;
+  background: #fff;
 }
-.payroll-table th:nth-child(3) { z-index: 101; }
-.payroll-table td:nth-child(3) { z-index: 60; }
 
 /* Ngày công */
 .payroll-table th:nth-child(4),
 .payroll-table td:nth-child(4) {
+  position: sticky;
   left: 330px;
   min-width: 120px;
+  z-index: 45;
+  background: #fff;
 }
-.payroll-table th:nth-child(4) { z-index: 101; }
-.payroll-table td:nth-child(4) { z-index: 60; }
 
 /* Ngày vắng */
 .payroll-table th:nth-child(5),
 .payroll-table td:nth-child(5) {
+  position: sticky;
   left: 450px;
   min-width: 120px;
+  z-index: 45;
+  background: #fff;
 }
-.payroll-table th:nth-child(5) { z-index: 101; }
-.payroll-table td:nth-child(5) { z-index: 60; }
 
 /* Chủ nhật */
 .payroll-table th:nth-child(6),
 .payroll-table td:nth-child(6) {
+  position: sticky;
   left: 570px;
   min-width: 120px;
+  z-index: 45;
+  background: #fff;
 }
-.payroll-table th:nth-child(6) { z-index: 101; }
-.payroll-table td:nth-child(6) { z-index: 60; }
 
 /* Lễ, tết */
 .payroll-table th:nth-child(7),
 .payroll-table td:nth-child(7) {
+  position: sticky;
   left: 690px;
   min-width: 120px;
+  z-index: 45;
+  background: #fff;
 }
-.payroll-table th:nth-child(7) { z-index: 101; }
-.payroll-table td:nth-child(7) { z-index: 60; }
-
-/* Header levels */
-.payroll-table thead tr:nth-child(1) th {
-  position: sticky;
-  top: 0;
-  background: #0d6efd;
-  color: #fff;
-  font-weight: 600;
-  z-index: 100;
-}
-.payroll-table thead tr:nth-child(2) th {
-  position: sticky;
-  top: 42px;
-  background: #e9ecef;
-  color: #495057;
-  font-weight: 500;
-  z-index: 99;
-}
-
 
 
 /* 3 cột đầu */
