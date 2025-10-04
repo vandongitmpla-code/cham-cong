@@ -50,7 +50,7 @@
             {% if colname == "Số ngày nghỉ không lương" %}
             <td>{{ cell }}</td>
               {% endif %}
-            </td>
+           
             {% elif colname == "Ghi chú" %}
               <td class="note-cell" data-emp="{{ row[1] }}">
                 {% if cell == "ICON_ONLY" or (cell is string and cell.endswith("|||ICON")) %}
