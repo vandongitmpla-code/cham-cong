@@ -4,7 +4,7 @@
 .payroll-wrapper {
   width: 100%;
   height: 94vh;
-  padding: 1rem;
+  padding: rem;
   display: flex;
   flex-direction: column;
   background: #f8f9fa; /* nền sáng */
