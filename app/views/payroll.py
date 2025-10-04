@@ -205,6 +205,7 @@ def payroll(filename):
 
 
 # Import dữ liệu Payroll (dùng cùng logic)
+# Import dữ liệu Payroll (dùng cùng logic hiển thị bảng Payroll)
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
     import re
@@ -217,6 +218,7 @@ def import_payroll(filename):
     file_path = os.path.join(upload_folder, filename)
 
     try:
+        # --- Đọc và làm sạch dữ liệu chấm công ---
         data = clean_attendance_data(file_path)
         df = data["att_log"]
 
@@ -236,19 +238,20 @@ def import_payroll(filename):
             flash("Không xác định được kỳ công trong file!", "danger")
             return redirect(url_for("main.payroll", filename=filename))
 
+        # --- Parse ngày bắt đầu & kết thúc ---
         start_s, end_s = period_str.split("~")
         start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
         end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
         period = start_date.strftime("%Y-%m")
 
         # --- Tạo danh sách ngày trong tháng ---
-        weekday_names = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"]
+        weekday_names = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
         year, month = start_date.year, start_date.month
         last_day = calendar.monthrange(year, month)[1]
         day_numbers = list(range(1, last_day + 1))
         weekdays = {d: weekday_names[datetime(year, month, d).weekday()] for d in day_numbers}
 
-        # --- Lấy ngày lễ trong DB ---
+        # --- Lấy danh sách ngày lễ trong tháng ---
         holidays = Holiday.query.filter(
             db.extract("year", Holiday.date) == year,
             db.extract("month", Holiday.date) == month
@@ -258,21 +261,20 @@ def import_payroll(filename):
         # --- Xoá dữ liệu PayrollRecord cũ của kỳ này ---
         PayrollRecord.query.filter_by(period=period).delete()
 
-        # --- Hàm tính status theo cell ---
+        # --- Hàm xác định trạng thái theo ô dữ liệu ---
         def render_status(cell_val):
             s = "" if cell_val is None else str(cell_val)
             times = re.findall(r'\d{1,2}:\d{2}', s)
             if not times:
-                return "v"
+                return "v"  # vắng
             if len(times) == 1:
-                return "warn"
-
+                return "warn"  # chỉ 1 mốc giờ
             def to_minutes(t):
                 hh, mm = t.split(":")
                 return int(hh) * 60 + int(mm)
-
             mins = [to_minutes(t) for t in times]
-            first, last = min(mins), max(mins)
+            first = min(mins)
+            last = max(mins)
             if last < first:
                 last += 24 * 60
             diff = last - first
@@ -282,63 +284,60 @@ def import_payroll(filename):
                 return "0.5"
             return ""
 
-        # --- xử lý 1 nhân viên: tính status từng ngày ---
-        tong_x = 0
-        x_chu_nhat = 0
-        x_le = 0
-        ngay_vang = 0
-        daily_status = {}
+        # --- Xử lý từng nhân viên ---
+        records = []
+        for _, row in df.iterrows():
+            emp_code = str(row.get("Mã", "")).strip()
+            emp = Employee.query.filter(
+                (Employee.code == emp_code) | (Employee.att_code == emp_code)
+            ).first()
+            if not emp:
+                continue
 
-        # đếm tong_x / x_chu_nhat / x_le / ngay_vang, đồng thời lưu daily_status
-        for d in day_numbers:
-            key = str(d)
-            status = render_status(row.get(key, ""))
-            daily_status[d] = status
+            tong_x = 0
+            x_chu_nhat = 0
+            x_le = 0
+            ngay_vang = 0
+            daily_status = {}
 
-            wd = (weekdays.get(d, "") or "").lower()
-            is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
-            is_holiday = d in holiday_days
+            # --- Duyệt từng ngày ---
+            for d in day_numbers:
+                key = str(d)
+                status = render_status(row.get(key, ""))
+                daily_status[d] = status
 
-            if status == "x":
-                tong_x += 1
-                if is_sunday:
-                    x_chu_nhat += 1
+                wd = (weekdays.get(d, "") or "").lower()
+                is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
+                is_holiday = d in holiday_days
+
+                if status == "x":
+                    tong_x += 1
+                    if is_sunday:
+                        x_chu_nhat += 1
                     if is_holiday:
                         x_le += 1
                 elif status == "v":
                     ngay_vang += 1
-                # 'warn' và '0.5' không thay đổi tong_x theo logic payroll gốc
 
-            # --- theo công thức của bạn ---
+            # --- Công thức tính ngày công (chuẩn theo yêu cầu) ---
             ngay_cong = tong_x - x_chu_nhat - (x_le * 2)
             if ngay_cong < 0:
                 ngay_cong = 0
 
-            # lượng giờ tăng ca CN theo logic cũ (8h/ngày CN làm)
             tang_ca_nghi = x_chu_nhat * 8
-            # tang_ca_tuan giữ 0 (nếu có logic khác bạn có thể điều chỉnh)
             tang_ca_tuan = 0
 
-            # --- Ghi chú chi tiết theo định dạng ---
-            cn_days = []
-            le_days = []
-            nghi_days = []
-
+            # --- Ghi chú chi tiết ---
+            cn_days, le_days, nghi_days = [], [], []
             for d in day_numbers:
                 wd = (weekdays.get(d, "") or "").lower()
                 is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
                 is_holiday = d in holiday_days
                 status = daily_status.get(d, "")
-
-                # Chủ nhật có làm
                 if is_sunday and status == "x":
                     cn_days.append(d)
-
-                # Làm ngày lễ
                 if is_holiday and status == "x":
                     le_days.append(d)
-
-                # Nghỉ (v)
                 if status == "v":
                     nghi_days.append(d)
 
@@ -352,7 +351,7 @@ def import_payroll(filename):
 
             ghi_chu = " / ".join(parts)
 
-            # --- tạo object và append (khớp model PayrollRecord của bạn) ---
+            # --- Tạo bản ghi PayrollRecord ---
             record = PayrollRecord(
                 employee_id=emp.id,
                 period=period,
@@ -368,7 +367,20 @@ def import_payroll(filename):
                 phong_ban=getattr(emp, "department", None),
                 loai_hd=getattr(emp, "contract_type", None)
             )
-        records.append(record)
+            records.append(record)
+
+        # --- Lưu vào DB ---
+        db.session.bulk_save_objects(records)
+        db.session.commit()
+
+        flash(f"Đã import {len(records)} bản ghi payroll vào Database!", "success")
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi import payroll: {e}", "danger")
+
+    return redirect(url_for("main.payroll", filename=filename))
+
 
 
         # --- Lưu vào DB ---
