@@ -1,178 +1,125 @@
-/* ===== Payroll Styles (Bootstrap modernized + sticky chuẩn) ===== */
+/* ===== Payroll Styles ===== */
 
 /* Wrapper */
 .payroll-wrapper {
   width: 100%;
   height: 94vh;
-  padding: 1rem;
+  padding: 10px 20px;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
 }
 
-/* Container cho bảng */
+/* Container cho bảng có scroll */
 .payroll-table-container {
   flex: 1;
   overflow: auto;
   background: #fff;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  padding: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 8px;
 }
 
-/* Bảng */
+/* Bảng payroll */
 .payroll-table {
   border-collapse: collapse;
   width: max-content;
   min-width: 100%;
-  font-size: 0.9rem;
-  color: #212529;
+  font-size: 14px;
 }
 
 /* Ô */
 .payroll-table th,
 .payroll-table td {
-  padding: 0.65rem 0.9rem;
-  border: 1px solid #dee2e6;
+  padding: 8px 12px;
+  border: 1px solid #2d3842;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
 }
 
-/* Hover */
-.payroll-table tbody tr:hover {
-  background-color: #f8f9fa;
-  transition: background 0.2s ease-in-out;
-}
-
-/* Header sticky */
+/* Header 2 dòng sticky */
 .payroll-table thead tr:nth-child(1) th {
   position: sticky;
   top: 0;
-  background: #0d6efd; /* Bootstrap primary */
-  color: #fff;
-  z-index: 100;
-  font-weight: 600;
+  background: #f97316;
+  color: #000000;
+  z-index: 50;
 }
+
 .payroll-table thead tr:nth-child(2) th {
   position: sticky;
-  top: 42px; /* chiều cao row đầu */
-  background: #e9ecef;
-  color: #495057;
-  z-index: 99;
-  font-weight: 500;
+  top: 40px; /* chiều cao hàng đầu */
+  background: #f97316;
+  color: #fffdfd;
+  z-index: 49;
 }
 
 /* Sticky cột đầu */
 .payroll-table th.sticky-col,
 .payroll-table td.sticky-col {
   position: sticky;
-  background: #fff;
-  box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+  background: #ffffff;
+  z-index: 40;
+  box-shadow: 2px 0 3px rgb(255, 255, 255);
 }
 
-/* === Cố định 7 cột đầu === */
-
-/* Mã */
+/* 3 cột đầu tiên sticky */
 .payroll-table th:nth-child(1),
 .payroll-table td:nth-child(1) {
+  position: sticky;
   left: 0;
   min-width: 60px;
-  z-index: 90;
+  z-index: 41;
+  background: #fff;
 }
-
-/* Tên */
 .payroll-table th:nth-child(2),
 .payroll-table td:nth-child(2) {
+  position: sticky;
   left: 60px;
   min-width: 120px;
-  z-index: 90;
+  z-index: 41;
+  background: #fff;
 }
-
-/* Phòng ban */
 .payroll-table th:nth-child(3),
 .payroll-table td:nth-child(3) {
+  position: sticky;
   left: 180px;
   min-width: 150px;
-  z-index: 90;
-}
-
-/* Ngày công */
-.payroll-table th:nth-child(4),
-.payroll-table td:nth-child(4) {
-  left: 330px;
-  min-width: 110px;
-  z-index: 90;
-  background: #fff;
-}
-
-/* Ngày vắng */
-.payroll-table th:nth-child(5),
-.payroll-table td:nth-child(5) {
-  left: 440px;
-  min-width: 110px;
-  z-index: 90;
-  background: #fff;
-}
-
-/* Chủ nhật */
-.payroll-table th:nth-child(6),
-.payroll-table td:nth-child(6) {
-  left: 550px;
-  min-width: 110px;
-  z-index: 90;
-  background: #fff;
-}
-
-/* Lễ, tết */
-.payroll-table th:nth-child(7),
-.payroll-table td:nth-child(7) {
-  left: 660px;
-  min-width: 110px;
-  z-index: 90;
-  background: #fff;
+  z-index: 41;
+  background: #ffffff;
 }
 
 /* Highlight cột thống kê */
 .highlight-col {
-  background-color: #d1ecf1 !important; /* Bootstrap info-light */
-  font-weight: 600;
-  color: #0c5460;
+  background-color: #fff3cd !important;
+  font-weight: 700;
 }
 
-/* Chủ nhật */
+/* Highlight cột Chủ nhật */
 .highlight-sunday {
-  background-color: #f8d7da !important; /* danger-light */
-  font-weight: 600;
-  color: #842029;
+  background-color: #f8d7da !important;
+  font-weight: 700;
+  color: #a80000;
 }
 
-/* Ngày lễ */
-.highlight-holiday {
-  background-color: #fff3cd !important; /* warning-light */
-  font-weight: 600;
-  color: #856404;
-}
-
-/* Tooltip warning icon */
-.blink-red {
+/* Icon chớp nháy */
+.blink-icon {
   animation: blink 1.2s infinite;
-  color: #dc3545 !important;
 }
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.2; }
 }
 
-/* Scrollbar */
+/* Scrollbar tinh chỉnh */
 .payroll-table-container::-webkit-scrollbar {
   height: 8px;
   width: 8px;
 }
 .payroll-table-container::-webkit-scrollbar-thumb {
-  background: #adb5bd;
+  background: #bbb;
   border-radius: 4px;
 }
 .payroll-table-container::-webkit-scrollbar-thumb:hover {
-  background: #6c757d;
+  background: #999;
 }
