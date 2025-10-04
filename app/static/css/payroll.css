@@ -1,57 +1,60 @@
-/* ===== Payroll Styles ===== */
+/* ===== Payroll Styles (Bootstrap modernized) ===== */
 
 /* Wrapper */
 .payroll-wrapper {
   width: 100%;
   height: 94vh;
-  padding: 10px 20px;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
+  background: #f8f9fa; /* nền sáng */
 }
 
-/* Container cho bảng có scroll */
+/* Container bảng */
 .payroll-table-container {
   flex: 1;
   overflow: auto;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 8px;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 0.5rem;
 }
 
-/* Bảng payroll */
+/* Bảng */
 .payroll-table {
   border-collapse: collapse;
   width: max-content;
   min-width: 100%;
-  font-size: 14px;
+  font-size: 0.9rem;
+  color: #212529;
 }
 
 /* Ô */
 .payroll-table th,
 .payroll-table td {
-  padding: 8px 12px;
-  border: 1px solid #2d3842;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #dee2e6;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
 }
 
-/* Header 2 dòng sticky */
+/* Header sticky */
 .payroll-table thead tr:nth-child(1) th {
   position: sticky;
   top: 0;
-  background: #f97316;
-  color: #000000;
+  background: #0d6efd; /* bootstrap primary */
+  color: #fff;
   z-index: 50;
+  font-weight: 600;
 }
-
 .payroll-table thead tr:nth-child(2) th {
   position: sticky;
-  top: 40px; /* chiều cao hàng đầu */
-  background: #f97316;
-  color: #fffdfd;
+  top: 42px;
+  background: #e9ecef;
+  color: #495057;
   z-index: 49;
+  font-weight: 500;
 }
 
 /* Sticky cột đầu */
@@ -60,51 +63,53 @@
   position: sticky;
   background: #ffffff;
   z-index: 40;
-  box-shadow: 2px 0 3px rgb(255, 255, 255);
+  box-shadow: 2px 0 3px rgba(0,0,0,0.05);
 }
 
-/* 3 cột đầu tiên sticky */
+/* 3 cột đầu */
 .payroll-table th:nth-child(1),
 .payroll-table td:nth-child(1) {
-  position: sticky;
   left: 0;
   min-width: 60px;
-  z-index: 41;
-  background: #fff;
+  z-index: 42;
 }
 .payroll-table th:nth-child(2),
 .payroll-table td:nth-child(2) {
-  position: sticky;
   left: 60px;
   min-width: 120px;
-  z-index: 41;
-  background: #fff;
+  z-index: 42;
 }
 .payroll-table th:nth-child(3),
 .payroll-table td:nth-child(3) {
-  position: sticky;
   left: 180px;
   min-width: 150px;
-  z-index: 41;
-  background: #ffffff;
+  z-index: 42;
 }
 
 /* Highlight cột thống kê */
 .highlight-col {
-  background-color: #fff3cd !important;
-  font-weight: 700;
+  background-color: #d1e7dd !important; /* bootstrap success-light */
+  font-weight: 600;
 }
 
-/* Highlight cột Chủ nhật */
+/* Chủ nhật */
 .highlight-sunday {
-  background-color: #f8d7da !important;
-  font-weight: 700;
-  color: #a80000;
+  background-color: #f8d7da !important; /* bootstrap danger-light */
+  font-weight: 600;
+  color: #842029;
 }
 
-/* Icon chớp nháy */
-.blink-icon {
+/* Ngày lễ */
+.highlight-holiday {
+  background-color: #fff3cd !important; /* bootstrap warning-light */
+  font-weight: 600;
+  color: #856404;
+}
+
+/* Tooltip warning icon */
+.blink-red {
   animation: blink 1.2s infinite;
+  color: #dc3545 !important;
 }
 @keyframes blink {
   0%, 100% { opacity: 1; }
@@ -117,9 +122,9 @@
   width: 8px;
 }
 .payroll-table-container::-webkit-scrollbar-thumb {
-  background: #bbb;
+  background: #adb5bd;
   border-radius: 4px;
 }
 .payroll-table-container::-webkit-scrollbar-thumb:hover {
-  background: #999;
+  background: #6c757d;
 }
