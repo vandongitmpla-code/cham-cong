@@ -21,7 +21,7 @@ def payroll(filename):
         data = clean_attendance_data(file_path)
         df = data["att_log"]
 
-        # ---- Lấy kỳ công ----
+        # --- Lấy period --- 
         period_str = ""
         att_meta = data.get("att_meta")
         if att_meta and len(att_meta) > 0:
@@ -35,33 +35,45 @@ def payroll(filename):
             if not period_str and isinstance(header_row[0], str) and header_row[0].strip():
                 period_str = header_row[0].strip()
 
-        # ---- Tạo mapping weekdays và danh sách ngày ----
+        # --- Tạo danh sách ngày và mapping weekdays ---
         weekdays = {}
         day_numbers = []
         start_date = end_date = None
+        weekday_names = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
+
         try:
             if period_str and "~" in period_str:
                 start_s, end_s = period_str.split("~")
                 start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
                 end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
-                current = start_date
-                weekday_names = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
-                while current <= end_date:
-                    day_numbers.append(current.day)
-                    weekdays[current.day] = weekday_names[current.weekday()]
-                    current += timedelta(days=1)
+
+                # Nếu kỳ công nằm trong cùng 1 tháng -> hiển thị toàn bộ ngày của tháng đó
+                if start_date.year == end_date.year and start_date.month == end_date.month:
+                    year = start_date.year
+                    month = start_date.month
+                    last_day = calendar.monthrange(year, month)[1]   # số ngày trong tháng
+                    day_numbers = list(range(1, last_day + 1))
+                    for d in day_numbers:
+                        dt = datetime(year, month, d)
+                        weekdays[d] = weekday_names[dt.weekday()]
+                else:
+                    # Kỳ công qua nhiều tháng: fallback xuống lấy cột số có trong file
+                    file_day_cols = sorted([int(c) for c in df.columns if str(c).strip().isdigit()])
+                    day_numbers = file_day_cols
+                    # optionally we can fill weekdays for these day numbers using start_date's month,
+                    # but since they span months it's ambiguous — leaving weekdays for these as empty or partial.
         except Exception as e:
-            print("Lỗi tạo weekdays:", e, flush=True)
+            print("Lỗi tạo danh sách ngày/weekday:", e, flush=True)
 
-        # fallback: nếu không đọc được kỳ công thì lấy từ file
+        # fallback chung: nếu vẫn chưa có day_numbers thì lấy từ cột trong file
         if not day_numbers:
-            day_numbers = sorted([int(c) for c in df.columns if str(c).isdigit()])
+            day_numbers = sorted([int(c) for c in df.columns if str(c).strip().isdigit()])
 
         if not day_numbers:
-            flash("Không tìm thấy cột ngày hợp lệ trong file", "danger")
+            flash("Không tìm thấy cột ngày (1..N) trong file", "danger")
             return redirect(url_for("main.index"))
 
-        # ---- Hàm render_status ----
+        # --- Hàm quyết định trạng thái ---
         def render_status(cell_val):
             s = "" if cell_val is None else str(cell_val)
             times = re.findall(r'\d{1,2}:\d{2}', s)
@@ -84,7 +96,7 @@ def payroll(filename):
                 return "0.5"
             return ""
 
-        # ---- Tạo dữ liệu rows ----
+        # --- Tạo dữ liệu bảng payroll ---
         cols = ["Mã", "Tên", "Phòng ban", "Ngày công", "Ngày vắng", "Chủ nhật"] + [str(d) for d in day_numbers]
         records = []
         for _, row in df.iterrows():
@@ -102,7 +114,6 @@ def payroll(filename):
                 val = row.get(key, "") if key in df.columns else ""
                 status = render_status(val)
                 day_statuses.append(status)
-
                 if status == "x":
                     ngay_cong += 1
                     wd = (weekdays.get(d, "") or "").lower()
@@ -114,7 +125,7 @@ def payroll(filename):
             row_list = [emp_id, emp_name, emp_dept, ngay_cong, ngay_vang, chu_nhat] + day_statuses
             records.append(row_list)
 
-        # Sắp xếp theo tên
+        # sắp xếp theo tên
         records = sorted(records, key=lambda r: (r[1] or "").lower())
 
         return render_template(
