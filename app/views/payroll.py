@@ -7,7 +7,7 @@ import re
 from datetime import datetime, timedelta
 from . import bp
 
-#bảng công tính lương
+# bảng công tính lương
 @bp.route("/payroll/<filename>")
 def payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
@@ -35,7 +35,7 @@ def payroll(filename):
             if not period_str and isinstance(header_row[0], str) and header_row[0].strip():
                 period_str = header_row[0].strip()
 
-        # ---- Tạo danh sách ngày dựa vào kỳ công ----
+        # ---- Tạo mapping weekdays và danh sách ngày ----
         weekdays = {}
         day_numbers = []
         start_date = end_date = None
