@@ -282,7 +282,7 @@ def import_payroll(filename):
                 return "0.5"
             return ""
 
-            # --- xử lý 1 nhân viên: tính status từng ngày ---
+            # --- xử lý 1 nhân viên: tính status từng ngày
             tong_x = 0
             x_chu_nhat = 0
             x_le = 0
