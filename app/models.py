@@ -56,7 +56,7 @@ class Holiday(db.Model):
     def __repr__(self):
         return f"<Holiday {self.date} - {self.name}>"
         
-# app/models.py
+
 
 class PayrollRecord(db.Model):
     __tablename__ = "payroll_records"
