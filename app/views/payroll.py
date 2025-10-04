@@ -300,8 +300,8 @@ def import_payroll(filename):
             is_holiday = d in holiday_days
 
             if status == "x":
-                    tong_x += 1
-                    if is_sunday:
+                tong_x += 1
+                if is_sunday:
                         x_chu_nhat += 1
                     if is_holiday:
                         x_le += 1
