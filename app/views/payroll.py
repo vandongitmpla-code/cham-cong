@@ -293,7 +293,7 @@ def import_payroll(filename):
         for d in day_numbers:
             key = str(d)
             status = render_status(row.get(key, ""))
-                daily_status[d] = status
+            daily_status[d] = status
 
                 wd = (weekdays.get(d, "") or "").lower()
                 is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
