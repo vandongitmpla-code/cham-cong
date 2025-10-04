@@ -16,9 +16,7 @@ def attendance_print(filename):
 
     try:
         # ---- Lấy kỳ công từ file để tìm period ----
-        from app.utils.cleaning import clean_attendance_data
-        import re
-
+        
         data = clean_attendance_data(file_path)
         att_meta = data.get("att_meta", [])
 
