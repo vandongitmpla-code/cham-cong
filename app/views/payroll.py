@@ -194,7 +194,8 @@ def payroll(filename):
             rows=records,
             period=period_str,
             weekdays=weekdays,
-            day_count=len(day_numbers)
+            day_count=len(day_numbers),
+            
             
         )
 
