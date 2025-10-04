@@ -382,7 +382,6 @@ def import_payroll(filename):
     return redirect(url_for("main.payroll", filename=filename))
 
 
-
         # --- Lưu vào DB ---
         db.session.bulk_save_objects(records)
         db.session.commit()
