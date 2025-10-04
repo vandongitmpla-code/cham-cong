@@ -173,7 +173,7 @@ def payroll(filename):
                     ngay_vang += 1
 
             # theo công thức bạn yêu cầu:
-            ngay_cong = tong_x - x_chu_nhat - x_le
+            ngay_cong = tong_x - x_chu_nhat - (x_le
             if ngay_cong < 0:
                 ngay_cong = 0
 
