@@ -54,7 +54,10 @@
           <!-- header: tên cột -->
           <tr>
             {% for col in cols %}
-              {% if col in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
+              {% if col == "Chủ nhật" %}
+                <th class="highlight-col">Chủ nhật</th>
+                <th class="highlight-col">Lễ, tết</th>
+              {% elif col in ["Ngày công", "Ngày vắng"] %}
                 <th class="highlight-col">{{ col }}</th>
               {% else %}
                 <th>{{ col }}</th>
@@ -68,10 +71,11 @@
               {% if col.isdigit() %}
                 {% set d = col|int %}
                 {% set wd = weekdays.get(d, "") %}
-                <th class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
+                <th class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
                   {{ wd }}
                 </th>
-              {% elif col in ["Chủ nhật","Lễ, tết","Ngày công","Ngày vắng"] %}
+              {% elif col == "Chủ nhật" %}
+                <th></th>
                 <th></th>
               {% else %}
                 <th></th>
@@ -86,12 +90,15 @@
               {% for i in range(cols|length) %}
                 {% set colname = cols[i] %}
                 {% set cell = row[i] %}
-                {% if colname in ["Ngày công", "Ngày vắng","Chủ nhật","Lễ, tết"] %}
+                {% if colname in ["Ngày công", "Ngày vắng"] %}
                   <td class="highlight-col fw-bold">{{ cell }}</td>
+                {% elif colname == "Chủ nhật" %}
+                  <td class="highlight-col">{{ cell }}</td>
+                  <td class="highlight-col holiday-count">{{ row[cols.index("Lễ, tết")] }}</td>
                 {% elif colname.isdigit() %}
                   {% set d = colname|int %}
                   {% set wd = weekdays.get(d, "") %}
-                  <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
+                  <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
                     {% if cell == 'warn' %}
                       <i class="bi bi-exclamation-triangle-fill text-warning blink-red"
                          data-bs-toggle="tooltip"
