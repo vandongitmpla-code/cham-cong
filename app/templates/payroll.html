@@ -39,11 +39,10 @@
           {% for h in holidays %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
               {{ h.date.strftime("%d/%m/%Y") }} - {{ h.name or "Không tên" }}
-              <form method="POST" action="{{ url_for('main.delete_holiday', holiday_id=h.id, filename=filename) }}" class="d-inline">
-                <button type="submit" class="btn btn-sm btn-danger">
-                  <i class="bi bi-trash"></i> Xóa
-                </button>
-              </form>
+              <a href="{{ url_for('main.delete_holiday', holiday_id=h.id, filename=filename) }}" 
+                 class="btn btn-sm btn-danger">
+                <i class="bi bi-trash"></i> Xóa
+              </a>
             </li>
           {% endfor %}
         </ul>
@@ -59,10 +58,7 @@
           <!-- header: tên cột -->
           <tr>
             {% for col in cols %}
-              {% if col == "Chủ nhật" %}
-                <th class="highlight-col">Chủ nhật</th>
-                <th class="highlight-col">Lễ, tết</th>
-              {% elif col in ["Ngày công", "Ngày vắng"] %}
+              {% if col in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
                 <th class="highlight-col">{{ col }}</th>
               {% else %}
                 <th>{{ col }}</th>
@@ -76,11 +72,10 @@
               {% if col.isdigit() %}
                 {% set d = col|int %}
                 {% set wd = weekdays.get(d, "") %}
-                <th class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
+                <th class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
                   {{ wd }}
                 </th>
-              {% elif col == "Chủ nhật" %}
-                <th></th>
+              {% elif col in ["Ngày công","Ngày vắng","Chủ nhật","Lễ, tết"] %}
                 <th></th>
               {% else %}
                 <th></th>
@@ -95,15 +90,12 @@
               {% for i in range(cols|length) %}
                 {% set colname = cols[i] %}
                 {% set cell = row[i] %}
-                {% if colname in ["Ngày công", "Ngày vắng"] %}
+                {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
                   <td class="highlight-col fw-bold">{{ cell }}</td>
-                {% elif colname == "Chủ nhật" %}
-                  <td class="highlight-col">{{ cell }}</td>
-                  <td class="highlight-col holiday-count">{{ row[cols.index("Lễ, tết")] }}</td>
                 {% elif colname.isdigit() %}
                   {% set d = colname|int %}
                   {% set wd = weekdays.get(d, "") %}
-                  <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower or 'sun' in wd|lower) %}highlight-sunday{% endif %}">
+                  <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
                     {% if cell == 'warn' %}
                       <i class="bi bi-exclamation-triangle-fill text-warning blink-red"
                          data-bs-toggle="tooltip"
@@ -129,16 +121,10 @@
 <div class="modal fade" id="holidayModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="POST" action="{{ url_for('main.add_holiday', filename=filename) }}">
-        <div class="modal-header">
-          <h5 class="modal-title">Thêm Ngày Lễ</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+      <form method="POST" action="{{ url_for('main.add_holiday') }}?filename={{ filename }}">
         <div class="modal-body">
-          <div class="mb-2">
+          <div class="input-group mb-2">
             <input type="date" name="holiday_date" class="form-control" required>
-          </div>
-          <div class="mb-2">
             <input type="text" name="holiday_name" class="form-control" placeholder="Tên ngày lễ (VD: Quốc khánh)">
           </div>
         </div>
