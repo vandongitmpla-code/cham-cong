@@ -295,11 +295,11 @@ def import_payroll(filename):
             status = render_status(row.get(key, ""))
             daily_status[d] = status
 
-                wd = (weekdays.get(d, "") or "").lower()
-                is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
-                is_holiday = d in holiday_days
+            wd = (weekdays.get(d, "") or "").lower()
+            is_sunday = ("chủ" in wd) or ("cn" in wd) or ("sun" in wd)
+            is_holiday = d in holiday_days
 
-                if status == "x":
+            if status == "x":
                     tong_x += 1
                     if is_sunday:
                         x_chu_nhat += 1
