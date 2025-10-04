@@ -1,14 +1,63 @@
-from flask import  redirect, url_for, flash, render_template
+from flask import redirect, url_for, flash, render_template, current_app
 import os
 from app.utils.cleaning import clean_attendance_data
-import datetime
-from app.models import Employee, Payroll, db
-import re, calendar
+import re
+import calendar
 from datetime import datetime, timedelta
+from app.models import Employee, Payroll, db
 from . import bp
 
+def _parse_holidays_for_month(holidays_config, ref_date):
+    """
+    holidays_config: list có thể chứa int (day-of-month) hoặc 'YYYY-MM-DD' strings hoặc digit-strings.
+    ref_date: datetime.date (dùng để lọc holidays trong cùng tháng/năm).
+    Trả về set các ngày (int) trong tháng ref_date là ngày lễ.
+    """
+    holiday_days = set()
+    if not holidays_config or not ref_date:
+        return holiday_days
 
-# bảng công tính lương
+    for h in holidays_config:
+        try:
+            if isinstance(h, int):
+                holiday_days.add(h)
+            elif isinstance(h, str):
+                s = h.strip()
+                # full date 'YYYY-MM-DD'
+                if re.match(r'^\d{4}-\d{2}-\d{2}$', s):
+                    dt = datetime.strptime(s, "%Y-%m-%d").date()
+                    if dt.year == ref_date.year and dt.month == ref_date.month:
+                        holiday_days.add(dt.day)
+                # numeric day as string '2' or '02'
+                elif s.isdigit():
+                    holiday_days.add(int(s))
+                # ignore other formats for now
+        except Exception:
+            continue
+    return holiday_days
+
+def _render_status(cell_val):
+    s = "" if cell_val is None else str(cell_val)
+    times = re.findall(r'\d{1,2}:\d{2}', s)
+    if not times:
+        return "v"
+    if len(times) == 1:
+        return "warn"
+    def to_minutes(t):
+        hh, mm = t.split(":")
+        return int(hh) * 60 + int(mm)
+    mins = [to_minutes(t) for t in times]
+    first = min(mins)
+    last = max(mins)
+    if last < first:
+        last += 24 * 60
+    diff = last - first
+    if diff >= 7 * 60:
+        return "x"
+    if diff >= 3 * 60:
+        return "0.5"
+    return ""
+
 @bp.route("/payroll/<filename>")
 def payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
@@ -22,7 +71,7 @@ def payroll(filename):
         data = clean_attendance_data(file_path)
         df = data["att_log"]
 
-        # --- Lấy period --- 
+        # --- Lấy period ---
         period_str = ""
         att_meta = data.get("att_meta")
         if att_meta and len(att_meta) > 0:
@@ -52,50 +101,41 @@ def payroll(filename):
                 if start_date.year == end_date.year and start_date.month == end_date.month:
                     year = start_date.year
                     month = start_date.month
-                    last_day = calendar.monthrange(year, month)[1]   # số ngày trong tháng
+                    last_day = calendar.monthrange(year, month)[1]
                     day_numbers = list(range(1, last_day + 1))
                     for d in day_numbers:
                         dt = datetime(year, month, d)
                         weekdays[d] = weekday_names[dt.weekday()]
                 else:
-                    # Kỳ công qua nhiều tháng: fallback xuống lấy cột số có trong file
+                    # Kỳ công qua nhiều tháng -> fallback lấy cột số có trong file
                     file_day_cols = sorted([int(c) for c in df.columns if str(c).strip().isdigit()])
                     day_numbers = file_day_cols
-                    # optionally we can fill weekdays for these day numbers using start_date's month,
-                    # but since they span months it's ambiguous — leaving weekdays for these as empty or partial.
+                    for d in day_numbers:
+                        # weekdays may be ambiguous across months; leave mapping if possible
+                        try:
+                            # try to map using start_date's month as base if available
+                            if start_date:
+                                dt = datetime(start_date.year, start_date.month, d)
+                                weekdays[d] = weekday_names[dt.weekday()]
+                        except Exception:
+                            weekdays[d] = ""
         except Exception as e:
             print("Lỗi tạo danh sách ngày/weekday:", e, flush=True)
 
-        # fallback chung: nếu vẫn chưa có day_numbers thì lấy từ cột trong file
+        # fallback chung
         if not day_numbers:
-            day_numbers = sorted([int(c) for c in df.columns if str(c).strip().isdigit()])
+            day_numbers = sorted([int(c) for c in df.columns if str(c).isdigit()])
 
         if not day_numbers:
             flash("Không tìm thấy cột ngày (1..N) trong file", "danger")
             return redirect(url_for("main.index"))
 
-        # --- Hàm quyết định trạng thái ---
-        def render_status(cell_val):
-            s = "" if cell_val is None else str(cell_val)
-            times = re.findall(r'\d{1,2}:\d{2}', s)
-            if not times:
-                return "v"
-            if len(times) == 1:
-                return "warn"
-            def to_minutes(t):
-                hh, mm = t.split(":")
-                return int(hh) * 60 + int(mm)
-            mins = [to_minutes(t) for t in times]
-            first = min(mins)
-            last = max(mins)
-            if last < first:
-                last += 24 * 60
-            diff = last - first
-            if diff >= 7 * 60:
-                return "x"
-            if diff >= 3 * 60:
-                return "0.5"
-            return ""
+        # --- Lấy danh sách ngày lễ từ cấu hình (nếu có) ---
+        holidays_config = current_app.config.get("PAYROLL_HOLIDAYS", [])
+        # nếu có start_date thì parse holidays cho tháng đó
+        holiday_days = set()
+        if start_date:
+            holiday_days = _parse_holidays_for_month(holidays_config, start_date.date())
 
         # --- Tạo dữ liệu bảng payroll ---
         cols = ["Mã", "Tên", "Phòng ban", "Ngày công", "Ngày vắng", "Chủ nhật"] + [str(d) for d in day_numbers]
@@ -105,25 +145,36 @@ def payroll(filename):
             emp_name = row.get("Tên", "") or ""
             emp_dept = row.get("Phòng ban", "") or ""
 
-            ngay_cong = 0
+            tong_x = 0
+            x_chu_nhat = 0
+            x_le = 0
             ngay_vang = 0
-            chu_nhat = 0
             day_statuses = []
 
             for d in day_numbers:
                 key = str(d)
                 val = row.get(key, "") if key in df.columns else ""
-                status = render_status(val)
+                status = _render_status(val)
                 day_statuses.append(status)
+
                 if status == "x":
-                    ngay_cong += 1
-                    wd = (weekdays.get(d, "") or "").lower()
-                    if "chủ" in wd or "cn" in wd or "sun" in wd:
-                        chu_nhat += 1
+                    tong_x += 1
+                    # ưu tiên Holiday nếu cùng ngày (không double-count Sunday + Holiday)
+                    if d in holiday_days:
+                        x_le += 1
+                    else:
+                        wd = (weekdays.get(d, "") or "").lower()
+                        if "chủ" in wd or "cn" in wd or "sun" in wd:
+                            x_chu_nhat += 1
                 elif status == "v":
                     ngay_vang += 1
 
-            row_list = [emp_id, emp_name, emp_dept, ngay_cong, ngay_vang, chu_nhat] + day_statuses
+            # theo công thức bạn yêu cầu:
+            ngay_cong = tong_x - x_chu_nhat - (x_le * 2)
+            if ngay_cong < 0:
+                ngay_cong = 0
+
+            row_list = [emp_id, emp_name, emp_dept, ngay_cong, ngay_vang, x_chu_nhat] + day_statuses
             records.append(row_list)
 
         # sắp xếp theo tên
@@ -145,7 +196,7 @@ def payroll(filename):
         return redirect(url_for("main.index"))
 
 
-# Import dữ liệu Payroll
+# Import dữ liệu Payroll (dùng cùng logic)
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
@@ -168,30 +219,63 @@ def import_payroll(filename):
 
         # lấy tháng (YYYY-MM)
         month_str = ""
+        start_date = None
         if period_str and "~" in period_str:
             start_s, _ = period_str.split("~")
             start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
             month_str = start_date.strftime("%Y-%m")
 
+        # tạo day_numbers và weekdays giống /payroll
+        day_numbers = []
+        weekdays = {}
+        if start_date:
+            year = start_date.year
+            month = start_date.month
+            last_day = calendar.monthrange(year, month)[1]
+            day_numbers = list(range(1, last_day + 1))
+            weekday_names = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
+            for d in day_numbers:
+                dt = datetime(year, month, d)
+                weekdays[d] = weekday_names[dt.weekday()]
+        if not day_numbers:
+            day_numbers = sorted([int(c) for c in df.columns if str(c).isdigit()])
+
+        # holidays từ config
+        holidays_config = current_app.config.get("PAYROLL_HOLIDAYS", [])
+        holiday_days = set()
+        if start_date:
+            holiday_days = _parse_holidays_for_month(holidays_config, start_date.date())
+
         # xoá dữ liệu cũ payroll cùng tháng
         db.session.query(Payroll).filter_by(month=month_str).delete()
 
         objs = []
-        # giả sử payroll logic đã tính ở /payroll
-        # ở đây ví dụ đơn giản chỉ lấy số ngày công = số ngày có status "x"
         for _, row in df.iterrows():
             emp_code = str(row.get("Mã", "")).strip()
             emp = Employee.query.filter_by(code=emp_code).first()
             if not emp:
                 continue
 
-            working_days = 0
-            for d in [c for c in df.columns if str(c).isdigit()]:
-                val = str(row.get(d, "")).strip()
-                if val:
-                    times = re.findall(r'\d{1,2}:\d{2}', val)
-                    if len(times) >= 2:
-                        working_days += 1
+            tong_x = 0
+            x_chu_nhat = 0
+            x_le = 0
+
+            for d in day_numbers:
+                key = str(d)
+                val = row.get(key, "") if key in df.columns else ""
+                status = _render_status(val)
+                if status == "x":
+                    tong_x += 1
+                    if d in holiday_days:
+                        x_le += 1
+                    else:
+                        wd = (weekdays.get(d, "") or "").lower()
+                        if "chủ" in wd or "cn" in wd or "sun" in wd:
+                            x_chu_nhat += 1
+
+            working_days = tong_x - x_chu_nhat - (x_le * 2)
+            if working_days < 0:
+                working_days = 0
 
             payroll = Payroll(
                 employee_id=emp.id,
