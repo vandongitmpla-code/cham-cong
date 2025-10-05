@@ -6,7 +6,7 @@ from . import bp
 from app.models import PayrollRecord
 from app.utils.cleaning import clean_attendance_data
 
-# Import các helper functions - ĐẢM BẢO CÓ get_attendance_period
+# Import các helper functions 
 from .attendance_helpers import (
     get_attendance_period,  # ✅ HÀM NÀY PHẢI TỒN TẠI
     create_attendance_rows, 
