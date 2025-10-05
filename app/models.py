@@ -111,5 +111,3 @@ class WorkAdjustment(db.Model):
     def __repr__(self):
         return f"<WorkAdjustment {self.employee_code} - {self.period}>"
     
-
-    
