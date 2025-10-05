@@ -5,7 +5,6 @@ from app.models import WorkAdjustment
 
 
 def create_attendance_rows(records, period):
-
     rows = []
     stt = 1
 
