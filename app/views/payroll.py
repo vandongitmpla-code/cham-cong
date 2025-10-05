@@ -609,4 +609,49 @@ def apply_adjustment():
     else:
         return redirect(url_for("main.index"))
     
+@bp.route("/reset_adjustment", methods=["POST"])
+def reset_adjustment():
+    try:
+        employee_code = request.form.get("employee_code")
+        period = request.form.get("period")
+        filename = request.form.get("filename") or request.args.get("filename")
+        
+        print(f"Resetting adjustment for: {employee_code}, period: {period}")  # Debug
+        
+        # Tìm adjustment
+        adjustment = WorkAdjustment.query.filter_by(
+            employee_code=employee_code,
+            period=period
+        ).first()
+        
+        if adjustment:
+            # Tìm payroll record
+            payroll_record = PayrollRecord.query.filter_by(
+                employee_code=employee_code,
+                period=period
+            ).first()
+            
+            if payroll_record:
+                # Khôi phục dữ liệu gốc
+                payroll_record.ngay_cong = adjustment.original_work_days
+                payroll_record.tang_ca_nghi = adjustment.original_overtime_hours
+                print(f"Restored: {adjustment.original_work_days} days, {adjustment.original_overtime_hours} hours")  # Debug
+            
+            # Xóa adjustment
+            db.session.delete(adjustment)
+            db.session.commit()
+            
+            flash(f"✅ Đã khôi phục dữ liệu gốc cho {adjustment.employee_name}", "success")
+        else:
+            flash("⚠️ Không tìm thấy điều chỉnh để khôi phục", "warning")
+            
+    except Exception as e:
+        db.session.rollback()
+        print(f"Reset error: {e}")  # Debug
+        flash(f"❌ Lỗi khi khôi phục: {e}", "danger")
     
+    # Xử lý filename an toàn
+    if filename:
+        return redirect(url_for("main.attendance_print", filename=filename))
+    else:
+        return redirect(url_for("main.index"))
