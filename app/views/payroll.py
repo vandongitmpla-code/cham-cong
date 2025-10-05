@@ -497,7 +497,7 @@ def delete_holiday(holiday_id):
     return redirect(url_for("main.payroll", filename=filename))
 
 @bp.route("/apply_adjustment", methods=["POST"])
-def apply_adjustment():  # ← GIỮ NGUYÊN TÊN CŨ
+def apply_adjustment(): 
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
@@ -538,20 +538,27 @@ def apply_adjustment():  # ← GIỮ NGUYÊN TÊN CŨ
                 
         ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
         
-        # Tính điều chỉnh
+        # TÍNH TOÁN ĐIỀU CHỈNH THEO ĐÚNG LOGIC
         ngay_thieu = ngay_cong_chuan - original_days
+        
         if ngay_thieu <= 0:
+            # Nếu không thiếu ngày công: giữ nguyên, tăng ca không đổi
             adjusted_days = original_days
             remaining_hours = overtime_hours
+            used_hours = 0
         else:
             gio_can_bu = ngay_thieu * 8
+            
             if overtime_hours >= gio_can_bu:
+                # Nếu tăng ca ĐỦ bù: đạt ngày công chuẩn, còn dư giờ
                 adjusted_days = ngay_cong_chuan
                 remaining_hours = overtime_hours - gio_can_bu
+                used_hours = gio_can_bu
             else:
-                ngay_duoc_bu = overtime_hours // 8
-                adjusted_days = original_days + ngay_duoc_bu
-                remaining_hours = overtime_hours % 8
+                # Nếu tăng ca KHÔNG ĐỦ bù: bù được bao nhiêu hay bấy nhiêu
+                adjusted_days = original_days + (overtime_hours // 8)
+                remaining_hours = 0  # Dùng hết tăng ca
+                used_hours = overtime_hours
         
         # Tạo hoặc cập nhật WorkAdjustment
         adjustment = WorkAdjustment.query.filter_by(
@@ -563,7 +570,8 @@ def apply_adjustment():  # ← GIỮ NGUYÊN TÊN CŨ
             # Cập nhật adjustment hiện có
             adjustment.adjusted_work_days = adjusted_days
             adjustment.remaining_overtime_hours = remaining_hours
-            adjustment.used_overtime_hours = overtime_hours - remaining_hours
+            adjustment.used_overtime_hours = used_hours
+            adjustment.adjustment_reason = f"Áp dụng thủ công - gộp {used_hours} giờ tăng ca"
         else:
             # Tạo adjustment mới
             adjustment = WorkAdjustment(
@@ -577,19 +585,19 @@ def apply_adjustment():  # ← GIỮ NGUYÊN TÊN CŨ
                 original_overtime_hours=overtime_hours,
                 adjusted_work_days=adjusted_days,
                 remaining_overtime_hours=remaining_hours,
-                used_overtime_hours=overtime_hours - remaining_hours,
+                used_overtime_hours=used_hours,
                 adjustment_type="overtime_compensation",
-                adjustment_reason=f"Áp dụng thủ công - gộp {overtime_hours - remaining_hours} giờ tăng ca"
+                adjustment_reason=f"Áp dụng thủ công - gộp {used_hours} giờ tăng ca"
             )
             db.session.add(adjustment)
         
         # Cập nhật PayrollRecord
         payroll_record.ngay_cong = adjusted_days
-        payroll_record.tang_ca_nghi = remaining_hours
+        payroll_record.tang_ca_nghi = remaining_hours  # Chỉ còn số giờ tăng ca còn lại
         
         db.session.commit()
         
-        flash(f"Đã áp dụng điều chỉnh cho {emp.name}!", "success")
+        flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Sử dụng {used_hours} giờ tăng ca.", "success")
         
     except Exception as e:
         db.session.rollback()
