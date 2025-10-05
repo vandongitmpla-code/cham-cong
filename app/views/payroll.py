@@ -541,7 +541,7 @@ def apply_adjustment():
         else:
             # Tạo adjustment mới - SỬ DỤNG payroll_record_id THAY VÌ payroll_record
             adjustment = WorkAdjustment(
-                payroll_record_id=payroll_record.id,  # ✅ SỬA: payroll_record_id thay vì payroll_record
+                payroll_record_id=payroll_record.id,  
                 employee_id=emp.id,
                 period=period,
                 employee_code=employee_code,
