@@ -208,12 +208,12 @@
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
-<!-- ✅ BỔ SUNG: Form ẩn để reset điều chỉnh -->
-<form id="resetForm" method="POST" action="{{ url_for('main.reset_adjustment') }}" style="display: none;">
+<!-- ✅ Sửa form reset để dùng endpoint mới -->
+<form id="resetForm" method="POST" action="{{ url_for('main.reset_adjustment_payroll') }}" style="display: none;">
   <input type="hidden" name="employee_code" id="resetEmployeeCode">
   <input type="hidden" name="period" id="resetPeriod">
   <input type="hidden" name="filename" value="{{ filename }}">
-</form>
+</form>m>
 
 <!-- Xuất weekdays + day_count cho JS -->
 <script id="timesheet-data" type="application/json">
