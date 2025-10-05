@@ -540,25 +540,25 @@ def apply_adjustment():
             adjustment.adjustment_reason = f"Gộp {used_hours} giờ tăng ca vào ngày công"
         else:
             # --- Tạo WorkAdjustment (SAU KHI CÓ RECORD) ---
-            adjustment = WorkAdjustment(
-                # ❌ SAI: payroll_record=record,  # payroll_record không tồn tại trong WorkAdjustment
-                # ✅ ĐÚNG: Sử dụng payroll_record_id thay vì payroll_record
-                payroll_record_id=record.id,  # Sử dụng ID thay vì object
-                employee_id=emp.id,
-                period=period,
-                employee_code=emp.code,
-                employee_name=emp.name,
-                original_work_days=ngay_cong_thuc_te,
-                standard_work_days=ngay_cong_chuan,
-                original_overtime_hours=tang_ca_nghi_gio,
-                adjusted_work_days=ngay_cong_dieu_chinh,
-                remaining_overtime_hours=tang_ca_nghi_con_lai,
-                used_overtime_hours=tang_ca_nghi_gio - tang_ca_nghi_con_lai,
-                adjustment_type="overtime_compensation",
-                adjustment_reason=f"Bù {tang_ca_nghi_gio - tang_ca_nghi_con_lai} giờ tăng ca chủ nhật vào ngày công"
-            )
-            adjustments.append(adjustment)
-                    
+        adjustment = WorkAdjustment(
+            # ❌ SAI: payroll_record=record,  # payroll_record không tồn tại trong WorkAdjustment
+            # ✅ ĐÚNG: Sử dụng payroll_record_id thay vì payroll_record
+            payroll_record_id=record.id,  # Sử dụng ID thay vì object
+            employee_id=emp.id,
+            period=period,
+            employee_code=emp.code,
+            employee_name=emp.name,
+            original_work_days=ngay_cong_thuc_te,
+            standard_work_days=ngay_cong_chuan,
+            original_overtime_hours=tang_ca_nghi_gio,
+            adjusted_work_days=ngay_cong_dieu_chinh,
+            remaining_overtime_hours=tang_ca_nghi_con_lai,
+            used_overtime_hours=tang_ca_nghi_gio - tang_ca_nghi_con_lai,
+            adjustment_type="overtime_compensation",
+            adjustment_reason=f"Bù {tang_ca_nghi_gio - tang_ca_nghi_con_lai} giờ tăng ca chủ nhật vào ngày công"
+        )
+        adjustments.append(adjustment)
+                
         # KHÔNG cập nhật PayrollRecord - giữ nguyên dữ liệu gốc
         # payroll_record.ngay_cong = adjusted_days  # ❌ KHÔNG SỬA PAYROLL_RECORD
         
