@@ -8,7 +8,7 @@ from app.utils.cleaning import clean_attendance_data
 
 # Import các helper functions 
 from .attendance_helpers import (
-    get_attendance_period,  # ✅ HÀM NÀY PHẢI TỒN TẠI
+    get_attendance_period, 
     create_attendance_rows, 
     get_attendance_columns, 
     get_company_info
