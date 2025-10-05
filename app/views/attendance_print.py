@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from . import bp
 from app.models import PayrollRecord
 from app.utils.cleaning import clean_attendance_data
+from .adjustment_handlers import apply_adjustment_handler, reset_adjustment_handler
 
 # Import các helper functions 
 from .attendance_helpers import (
