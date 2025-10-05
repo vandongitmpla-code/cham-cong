@@ -77,20 +77,7 @@ def attendance_print(filename):
         flash(f"Lỗi khi tạo bảng chấm công in ký: {e}", "danger")
         return redirect(url_for("main.index"))
 
-@bp.route("/apply_adjustment", methods=["POST"], endpoint="apply_adjustment_payroll")
-def apply_adjustment_payroll(): 
-    try:
-        # ... code xử lý
-        filename = request.form.get("filename") or request.args.get("filename")
-        if filename:
-            return redirect(url_for("main.attendance_print", filename=filename))
-        else:
-            flash("Đã áp dụng điều chỉnh thành công!", "success")
-            return redirect(url_for("main.index"))
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Lỗi khi áp dụng điều chỉnh: {e}", "danger")
-        return redirect(url_for("main.index"))
+
 
 @bp.route("/reset_adjustment/<employee_code>/<period>")
 def reset_adjustment(employee_code, period):
