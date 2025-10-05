@@ -1,3 +1,8 @@
+
+
+
+
+
 def create_attendance_rows(records, period):
     """
     Tạo dữ liệu rows cho template attendance_print - THEO LOGIC MỚI
