@@ -51,39 +51,38 @@
             {% set cell = row[i] %}
 
             {% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
-              <!-- ✅ SỬA: Hiển thị cả nút + và - -->
-              <td class="adjustable-cell position-relative">
-                {{ cell }}
-                <div class="adjustment-buttons">
-                  {% if row[-1].has_adjustment_option and not row[-1].adjustment_info %}
-                  <!-- Chưa điều chỉnh - Hiện nút + -->
-                  <i class="bi bi-plus-circle-fill text-success ms-1 adjustment-icon"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Gộp ngày tăng ca"
-                    style="cursor:pointer; font-size: 16px;"
-                    data-employee-code="{{ row[1] }}"
-                    data-employee-name="{{ row[2] }}"
-                    data-period="{{ period }}"
-                    data-original-days="{{ row[-1].original_days }}"
-                    data-actual-days="{{ cell }}"
-                    data-overtime-hours="{{ row[9] }}">
-                  </i>
-                  {% elif row[-1].adjustment_info > 0 %}
-                  <!-- Đã điều chỉnh - Hiện nút - -->
-                  <i class="bi bi-dash-circle-fill text-danger ms-1 reset-icon"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Khôi phục dữ liệu gốc"
-                    style="cursor:pointer; font-size: 16px;"
-                    data-employee-code="{{ row[1] }}"
-                    data-employee-name="{{ row[2] }}"
-                    data-period="{{ period }}"
-                    data-filename="{{ filename }}">
-                  </i>
-                  {% endif %}
-                </div>
-              </td>
+<td class="adjustable-cell position-relative">
+  {{ cell }}
+  
+  <!-- ✅ TẠM THỜI: LUÔN HIỂN THỊ CẢ 2 ICON ĐỂ TEST -->
+  <div class="adjustment-buttons">
+    <!-- Luôn hiển thị nút + -->
+    <i class="bi bi-plus-circle-fill text-success ms-1 adjustment-icon"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Gộp ngày tăng ca (TEST)"
+      style="cursor:pointer; font-size: 16px;"
+      data-employee-code="{{ row[1] }}"
+      data-employee-name="{{ row[2] }}"
+      data-period="{{ period }}"
+      data-original-days="{{ row[-1].original_days }}"
+      data-actual-days="{{ cell }}"
+      data-overtime-hours="{{ row[9] }}">
+    </i>
+    
+    <!-- Luôn hiển thị nút - -->
+    <i class="bi bi-dash-circle-fill text-danger ms-1 reset-icon"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Khôi phục dữ liệu gốc (TEST)"
+      style="cursor:pointer; font-size: 16px;"
+      data-employee-code="{{ row[1] }}"
+      data-employee-name="{{ row[2] }}"
+      data-period="{{ period }}"
+      data-filename="{{ filename }}">
+    </i>
+  </div>
+</td>
             {% elif colname == "Số ngày nghỉ không lương" %}
               <td class="fw-bold">
                 {{ cell }}
