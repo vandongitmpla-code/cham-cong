@@ -496,20 +496,21 @@ def delete_holiday(holiday_id):
 
     return redirect(url_for("main.payroll", filename=filename))
 
-@bp.route("/apply_adjustment", methods=["POST"])
-def apply_adjustment(): 
+@bp.route("/apply_adjustment_payroll", methods=["POST"], endpoint="apply_adjustment_payroll")
+def apply_adjustment_payroll(): 
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
         original_days = float(request.form.get("original_days"))
         overtime_hours = float(request.form.get("overtime_hours"))
-        filename = request.args.get("filename")  # ✅ LẤY FILENAME TỪ REQUEST
+        filename = request.form.get("filename") or request.args.get("filename")  # ✅ LẤY TỪ FORM HOẶC ARGS
         
         # Tìm employee và payroll record
         emp = Employee.query.filter_by(code=employee_code).first()
         if not emp:
             flash("Không tìm thấy nhân viên!", "danger")
-            return redirect(url_for("main.attendance_print", filename=filename))
+            # Fallback nếu không có filename
+            return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
         payroll_record = PayrollRecord.query.filter_by(
             employee_code=employee_code, 
@@ -518,7 +519,7 @@ def apply_adjustment():
         
         if not payroll_record:
             flash("Không tìm thấy bản ghi payroll!", "danger")
-            return redirect(url_for("main.attendance_print", filename=filename))
+            return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
         # Tính toán điều chỉnh
         year, month = map(int, period.split('-'))
@@ -595,4 +596,8 @@ def apply_adjustment():
         db.session.rollback()
         flash(f"Lỗi khi áp dụng điều chỉnh: {e}", "danger")
     
-    return redirect(url_for("main.attendance_print", filename=filename))
+    # ✅ XỬ LÝ FILENAME AN TOÀN - FALLBACK VỀ TRANG CHỦ NẾU KHÔNG CÓ FILENAME
+    if filename:
+        return redirect(url_for("main.attendance_print", filename=filename))
+    else:
+        return redirect(url_for("main.index"))
