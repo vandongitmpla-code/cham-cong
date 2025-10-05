@@ -496,20 +496,19 @@ def delete_holiday(holiday_id):
 
     return redirect(url_for("main.payroll", filename=filename))
 
-@bp.route("/apply_adjustment_payroll", methods=["POST"], endpoint="apply_adjustment_payroll")
-def apply_adjustment_payroll(): 
+@bp.route("/apply_adjustment", methods=["POST"])
+def apply_adjustment():  # ← GIỮ NGUYÊN TÊN CŨ
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
         original_days = float(request.form.get("original_days"))
         overtime_hours = float(request.form.get("overtime_hours"))
-        filename = request.form.get("filename") or request.args.get("filename")  # ✅ LẤY TỪ FORM HOẶC ARGS
+        filename = request.form.get("filename") or request.args.get("filename")
         
         # Tìm employee và payroll record
         emp = Employee.query.filter_by(code=employee_code).first()
         if not emp:
             flash("Không tìm thấy nhân viên!", "danger")
-            # Fallback nếu không có filename
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
         payroll_record = PayrollRecord.query.filter_by(
@@ -596,7 +595,7 @@ def apply_adjustment_payroll():
         db.session.rollback()
         flash(f"Lỗi khi áp dụng điều chỉnh: {e}", "danger")
     
-    # ✅ XỬ LÝ FILENAME AN TOÀN - FALLBACK VỀ TRANG CHỦ NẾU KHÔNG CÓ FILENAME
+    # Xử lý filename an toàn
     if filename:
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
