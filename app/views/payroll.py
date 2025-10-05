@@ -539,9 +539,9 @@ def apply_adjustment():
             adjustment.used_overtime_hours = used_hours
             adjustment.adjustment_reason = f"Gộp {used_hours} giờ tăng ca vào ngày công"
         else:
-            # Tạo adjustment mới
+            # Tạo adjustment mới - SỬ DỤNG payroll_record_id THAY VÌ payroll_record
             adjustment = WorkAdjustment(
-                payroll_record_id=payroll_record.id,
+                payroll_record_id=payroll_record.id,  # ✅ SỬA: payroll_record_id thay vì payroll_record
                 employee_id=emp.id,
                 period=period,
                 employee_code=employee_code,
