@@ -113,3 +113,79 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 });
 
+// Xử lý nút reset (-)
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('reset-icon')) {
+        const employeeCode = e.target.getAttribute('data-employee-code');
+        const employeeName = e.target.getAttribute('data-employee-name');
+        const period = e.target.getAttribute('data-period');
+        
+        // Hiển thị modal xác nhận reset
+        document.getElementById('resetEmployeeName').textContent = employeeName;
+        document.getElementById('resetEmployeeCode').value = employeeCode;
+        document.getElementById('resetPeriod').value = period;
+        
+        const resetModal = new bootstrap.Modal(document.getElementById('resetModal'));
+        resetModal.show();
+    }
+});
+
+// Xác nhận reset
+document.getElementById('confirmReset').addEventListener('click', function() {
+    document.getElementById('resetForm').submit();
+});
+
+// Logic tính toán điều chỉnh (giữ nguyên)
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('adjustment-icon')) {
+        const employeeCode = e.target.getAttribute('data-employee-code');
+        const employeeName = e.target.getAttribute('data-employee-name');
+        const period = e.target.getAttribute('data-period');
+        const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
+        const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
+        
+        // Tính toán điều chỉnh
+        const standardDays = 22; // Có thể lấy từ server nếu cần
+        const ngayThieu = standardDays - originalDays;
+        
+        let adjustedDays, remainingHours;
+        
+        if (ngayThieu <= 0) {
+            adjustedDays = originalDays;
+            remainingHours = overtimeHours;
+        } else {
+            const gioCanBu = ngayThieu * 8;
+            if (overtimeHours >= gioCanBu) {
+                adjustedDays = standardDays;
+                remainingHours = overtimeHours - gioCanBu;
+            } else {
+                const ngayDuocBu = Math.floor(overtimeHours / 8);
+                adjustedDays = originalDays + ngayDuocBu;
+                remainingHours = 0;
+            }
+        }
+        
+        // Hiển thị modal
+        document.getElementById('modalEmployeeName').textContent = employeeName;
+        document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
+        document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ';
+        document.getElementById('modalAdjustedDays').textContent = adjustedDays + ' ngày';
+        document.getElementById('modalRemainingHours').textContent = remainingHours + ' giờ';
+        
+        // Điền form
+        document.getElementById('formEmployeeCode').value = employeeCode;
+        document.getElementById('formPeriod').value = period;
+        document.getElementById('formOriginalDays').value = originalDays;
+        document.getElementById('formOvertimeHours').value = overtimeHours;
+        
+        const adjustmentModal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
+        adjustmentModal.show();
+    }
+});
+
+// Xác nhận điều chỉnh
+document.getElementById('confirmAdjustment').addEventListener('click', function() {
+    document.getElementById('adjustmentForm').submit();
+});
+
+// ... phần code còn lại giữ nguyên
