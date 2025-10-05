@@ -51,10 +51,12 @@
             {% set cell = row[i] %}
 
             {% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
-              <!-- ✅ BỔ SUNG: Cột có icon "+" cho điều chỉnh -->
+              <!-- ✅ SỬA: Hiển thị cả nút + và - -->
               <td class="adjustable-cell position-relative">
                 {{ cell }}
-                {% if row[-1].has_adjustment_option %}
+                <div class="adjustment-buttons">
+                  {% if row[-1].has_adjustment_option and not row[-1].adjustment_info %}
+                  <!-- Chưa điều chỉnh - Hiện nút + -->
                   <i class="bi bi-plus-circle-fill text-success ms-1 adjustment-icon"
                     data-bs-toggle="tooltip"
                     data-bs-placement="top"
@@ -63,11 +65,24 @@
                     data-employee-code="{{ row[1] }}"
                     data-employee-name="{{ row[2] }}"
                     data-period="{{ period }}"
-                    data-original-days="{{ row[5] }}"
+                    data-original-days="{{ row[-1].original_days }}"
                     data-actual-days="{{ cell }}"
                     data-overtime-hours="{{ row[9] }}">
                   </i>
-                {% endif %}
+                  {% elif row[-1].adjustment_info > 0 %}
+                  <!-- Đã điều chỉnh - Hiện nút - -->
+                  <i class="bi bi-dash-circle-fill text-danger ms-1 reset-icon"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Khôi phục dữ liệu gốc"
+                    style="cursor:pointer; font-size: 16px;"
+                    data-employee-code="{{ row[1] }}"
+                    data-employee-name="{{ row[2] }}"
+                    data-period="{{ period }}"
+                    data-filename="{{ filename }}">
+                  </i>
+                  {% endif %}
+                </div>
               </td>
             {% elif colname == "Số ngày nghỉ không lương" %}
               <td class="fw-bold">
@@ -164,12 +179,39 @@
   </div>
 </div>
 
+<!-- ✅ BỔ SUNG: Modal xác nhận reset -->
+<div class="modal fade" id="resetModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Khôi phục dữ liệu gốc</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có muốn khôi phục dữ liệu gốc cho <strong id="resetEmployeeName"></strong>?</p>
+        <p class="text-muted">Dữ liệu điều chỉnh sẽ bị xóa và khôi phục về trạng thái ban đầu.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-danger" id="confirmReset">Có, khôi phục</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ✅ BỔ SUNG: Form ẩn để submit điều chỉnh -->
 <form id="adjustmentForm" method="POST" action="{{ url_for('main.apply_adjustment') }}" style="display: none;">
   <input type="hidden" name="employee_code" id="formEmployeeCode">
   <input type="hidden" name="period" id="formPeriod">
   <input type="hidden" name="original_days" id="formOriginalDays">
   <input type="hidden" name="overtime_hours" id="formOvertimeHours">
+  <input type="hidden" name="filename" value="{{ filename }}">
+</form>
+
+<!-- ✅ BỔ SUNG: Form ẩn để reset điều chỉnh -->
+<form id="resetForm" method="POST" action="{{ url_for('main.reset_adjustment') }}" style="display: none;">
+  <input type="hidden" name="employee_code" id="resetEmployeeCode">
+  <input type="hidden" name="period" id="resetPeriod">
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
