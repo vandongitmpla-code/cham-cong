@@ -1,4 +1,4 @@
-// attendance_print.js - JavaScript cho trang attendance_print
+// attendance_print.js - JavaScript cho trang attendance_print - THEO LOGIC MỚI
 document.addEventListener("DOMContentLoaded", function(){
     // Khởi tạo timesheet data
     (function(){
@@ -35,39 +35,16 @@ document.addEventListener("DOMContentLoaded", function(){
             
             console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, actualDays, overtimeHours});
             
-            // Tính toán điều chỉnh - LOGIC ĐÃ SỬA
-            const standardDays = 22; // Ngày công chuẩn
-            const ngayThieu = standardDays - actualDays;
-            
-            let adjustedDays, remainingHours, usedHours;
-            
-            if (ngayThieu <= 0) {
-                // Không thiếu ngày công
-                adjustedDays = actualDays;
-                remainingHours = overtimeHours;
-                usedHours = 0;
-            } else {
-                const gioCanBu = ngayThieu * 8;
-                
-                if (overtimeHours >= gioCanBu) {
-                    // Tăng ca ĐỦ bù
-                    adjustedDays = standardDays;
-                    remainingHours = overtimeHours - gioCanBu;
-                    usedHours = gioCanBu;
-                } else {
-                    // Tăng ca KHÔNG ĐỦ bù
-                    const ngayDuocBu = Math.floor(overtimeHours / 8);
-                    adjustedDays = actualDays + ngayDuocBu;
-                    remainingHours = 0; // Dùng hết tăng ca
-                    usedHours = overtimeHours;
-                }
-            }
+            // ✅ TÍNH TOÁN THEO LOGIC MỚI - ĐƠN GIẢN
+            const adjustedDays = originalDays + Math.floor(overtimeHours / 8);
+            const remainingHours = overtimeHours % 8;
+            const usedHours = overtimeHours - remainingHours;
             
             // Hiển thị modal
             document.getElementById('modalEmployeeName').textContent = employeeName;
             document.getElementById('modalCurrentDays').textContent = actualDays + ' ngày';
             document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ';
-            document.getElementById('modalAdjustedDays').textContent = adjustedDays + ' ngày';
+            document.getElementById('modalAdjustedDays').textContent = adjustedDays + ' ngày'; // ✅ CẢ HAI CỘT SẼ HIỂN THỊ GIÁ TRỊ NÀY
             document.getElementById('modalRemainingHours').textContent = remainingHours + ' giờ';
             
             // Điền form
