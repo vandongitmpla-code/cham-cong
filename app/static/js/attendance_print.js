@@ -53,7 +53,8 @@ document.addEventListener("DOMContentLoaded", function(){
                     adjustmentModal.show();
                 }
             modal.show();
-        };
+        }
+
 
     // Xử lý click icon reset (-)
     document.addEventListener('click', function(e) {
