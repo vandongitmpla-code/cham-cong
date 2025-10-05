@@ -77,13 +77,7 @@ def attendance_print(filename):
         flash(f"Lỗi khi tạo bảng chấm công in ký: {e}", "danger")
         return redirect(url_for("main.index"))
 
-@bp.route("/apply_adjustment", methods=["POST"])
-def apply_adjustment():
-    """
-    Route áp dụng điều chỉnh - sử dụng handler
-    """
-    success, filename = apply_adjustment_handler()
-    return redirect(url_for("main.attendance_print", filename=filename))
+
 
 @bp.route("/reset_adjustment/<employee_code>/<period>")
 def reset_adjustment(employee_code, period):
