@@ -609,14 +609,14 @@ def apply_adjustment():
     else:
         return redirect(url_for("main.index"))
 
-@bp.route("/reset_adjustment", methods=["POST"])
+@bp.route("/reset_adjustment_payroll", methods=["POST"], endpoint="reset_adjustment_payroll")
 def reset_adjustment():
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
         filename = request.form.get("filename") or request.args.get("filename")
         
-        print(f"Resetting adjustment for: {employee_code}, period: {period}")  # Debug
+        print(f"Resetting adjustment for: {employee_code}, period: {period}")
         
         # Tìm adjustment
         adjustment = WorkAdjustment.query.filter_by(
@@ -635,7 +635,7 @@ def reset_adjustment():
                 # Khôi phục dữ liệu gốc
                 payroll_record.ngay_cong = adjustment.original_work_days
                 payroll_record.tang_ca_nghi = adjustment.original_overtime_hours
-                print(f"Restored: {adjustment.original_work_days} days, {adjustment.original_overtime_hours} hours")  # Debug
+                print(f"Restored: {adjustment.original_work_days} days, {adjustment.original_overtime_hours} hours")
             
             # Xóa adjustment
             db.session.delete(adjustment)
@@ -647,7 +647,7 @@ def reset_adjustment():
             
     except Exception as e:
         db.session.rollback()
-        print(f"Reset error: {e}")  # Debug
+        print(f"Reset error: {e}")
         flash(f"❌ Lỗi khi khôi phục: {e}", "danger")
     
     # Xử lý filename an toàn
