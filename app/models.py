@@ -108,6 +108,9 @@ class WorkAdjustment(db.Model):
     adjustment_reason = db.Column(db.Text)
     calculated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # ✅ QUAN HỆ ĐÚNG - sử dụng backref hoặc relationship
+    payroll_record = db.relationship("PayrollRecord", backref="work_adjustments")
+
     def __repr__(self):
         return f"<WorkAdjustment {self.employee_code} - {self.period}>"
     
