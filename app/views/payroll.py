@@ -610,7 +610,7 @@ def apply_adjustment():
         return redirect(url_for("main.index"))
 
 @bp.route("/reset_adjustment_payroll", methods=["POST"], endpoint="reset_adjustment_payroll")
-def reset_adjustment():
+def reset_adjustment_payroll():  # ✅ ĐÃ SỬA TÊN HÀM
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
