@@ -76,13 +76,3 @@ def attendance_print(filename):
         print("Error in attendance_print route:", e, flush=True)
         flash(f"Lỗi khi tạo bảng chấm công in ký: {e}", "danger")
         return redirect(url_for("main.index"))
-
-
-
-@bp.route("/reset_adjustment/<employee_code>/<period>")
-def reset_adjustment(employee_code, period):
-    """
-    Route reset điều chỉnh - sử dụng handler
-    """
-    filename = reset_adjustment_handler(employee_code, period)
-    return redirect(url_for("main.attendance_print", filename=filename))
