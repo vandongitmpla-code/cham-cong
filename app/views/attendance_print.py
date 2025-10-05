@@ -13,7 +13,7 @@ from .attendance_helpers import (
     get_attendance_columns, 
     get_company_info
 )
-from .adjustment_handlers import apply_adjustment_handler, reset_adjustment_handler
+
 
 @bp.route("/attendance_print/<filename>")
 def attendance_print(filename):
