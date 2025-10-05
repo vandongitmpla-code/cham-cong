@@ -1,11 +1,19 @@
-from flask import render_template, redirect, url_for, flash
+# app/views/attendance_print.py
+from flask import render_template, redirect, url_for, flash, request
 import os
 from datetime import datetime, timedelta
 from . import bp
-from app.models import db, PayrollRecord
+from app.models import PayrollRecord
 from app.utils.cleaning import clean_attendance_data
-import re
 
+# Import các helper functions
+from .attendance_helpers import (
+    get_attendance_period, 
+    create_attendance_rows, 
+    get_attendance_columns, 
+    get_company_info
+)
+from .adjustment_handlers import apply_adjustment_handler, reset_adjustment_handler
 
 @bp.route("/attendance_print/<filename>")
 def attendance_print(filename):
@@ -17,27 +25,17 @@ def attendance_print(filename):
         return redirect(url_for("main.index"))
 
     try:
-        # ---- Lấy kỳ công từ file để tìm period ----
+        # ---- Lấy kỳ công từ file ----
         data = clean_attendance_data(file_path)
-        att_meta = data.get("att_meta", [])
-
-        period_str = ""
-        if att_meta and len(att_meta) > 0:
-            header_row = att_meta[0]
-            for cell in header_row:
-                if isinstance(cell, str):
-                    m = re.search(r"\d{4}-\d{2}", cell)
-                    if m:
-                        period_str = m.group(0)
-                        break
+        period_str = get_attendance_period(data.get("att_meta", []))
 
         if not period_str:
             flash("Không xác định được kỳ công từ file!", "danger")
             return redirect(url_for("main.index"))
 
-        period = period_str.strip()  # Ví dụ "2025-09"
+        period = period_str.strip()
 
-        # ---- Lấy danh sách PayrollRecord cho kỳ công đó ----
+        # ---- Lấy danh sách PayrollRecord ----
         records = (
             PayrollRecord.query
             .filter(PayrollRecord.period == period)
@@ -51,51 +49,16 @@ def attendance_print(filename):
 
         # ---- Tạo danh sách weekdays và ngày ----
         start_date = datetime.strptime(period + "-01", "%Y-%m-%d")
-        last_day = (start_date.replace(day=28) + timedelta(days=4)).day
+        last_day = (start_date.replace(day=28) + timedelta(days=4)).replace(day=1).day
         weekday_names = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"]
 
         day_numbers = list(range(1, last_day + 1))
         weekdays = {d: weekday_names[datetime(start_date.year, start_date.month, d).weekday()] for d in day_numbers}
 
-        # ---- Tạo dữ liệu bảng attendance_print ----
-        rows = []
-        stt = 1
-        for rec in records:
-            rows.append([
-                stt,                           # STT
-                rec.employee_code,            # Mã số
-                rec.employee_name,            # Họ và tên
-                rec.phong_ban,                # Phòng ban
-                rec.loai_hd,                  # Loại HĐ
-                rec.ngay_cong,                # Số ngày/giờ làm việc quy định trong tháng
-                "",                            # Nghỉ phép năm
-                rec.ngay_vang,                # Số ngày nghỉ không lương
-                rec.ngay_cong,                # Số ngày/giờ làm việc thực tế trong tháng
-                rec.tang_ca_nghi,             # Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)
-                rec.tang_ca_tuan,             # Số giờ làm việc tăng ca (ngày làm trong tuần)
-                rec.ghi_chu or "",            # Ghi chú
-                "", "",                       # Bắt đầu tính phép từ tháng / Số ngày phép còn tồn
-                rec.to,                       # Tổ
-                {}                             # Chi tiết
-            ])
-            stt += 1
-
-        cols = [
-            "STT", "Mã số", "Họ và tên", "Phòng ban", "Loại HĐ",
-            "Số ngày/giờ làm việc quy định trong tháng", "Số ngày nghỉ phép năm",
-            "Số ngày nghỉ không lương", "Số ngày/giờ làm việc thực tế trong tháng",
-            "Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)",
-            "Số giờ làm việc tăng ca (ngày làm trong tuần)",
-            "Ghi chú", "Bắt đầu tính phép từ tháng",
-            "Số ngày phép còn tồn", "Tổ", "Chi tiết"
-        ]
-
-        company_info = {
-            "name": "CÔNG TY CP CÔNG NGHỆ OTANICS",
-            "tax": "2001337320",
-            "address": "KCN phường 8, phường Lý Văn Lâm, Tỉnh Cà Mau, Việt Nam",
-            "title": f"BẢNG CHẤM CÔNG VÀ HIỆU SUẤT {period}"
-        }
+        # ---- Tạo dữ liệu cho template ----
+        rows = create_attendance_rows(records, period)
+        cols = get_attendance_columns()
+        company_info = get_company_info(period)
 
         return render_template(
             "attendance_print.html",
@@ -105,10 +68,27 @@ def attendance_print(filename):
             period=period,
             weekdays=weekdays,
             day_count=len(day_numbers),
-            day_numbers=day_numbers
+            day_numbers=day_numbers,
+            filename=filename
         )
 
     except Exception as e:
         print("Error in attendance_print route:", e, flush=True)
         flash(f"Lỗi khi tạo bảng chấm công in ký: {e}", "danger")
         return redirect(url_for("main.index"))
+
+@bp.route("/apply_adjustment", methods=["POST"])
+def apply_adjustment():
+    """
+    Route áp dụng điều chỉnh - sử dụng handler
+    """
+    success, filename = apply_adjustment_handler()
+    return redirect(url_for("main.attendance_print", filename=filename))
+
+@bp.route("/reset_adjustment/<employee_code>/<period>")
+def reset_adjustment(employee_code, period):
+    """
+    Route reset điều chỉnh - sử dụng handler
+    """
+    filename = reset_adjustment_handler(employee_code, period)
+    return redirect(url_for("main.attendance_print", filename=filename))

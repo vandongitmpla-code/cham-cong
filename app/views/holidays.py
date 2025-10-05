@@ -9,13 +9,13 @@ def holidays():
     holidays = Holiday.query.order_by(Holiday.date).all()
     return render_template("holidays.html", holidays=holidays)
 
-# Thêm ngày lễ
+# Thêm ngày lễ (từ payroll page)
 @bp.route("/add_holiday", methods=["POST"])
 def add_holiday():
     try:
         date_str = request.form.get("holiday_date")
         name = request.form.get("holiday_name")
-        filename = request.args.get("filename")  # để redirect lại đúng file
+        filename = request.args.get("filename")
 
         if not date_str:
             flash("Vui lòng chọn ngày lễ!", "warning")
@@ -39,10 +39,9 @@ def add_holiday():
 
     return redirect(url_for("main.payroll", filename=filename))
 
-
-# Xóa ngày lễ
+# Xóa ngày lễ (từ payroll page) - ĐỔI TÊN FUNCTION
 @bp.route("/delete_holiday/<int:holiday_id>")
-def delete_holiday(holiday_id):
+def delete_holiday_from_payroll(holiday_id):  # ← Đổi tên
     filename = request.args.get("filename")
     try:
         holiday = Holiday.query.get_or_404(holiday_id)
@@ -52,11 +51,11 @@ def delete_holiday(holiday_id):
     except Exception as e:
         db.session.rollback()
         flash(f"Lỗi khi xóa ngày lễ: {e}", "danger")
-
     return redirect(url_for("main.payroll", filename=filename))
-# Xóa ngày lễ
+
+# Xóa ngày lễ (từ holidays page) - GIỮ NGUYÊN
 @bp.route("/holidays/delete/<int:holiday_id>", methods=["POST"])
-def delete_holiday(holiday_id):
+def delete_holiday(holiday_id):  # ← Giữ nguyên
     holiday = Holiday.query.get_or_404(holiday_id)
     try:
         db.session.delete(holiday)

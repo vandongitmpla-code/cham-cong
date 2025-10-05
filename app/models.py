@@ -3,6 +3,7 @@ from app import db
 db = SQLAlchemy()
 from app.extensions import db
 from app.extensions import db
+from datetime import datetime
 
 class Employee(db.Model):
     __tablename__ = "employees"
@@ -63,18 +64,16 @@ class PayrollRecord(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=False)
-
-    # 👉 Thêm 2 cột này
+    
+    # 👉 Các cột hiện có
     employee_code = db.Column(db.String(50))
     employee_name = db.Column(db.String(100))
-
-    # Kỳ công, ví dụ "2025-09"
     period = db.Column(db.String(7), nullable=False)
-
     ngay_cong = db.Column(db.Float, default=0)
     ngay_vang = db.Column(db.Float, default=0)
     chu_nhat = db.Column(db.Float, default=0)
-    le_tet = db.Column(db.Float, default=0)
+    le_tet = db.Column(db.Float, default=0)  #  số ngày lễ
+    le_tet_gio = db.Column(db.Float, default=0)  #  số giờ tăng ca ngày lễ
     tang_ca_nghi = db.Column(db.Float, default=0)
     tang_ca_tuan = db.Column(db.Float, default=0)
     ghi_chu = db.Column(db.Text)
@@ -88,3 +87,27 @@ class PayrollRecord(db.Model):
 
     def __repr__(self):
         return f"<PayrollRecord {self.employee_code} - {self.employee_name} ({self.period})>"
+    
+
+class WorkAdjustment(db.Model):
+    __tablename__ = "work_adjustments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    payroll_record_id = db.Column(db.Integer, db.ForeignKey("payroll_records.id"), nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=False)
+    period = db.Column(db.String(7), nullable=False)
+    employee_code = db.Column(db.String(50))
+    employee_name = db.Column(db.String(100))
+    original_work_days = db.Column(db.Float, default=0)
+    standard_work_days = db.Column(db.Float, default=0)
+    original_overtime_hours = db.Column(db.Float, default=0)
+    adjusted_work_days = db.Column(db.Float, default=0)
+    remaining_overtime_hours = db.Column(db.Float, default=0)
+    used_overtime_hours = db.Column(db.Float, default=0)
+    adjustment_type = db.Column(db.String(50), default="overtime_compensation")
+    adjustment_reason = db.Column(db.Text)
+    calculated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<WorkAdjustment {self.employee_code} - {self.period}>"
+    

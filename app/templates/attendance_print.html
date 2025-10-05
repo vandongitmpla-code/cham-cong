@@ -1,8 +1,11 @@
 {% extends "base.html" %}
+
 {% block title %}Bảng chấm công in ký{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_print.css') }}">
 {% endblock %}
+
 {% block content %}
   <!-- Nút in -->
   <div class="mb-3 text-end">
@@ -47,15 +50,35 @@
             {% set colname = cols[i] %}
             {% set cell = row[i] %}
 
-            {% if colname == "Số ngày nghỉ không lương" %}
-              <td>
-                {{ cell.count }}
-                {% if cell.sundays %}
-                <i class="bi bi-info-circle text-danger ms-1 blink-icon"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Nghỉ CN các ngày: {{ cell.sundays | join(', ') }}"></i>
+            {% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
+              <!-- ✅ BỔ SUNG: Cột có icon "+" cho điều chỉnh -->
+              <td class="adjustable-cell position-relative">
+                {{ cell }}
+                {% if row[-1].has_adjustment_option %}
+                  <i class="bi bi-plus-circle-fill text-success ms-1 adjustment-icon"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Gộp ngày tăng ca"
+                    style="cursor:pointer; font-size: 16px;"
+                    data-employee-code="{{ row[1] }}"
+                    data-employee-name="{{ row[2] }}"
+                    data-period="{{ period }}"
+                    data-original-days="{{ row[5] }}"
+                    data-actual-days="{{ cell }}"
+                    data-overtime-hours="{{ row[9] }}">
+                  </i>
                 {% endif %}
+              </td>
+            {% elif colname == "Số ngày nghỉ không lương" %}
+              <td class="fw-bold">
+                {{ cell }}
+              </td>
+            {% elif colname in ["Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)", 
+                               "Số giờ làm việc tăng ca (ngày lễ)",
+                               "Số giờ làm việc tăng ca (ngày làm trong tuần)"] %}
+              <!-- Các cột giờ tăng ca - hiển thị nổi bật -->
+              <td class="fw-bold text-primary">
+                {{ cell }}
               </td>
             {% elif colname == "Ghi chú" %}
               <td class="note-cell" data-emp="{{ row[1] }}">
@@ -101,93 +124,61 @@
   </div>
 </div>
 
+<!-- ✅ BỔ SUNG: Modal xác nhận gộp tăng ca -->
+<div class="modal fade" id="adjustmentModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Gộp ngày tăng ca</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có muốn gộp giờ tăng ca chủ nhật vào ngày công cho <strong id="modalEmployeeName"></strong>?</p>
+        
+        <div class="adjustment-details">
+          <table class="table table-sm">
+            <tr>
+              <td><strong>Ngày công hiện tại:</strong></td>
+              <td id="modalCurrentDays"></td>
+            </tr>
+            <tr>
+              <td><strong>Giờ tăng ca có thể gộp:</strong></td>
+              <td id="modalOvertimeHours"></td>
+            </tr>
+            <tr>
+              <td><strong>Ngày công sau gộp (dự kiến):</strong></td>
+              <td id="modalAdjustedDays" class="text-success fw-bold"></td>
+            </tr>
+            <tr>
+              <td><strong>Giờ tăng ca còn lại:</strong></td>
+              <td id="modalRemainingHours" class="text-info"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-primary" id="confirmAdjustment">Có, áp dụng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ BỔ SUNG: Form ẩn để submit điều chỉnh -->
+<form id="adjustmentForm" method="POST" action="{{ url_for('main.apply_adjustment') }}" style="display: none;">
+  <input type="hidden" name="employee_code" id="formEmployeeCode">
+  <input type="hidden" name="period" id="formPeriod">
+  <input type="hidden" name="original_days" id="formOriginalDays">
+  <input type="hidden" name="overtime_hours" id="formOvertimeHours">
+  <input type="hidden" name="filename" value="{{ filename }}">
+</form>
+
 <!-- Xuất weekdays + day_count cho JS -->
 <script id="timesheet-data" type="application/json">
 {{ {"weekdays": weekdays|default({}), "day_count": day_count|default(31)} | tojson | safe }}
 </script>
 
-<script>
-(function(){
-  try {
-    const el = document.getElementById('timesheet-data');
-    const raw = el ? el.textContent.trim() : null;
-    if (!raw) {
-      window.__TIMESHEET__ = { weekdays: {}, day_count: 31 };
-      return;
-    }
-    const cfg = JSON.parse(raw);
-    cfg.weekdays = cfg.weekdays || {};
-    cfg.day_count = Number(cfg.day_count) || 31;
-    window.__TIMESHEET__ = cfg;
-  } catch (err) {
-    console.error("Error parsing timesheet config:", err);
-    window.__TIMESHEET__ = { weekdays: {}, day_count: 31 };
-  }
-})();
-</script>
-
-<style>
-.print-container {
-  font-size: 14px;
-}
-@media print {
-  .btn { display: none !important; }
-  body { margin: 20px; }
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-  // Tooltip
-  const els = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  els.forEach(e => new bootstrap.Tooltip(e, {container: 'body'}));
-
-  // Ghi chú động
-  document.querySelectorAll(".note-cell").forEach(cell => {
-    const icon = cell.querySelector(".note-icon");
-    const input = cell.querySelector(".note-input");
-
-    if(icon){
-      icon.addEventListener("click", () => {
-        const span = cell.querySelector("span.note-text");
-        if(span){
-          input.value = span.textContent.trim();
-          span.remove();
-        }
-        icon.classList.add("d-none");
-        input.classList.remove("d-none");
-        input.focus();
-      });
-
-      input.addEventListener("blur", () => {
-        let value = input.value.trim();
-        if(value !== ""){
-          input.classList.add("d-none");
-          icon.classList.remove("d-none");
-          let span = document.createElement("span");
-          span.classList.add("note-text");
-          span.textContent = value;
-          cell.insertBefore(span, icon);
-        }else{
-          input.classList.add("d-none");
-          icon.classList.remove("d-none");
-        }
-      });
-
-      input.addEventListener("keypress", e => {
-        if(e.key === "Enter"){ input.blur(); }
-      });
-
-      cell.addEventListener("mouseenter", () => { icon.classList.remove("d-none"); });
-      cell.addEventListener("mouseleave", () => {
-        if(input.value.trim() !== ""){ icon.classList.add("d-none"); }
-      });
-    }
-  });
-});
-</script>
-
-<!-- Script chi tiết -->
-<script src="{{ url_for('static', filename='js/timesheet.js') }}"></script>
+<!-- ✅ THAY ĐỔI: Load JavaScript riêng thay vì inline -->
+<script src="{{ url_for('static', filename='js/attendance_print.js') }}"></script>
 
 {% endblock %}

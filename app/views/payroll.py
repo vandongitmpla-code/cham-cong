@@ -4,10 +4,11 @@ from app.utils.cleaning import clean_attendance_data
 import re
 import calendar
 from datetime import datetime
-from app.models import  db
+from app.models import db
 from . import bp
-from app.models import  Holiday, db
+from app.models import Holiday, db
 from flask import request
+from app.models import Employee, PayrollRecord, WorkAdjustment, Holiday, db  
 
 
 def _parse_holidays_for_month(holidays_config, ref_date):
@@ -135,7 +136,7 @@ def payroll(filename):
 
         # --- Lấy danh sách ngày lễ từ cấu hình (nếu có) ---
         holidays_config = current_app.config.get("PAYROLL_HOLIDAYS", [])
-      # --- Lấy holidays từ DB theo tháng kỳ công ---
+        # --- Lấy holidays từ DB theo tháng kỳ công ---
         holidays = []
         holiday_days = set()
         if start_date:
@@ -204,14 +205,13 @@ def payroll(filename):
         return redirect(url_for("main.index"))
 
 
-# Import dữ liệu Payroll (dùng cùng logic)
-# Import dữ liệu Payroll (dùng cùng logic hiển thị bảng Payroll)
+# Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
     import re
     import calendar
     from datetime import datetime
-    from app.models import Employee, PayrollRecord, Holiday
+    from app.models import Employee, PayrollRecord, Holiday, WorkAdjustment  # ✅ THÊM WorkAdjustment
     from flask import current_app, request
 
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
@@ -258,17 +258,44 @@ def import_payroll(filename):
         ).all()
         holiday_days = {h.date.day for h in holidays}
 
-        # --- Xoá dữ liệu PayrollRecord cũ của kỳ này ---
+        # --- Xoá dữ liệu cũ ---
         PayrollRecord.query.filter_by(period=period).delete()
+        WorkAdjustment.query.filter_by(period=period).delete()  # ✅ XÓA CẢ ADJUSTMENT CŨ
 
-        # --- Hàm xác định trạng thái theo ô dữ liệu ---
+        # --- Hàm tính ngày công chuẩn ---
+        def calculate_standard_work_days(year, month, holiday_count):
+            total_days = calendar.monthrange(year, month)[1]
+            sunday_count = 0
+            for day in range(1, total_days + 1):
+                weekday = datetime(year, month, day).weekday()
+                if weekday == 6:  # Chủ nhật
+                    sunday_count += 1
+            standard_days = total_days - sunday_count - (holiday_count * 2)
+            return standard_days, sunday_count
+
+        # --- Hàm điều chỉnh ngày công ---
+        def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio):
+            ngay_thieu = ngay_cong_chuan - ngay_cong_thuc_te
+            if ngay_thieu <= 0:
+                return ngay_cong_thuc_te, tang_ca_nghi_gio
+            gio_can_bu = ngay_thieu * 8
+            if tang_ca_nghi_gio >= gio_can_bu:
+                ngay_cong_dieu_chinh = ngay_cong_chuan
+                tang_ca_nghi_con_lai = tang_ca_nghi_gio - gio_can_bu
+            else:
+                ngay_duoc_bu = tang_ca_nghi_gio // 8
+                ngay_cong_dieu_chinh = ngay_cong_thuc_te + ngay_duoc_bu
+                tang_ca_nghi_con_lai = tang_ca_nghi_gio % 8
+            return ngay_cong_dieu_chinh, tang_ca_nghi_con_lai
+
+        # --- Hàm xác định trạng thái ---
         def render_status(cell_val):
             s = "" if cell_val is None else str(cell_val)
             times = re.findall(r'\d{1,2}:\d{2}', s)
             if not times:
-                return "v"  # vắng
+                return "v"
             if len(times) == 1:
-                return "warn"  # chỉ 1 mốc giờ
+                return "warn"
             def to_minutes(t):
                 hh, mm = t.split(":")
                 return int(hh) * 60 + int(mm)
@@ -284,8 +311,12 @@ def import_payroll(filename):
                 return "0.5"
             return ""
 
+        # --- Tính ngày công chuẩn ---
+        ngay_cong_chuan, so_chu_nhat = calculate_standard_work_days(year, month, len(holiday_days))
+
         # --- Xử lý từng nhân viên ---
         records = []
+        adjustments = []  # ✅ TẠO LIST ĐỂ LƯU ADJUSTMENTS
         for _, row in df.iterrows():
             emp_code = str(row.get("Mã", "")).strip()
             emp = Employee.query.filter(
@@ -319,13 +350,19 @@ def import_payroll(filename):
                 elif status == "v":
                     ngay_vang += 1
 
-            # --- Công thức tính ngày công (chuẩn theo yêu cầu) ---
-            ngay_cong = tong_x - x_chu_nhat - (x_le * 2)
-            if ngay_cong < 0:
-                ngay_cong = 0
+            # --- CÔNG THỨC CŨ ---
+            ngay_cong_thuc_te = tong_x - x_chu_nhat - (x_le * 2)  # ✅ ĐỊNH NGHĨA BIẾN
+            if ngay_cong_thuc_te < 0:
+                ngay_cong_thuc_te = 0
 
-            tang_ca_nghi = x_chu_nhat * 8
+            tang_ca_nghi_gio = x_chu_nhat * 8  # ✅ ĐỊNH NGHĨA BIẾN
             tang_ca_tuan = 0
+            le_tet_gio = x_le * 16
+
+            # --- ĐIỀU CHỈNH NGÀY CÔNG ---
+            ngay_cong_dieu_chinh, tang_ca_nghi_con_lai = calculate_adjusted_work_days(
+                ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio
+            )  # ✅ ĐỊNH NGHĨA BIẾN
 
             # --- Ghi chú chi tiết ---
             cn_days, le_days, nghi_days = [], [], []
@@ -341,40 +378,75 @@ def import_payroll(filename):
                 if status == "v":
                     nghi_days.append(d)
 
+            # Format ghi_chú
             parts = []
             if cn_days:
-                parts.append(f"Tăng ca {len(cn_days)} ngày CN: {', '.join(str(d) for d in cn_days)}")
+                cn_days_formatted = ",".join([str(d) for d in cn_days])
+                parts.append(f"Tăng ca {len(cn_days)} CN: {cn_days_formatted}/{month:02d}/{year}")
             if le_days:
-                parts.append(f"Làm {len(le_days)} ngày Lễ: {', '.join(f'{d:02d}/{month:02d}' for d in le_days)}")
+                le_days_formatted = ",".join([str(d) for d in le_days])
+                parts.append(f"Làm {len(le_days)} ngày lễ: {le_days_formatted}/{month:02d}/{year}")
             if nghi_days:
-                parts.append(f"Nghỉ ngày: {', '.join(f'{d:02d}/{month:02d}/{year}' for d in nghi_days)}")
+                nghi_days_formatted = ",".join([str(d) for d in nghi_days])
+                parts.append(f"Nghỉ phép từ ngày: {nghi_days_formatted}/{month:02d}/{year}")
 
-            ghi_chu = " / ".join(parts)
+            ghi_chu = " - ".join(parts) if parts else "Làm việc đủ ngày"
 
-            # --- Tạo bản ghi PayrollRecord ---
+            # --- Tạo PayrollRecord (CHỈ CÁC TRƯỜNG CỦA PAYROLL) ---
             record = PayrollRecord(
                 employee_id=emp.id,
+                employee_code=emp.code,
                 employee_name=emp.name,
                 period=period,
-                ngay_cong=ngay_cong,
+                ngay_cong=ngay_cong_dieu_chinh,  # ✅ DÙNG NGÀY CÔNG ĐÃ ĐIỀU CHỈNH
                 ngay_vang=ngay_vang,
                 chu_nhat=x_chu_nhat,
                 le_tet=x_le,
-                tang_ca_nghi=tang_ca_nghi,
+                le_tet_gio=le_tet_gio,
+                tang_ca_nghi=tang_ca_nghi_con_lai,  # ✅ DÙNG GIỜ TĂNG CA CÒN LẠI
                 tang_ca_tuan=tang_ca_tuan,
                 ghi_chu=ghi_chu,
-                raw_data=daily_status,
-                to=getattr(emp, "team", None),
-                phong_ban=getattr(emp, "department", None),
-                loai_hd=getattr(emp, "contract_type", None)
+                raw_data={
+                    'daily_status': daily_status,
+                    'summary': {
+                        'total_work_days': tong_x,
+                        'sunday_work_days': cn_days,
+                        'holiday_work_days': le_days,
+                        'absence_days': nghi_days,
+                        'standard_work_days': ngay_cong_chuan,
+                        'original_work_days': ngay_cong_thuc_te
+                    }
+                },
+                to=getattr(emp, "team", ""),
+                phong_ban=getattr(emp, "department", ""),
+                loai_hd=getattr(emp, "contract_type", "")
             )
             records.append(record)
 
+            # --- Tạo WorkAdjustment (SAU KHI CÓ RECORD) ---
+            adjustment = WorkAdjustment(
+                payroll_record=record,  # ✅ SỬ DỤNG RELATIONSHIP
+                employee_id=emp.id,
+                period=period,
+                employee_code=emp.code,
+                employee_name=emp.name,
+                original_work_days=ngay_cong_thuc_te,
+                standard_work_days=ngay_cong_chuan,
+                original_overtime_hours=tang_ca_nghi_gio,
+                adjusted_work_days=ngay_cong_dieu_chinh,
+                remaining_overtime_hours=tang_ca_nghi_con_lai,
+                used_overtime_hours=tang_ca_nghi_gio - tang_ca_nghi_con_lai,
+                adjustment_type="overtime_compensation",
+                adjustment_reason=f"Bù {tang_ca_nghi_gio - tang_ca_nghi_con_lai} giờ tăng ca chủ nhật vào ngày công"
+            )
+            adjustments.append(adjustment)
+
         # --- Lưu vào DB ---
         db.session.bulk_save_objects(records)
+        db.session.bulk_save_objects(adjustments)  # ✅ LƯU CẢ ADJUSTMENTS
         db.session.commit()
 
-        flash(f"Đã import {len(records)} bản ghi payroll vào Database!", "success")
+        flash(f"Đã import {len(records)} bản ghi payroll và {len(adjustments)} điều chỉnh!", "success")
 
     except Exception as e:
         db.session.rollback()
@@ -409,7 +481,6 @@ def add_holiday():
 
     return redirect(url_for("main.payroll", filename=request.args.get("filename")))
 
-
 # Xóa ngày lễ
 @bp.route("/delete_holiday/<int:holiday_id>", methods=["POST"])
 def delete_holiday(holiday_id):
@@ -424,3 +495,104 @@ def delete_holiday(holiday_id):
         flash(f"Lỗi khi xóa ngày lễ: {e}", "danger")
 
     return redirect(url_for("main.payroll", filename=filename))
+
+@bp.route("/apply_adjustment", methods=["POST"])
+def apply_adjustment(): 
+    try:
+        employee_code = request.form.get("employee_code")
+        period = request.form.get("period")
+        original_days = float(request.form.get("original_days"))
+        overtime_hours = float(request.form.get("overtime_hours"))
+        filename = request.args.get("filename")  # ✅ LẤY FILENAME TỪ REQUEST
+        
+        # Tìm employee và payroll record
+        emp = Employee.query.filter_by(code=employee_code).first()
+        if not emp:
+            flash("Không tìm thấy nhân viên!", "danger")
+            return redirect(url_for("main.attendance_print", filename=filename))
+        
+        payroll_record = PayrollRecord.query.filter_by(
+            employee_code=employee_code, 
+            period=period
+        ).first()
+        
+        if not payroll_record:
+            flash("Không tìm thấy bản ghi payroll!", "danger")
+            return redirect(url_for("main.attendance_print", filename=filename))
+        
+        # Tính toán điều chỉnh
+        year, month = map(int, period.split('-'))
+        
+        # Lấy số ngày lễ để tính ngày công chuẩn
+        holidays = Holiday.query.filter(
+            db.extract("year", Holiday.date) == year,
+            db.extract("month", Holiday.date) == month
+        ).all()
+        
+        # Tính ngày công chuẩn
+        total_days = calendar.monthrange(year, month)[1]
+        sunday_count = 0
+        for day in range(1, total_days + 1):
+            if datetime(year, month, day).weekday() == 6:
+                sunday_count += 1
+                
+        ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
+        
+        # Tính điều chỉnh
+        ngay_thieu = ngay_cong_chuan - original_days
+        if ngay_thieu <= 0:
+            adjusted_days = original_days
+            remaining_hours = overtime_hours
+        else:
+            gio_can_bu = ngay_thieu * 8
+            if overtime_hours >= gio_can_bu:
+                adjusted_days = ngay_cong_chuan
+                remaining_hours = overtime_hours - gio_can_bu
+            else:
+                ngay_duoc_bu = overtime_hours // 8
+                adjusted_days = original_days + ngay_duoc_bu
+                remaining_hours = overtime_hours % 8
+        
+        # Tạo hoặc cập nhật WorkAdjustment
+        adjustment = WorkAdjustment.query.filter_by(
+            employee_code=employee_code,
+            period=period
+        ).first()
+        
+        if adjustment:
+            # Cập nhật adjustment hiện có
+            adjustment.adjusted_work_days = adjusted_days
+            adjustment.remaining_overtime_hours = remaining_hours
+            adjustment.used_overtime_hours = overtime_hours - remaining_hours
+        else:
+            # Tạo adjustment mới
+            adjustment = WorkAdjustment(
+                payroll_record_id=payroll_record.id,
+                employee_id=emp.id,
+                period=period,
+                employee_code=employee_code,
+                employee_name=emp.name,
+                original_work_days=original_days,
+                standard_work_days=ngay_cong_chuan,
+                original_overtime_hours=overtime_hours,
+                adjusted_work_days=adjusted_days,
+                remaining_overtime_hours=remaining_hours,
+                used_overtime_hours=overtime_hours - remaining_hours,
+                adjustment_type="overtime_compensation",
+                adjustment_reason=f"Áp dụng thủ công - gộp {overtime_hours - remaining_hours} giờ tăng ca"
+            )
+            db.session.add(adjustment)
+        
+        # Cập nhật PayrollRecord
+        payroll_record.ngay_cong = adjusted_days
+        payroll_record.tang_ca_nghi = remaining_hours
+        
+        db.session.commit()
+        
+        flash(f"Đã áp dụng điều chỉnh cho {emp.name}!", "success")
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi áp dụng điều chỉnh: {e}", "danger")
+    
+    return redirect(url_for("main.attendance_print", filename=filename))
