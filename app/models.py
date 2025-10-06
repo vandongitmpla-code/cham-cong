@@ -92,7 +92,6 @@ class PayrollRecord(db.Model):
         return f"<PayrollRecord {self.employee_code} - {self.employee_name} ({self.period})>"
     
 
-# Trong app/models.py - cập nhật class WorkAdjustment
 class WorkAdjustment(db.Model):
     __tablename__ = "work_adjustments"
 
