@@ -527,7 +527,6 @@ def apply_adjustment():
         for day in range(1, total_days + 1):
             if datetime(year, month, day).weekday() == 6:
                 sunday_count += 1
-                
         ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
         overtime_days = overtime_hours / 8  # Chuyển giờ tăng ca thành ngày
         max_compensation_days = overtime_days  # Cho phép dùng tối đa tăng ca
