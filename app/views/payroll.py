@@ -533,10 +533,8 @@ def apply_adjustment():
         adjusted_days = original_days + max_compensation_days  # Ngày công sau gộp
         used_days = adjusted_days - original_days
         new_absence_days = max(0, current_absence - used_days)
-        
-        # Tính giờ tăng ca còn lại
         remaining_hours = overtime_hours - (used_days * 8)
-        
+    
         # Đảm bảo không âm
         if remaining_hours < 0:
             remaining_hours = 0
