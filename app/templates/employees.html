@@ -17,6 +17,8 @@
         <th>Tổ</th>
         <th>Phòng ban</th>
         <th>Loại HĐ</th>
+        <th>Bắt đầu làm</th>
+        <th>Bắt đầu BH</th>
         <th>Mã chấm công</th>
         <th>Hành động</th>
       </tr>
@@ -29,6 +31,20 @@
         <td>{{ emp.team }}</td>
         <td>{{ emp.department }}</td>
         <td>{{ emp.contract_type }}</td>
+        <td>
+          {% if emp.start_month %}
+            {{ emp.start_month[5:7] }}/{{ emp.start_month[:4] }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>
+          {% if emp.insurance_start_month %}
+            {{ emp.insurance_start_month[5:7] }}/{{ emp.insurance_start_month[:4] }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
         <td>
           <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" class="d-flex">
             <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
