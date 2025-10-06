@@ -39,16 +39,18 @@
                onchange="updateInsuranceMonth()">
     </div>
     
-    <div class="form-group">
-        <label id="insuranceLabel">
-            Bắt đầu đóng bảo hiểm từ tháng: 
-            {% if emp.insurance_start_month %}
-                {{ emp.insurance_start_month[5:7] }}/{{ emp.insurance_start_month[:4] }}
-            {% endif %}
-        </label>
-        <input type="hidden" name="insurance_start_month" id="insuranceMonth" 
-               value="{{ emp.insurance_start_month if emp.insurance_start_month }}">
-    </div>
+    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">📅 Tháng bắt đầu làm</label>
+                                <div class="month-input-wrapper">
+                                    <input type="month" name="start_month" id="editStartMonth" 
+                                           class="form-control" 
+                                           value="{{ emp.start_month or '' }}"
+                                           onchange="updateEditInsuranceMonth()">
+                                </div>
+                            </div>
+                        </div>
 
     <button type="submit" class="btn btn-primary">Cập nhật</button>
     <a href="{{ url_for('main.employees') }}" class="btn btn-secondary">Hủy</a>
