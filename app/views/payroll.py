@@ -205,7 +205,6 @@ def payroll(filename):
 
 
 # Import dữ liệu Payroll
-# Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
