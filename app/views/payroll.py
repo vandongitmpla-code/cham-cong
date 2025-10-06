@@ -531,22 +531,22 @@ def apply_adjustment():
         ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
         
         # ✅ LOGIC MỚI: TÁCH BIỆT DỮ LIỆU GỐC VÀ ĐIỀU CHỈNH
-    overtime_days = overtime_hours / 8
-        
-        # Gộp toàn bộ tăng ca vào ngày công, nhưng không vượt chuẩn
-    adjusted_days = original_days + overtime_days
-    if adjusted_days > ngay_cong_chuan:
-        adjusted_days = ngay_cong_chuan  # Giới hạn ở ngày công chuẩn
-        
-        # Tính số ngày thực tế được gộp
-        actual_used_days = adjusted_days - original_days
-        
-        # Ngày nghỉ giữ nguyên (vì không dùng để bù)
-        adjusted_absence = current_absence
-        
-        # Tính giờ tăng ca thực tế đã dùng
-        used_hours = actual_used_days * 8
-        remaining_hours = overtime_hours - used_hours
+            overtime_days = overtime_hours / 8
+                
+                # Gộp toàn bộ tăng ca vào ngày công, nhưng không vượt chuẩn
+            adjusted_days = original_days + overtime_days
+            if adjusted_days > ngay_cong_chuan:
+                adjusted_days = ngay_cong_chuan  # Giới hạn ở ngày công chuẩn
+                
+                # Tính số ngày thực tế được gộp
+                actual_used_days = adjusted_days - original_days
+                
+                # Ngày nghỉ giữ nguyên (vì không dùng để bù)
+                adjusted_absence = current_absence
+                
+                # Tính giờ tăng ca thực tế đã dùng
+                used_hours = actual_used_days * 8
+                remaining_hours = overtime_hours - used_hours
 
         # Tạo hoặc cập nhật WorkAdjustment
         adjustment = WorkAdjustment.query.filter_by(
