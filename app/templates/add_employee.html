@@ -45,16 +45,54 @@
 <script>
 function updateInsuranceMonth() {
     const startMonth = document.getElementById('startMonth').value;
+    const insuranceLabel = document.getElementById('insuranceLabel');
+    const insuranceMonth = document.getElementById('insuranceMonth');
+    
     if (startMonth) {
         const [year, month] = startMonth.split('-');
-        const insuranceMonth = `${month}/${year}`;
-        document.getElementById('insuranceLabel').textContent = 
-            `Bắt đầu đóng bảo hiểm từ tháng: ${insuranceMonth}`;
-        document.getElementById('insuranceMonth').value = startMonth;
+        const insuranceMonthFormatted = `${month}/${year}`;
+        
+        // Cập nhật label với hiệu ứng
+        insuranceLabel.innerHTML = `
+            <div class="insurance-display show">
+                📅 Bắt đầu đóng bảo hiểm từ tháng: <strong>${insuranceMonthFormatted}</strong>
+            </div>
+        `;
+        insuranceMonth.value = startMonth;
+        
+        // Tự động focus vào nút Lưu để người dùng dễ thấy
+        setTimeout(() => {
+            document.querySelector('button[type="submit"]').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 300);
+        
     } else {
-        document.getElementById('insuranceLabel').textContent = 'Bắt đầu đóng bảo hiểm từ tháng: ';
-        document.getElementById('insuranceMonth').value = '';
+        insuranceLabel.innerHTML = 'Bắt đầu đóng bảo hiểm từ tháng: ';
+        insuranceMonth.value = '';
     }
 }
+
+// Thêm sự kiện khi trang load xong
+document.addEventListener('DOMContentLoaded', function() {
+    const startMonthInput = document.getElementById('startMonth');
+    
+    // Tự động kích hoạt nếu có giá trị mặc định (trong trường hợp edit)
+    if (startMonthInput.value) {
+        updateInsuranceMonth();
+    }
+    
+    // Thêm placeholder cho input month
+    startMonthInput.addEventListener('focus', function() {
+        if (!this.value) {
+            this.setAttribute('placeholder', 'Chọn tháng/năm');
+        }
+    });
+    
+    startMonthInput.addEventListener('blur', function() {
+        this.removeAttribute('placeholder');
+    });
+});
 </script>
 {% endblock %}
