@@ -538,12 +538,6 @@ def apply_adjustment():
         
         adjusted_days = original_days + max_compensation_days  # Ngày công sau gộp
         
-        # Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn (TUỲ CHỌN)
-        # Bỏ comment dòng dưới nếu muốn giới hạn ngày công tối đa = ngày công chuẩn
-        # if adjusted_days > ngay_cong_chuan:
-        #     adjusted_days = ngay_cong_chuan
-        
-        # Tính ngày nghỉ mới (giảm nếu có ngày nghỉ để bù)
         used_days = adjusted_days - original_days
         new_absence_days = max(0, current_absence - used_days)
         
