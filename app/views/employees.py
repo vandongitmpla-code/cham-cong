@@ -49,6 +49,8 @@ def add_employee():
         team = request.form.get("team")
         department = request.form.get("department")
         contract_type = request.form.get("contract_type")
+        start_month = request.form.get("start_month")  # Lấy từ input month
+        insurance_start_month = request.form.get("insurance_start_month")  # Lấy từ hidden field
 
         try:
             emp = Employee(
@@ -57,7 +59,9 @@ def add_employee():
                 team=team,
                 department=department,
                 contract_type=contract_type,
-                salary_base=0
+                salary_base=0,
+                start_month=start_month,
+                insurance_start_month=insurance_start_month
             )
             db.session.add(emp)
             db.session.commit()
