@@ -574,7 +574,7 @@ def apply_adjustment():
             adjustment.used_overtime_hours = used_hours
             adjustment.adjustment_reason = f"Gộp {used_hours} giờ tăng ca vào ngày công, giảm {current_absence - new_absence_days} ngày nghỉ"
         else:
-            # Tạo adjustment mới
+            # Tạo adjustment mới - KHÔNG dùng original_absence_days và adjusted_absence_days
             adjustment = WorkAdjustment(
                 payroll_record_id=payroll_record.id,  
                 employee_id=emp.id,
@@ -584,9 +584,7 @@ def apply_adjustment():
                 original_work_days=original_days,
                 standard_work_days=ngay_cong_chuan,
                 original_overtime_hours=overtime_hours,
-                original_absence_days=current_absence,  # ✅ Lưu số ngày nghỉ gốc
                 adjusted_work_days=adjusted_days,
-                adjusted_absence_days=new_absence_days,  # ✅ Số ngày nghỉ mới
                 remaining_overtime_hours=remaining_hours,
                 used_overtime_hours=used_hours,
                 adjustment_type="overtime_compensation",
@@ -612,7 +610,7 @@ def apply_adjustment():
     
 
 
-    
+
 @bp.route("/reset_adjustment_payroll", methods=["POST"], endpoint="reset_adjustment_payroll")
 def reset_adjustment_payroll():
     try:
