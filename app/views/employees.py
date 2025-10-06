@@ -84,7 +84,12 @@ def edit_employee(emp_id):
         emp.team = request.form.get("team")
         emp.department = request.form.get("department")
         emp.contract_type = request.form.get("contract_type")
-        emp.att_code = request.form.get("att_code")  # ✅ thêm dòng này
+        emp.att_code = request.form.get("att_code")
+        
+        # CẬP NHẬT TRƯỜNG MỚI
+        emp.start_month = request.form.get("start_month")
+        emp.insurance_start_month = request.form.get("insurance_start_month")
+
         try:
             db.session.commit()
             flash("Cập nhật nhân viên thành công!", "success")
@@ -94,7 +99,6 @@ def edit_employee(emp_id):
             flash(f"Lỗi khi cập nhật nhân viên: {e}", "danger")
 
     return render_template("edit_employee.html", emp=emp)
-
 # Xóa nhân viên
 @bp.route("/employees/delete/<int:emp_id>", methods=["POST"])
 def delete_employee(emp_id):
