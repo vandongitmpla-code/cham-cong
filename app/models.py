@@ -96,7 +96,7 @@ class WorkAdjustment(db.Model):
     __tablename__ = "work_adjustments"
 
     id = db.Column(db.Integer, primary_key=True)
-    payroll_record_id = db.Column(db.Integer, db.ForeignKey("payroll_records.id"), nullable=False)
+    payroll_record_id = db.Column(db.Integer, db.ForeignKey("payroll_records.id", ondelete="CASCADE"), nullable=False)
     employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=False)
     period = db.Column(db.String(7), nullable=False)
     employee_code = db.Column(db.String(50))
