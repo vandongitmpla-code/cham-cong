@@ -18,7 +18,7 @@ class Employee(db.Model):
     salary_base = db.Column(db.Float, default=0)
     att_code = db.Column(db.String(50), unique=True)
     start_month = db.Column(db.String(7))  # Format: YYYY-MM (ví dụ: 2025-07)
-    insurance_start_month = db.Column(db.String(7))  # Format: YYYY-MM
+    insurance_start_month = db.Column(db.String(7))  
 
     # Quan hệ
     attendances = db.relationship("AttendanceLog", backref="employee", lazy=True)
