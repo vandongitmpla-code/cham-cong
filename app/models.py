@@ -92,6 +92,7 @@ class PayrollRecord(db.Model):
         return f"<PayrollRecord {self.employee_code} - {self.employee_name} ({self.period})>"
     
 
+# Trong app/models.py - cập nhật class WorkAdjustment
 class WorkAdjustment(db.Model):
     __tablename__ = "work_adjustments"
 
@@ -101,17 +102,19 @@ class WorkAdjustment(db.Model):
     period = db.Column(db.String(7), nullable=False)
     employee_code = db.Column(db.String(50))
     employee_name = db.Column(db.String(100))
+    
+    # DỮ LIỆU GỐC
     original_work_days = db.Column(db.Float, default=0)
-    standard_work_days = db.Column(db.Float, default=0)
+    original_absence_days = db.Column(db.Float, default=0)  # ✅ THÊM: ngày vắng gốc
     original_overtime_hours = db.Column(db.Float, default=0)
+    
+    # DỮ LIỆU SAU ĐIỀU CHỈNH
     adjusted_work_days = db.Column(db.Float, default=0)
+    adjusted_absence_days = db.Column(db.Float, default=0)  # ✅ THÊM: ngày vắng sau gộp
     remaining_overtime_hours = db.Column(db.Float, default=0)
     used_overtime_hours = db.Column(db.Float, default=0)
     
-    # ✅ THÊM CÁC TRƯỜNG MỚI NẾU CẦN
-    original_absence_days = db.Column(db.Float, default=0)  # Số ngày nghỉ gốc
-    adjusted_absence_days = db.Column(db.Float, default=0)  # Số ngày nghỉ sau điều chỉnh
-    
+    standard_work_days = db.Column(db.Float, default=0)
     adjustment_type = db.Column(db.String(50), default="overtime_compensation")
     adjustment_reason = db.Column(db.Text)
     calculated_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -120,4 +123,3 @@ class WorkAdjustment(db.Model):
 
     def __repr__(self):
         return f"<WorkAdjustment {self.employee_code} - {self.period}>"
-    
