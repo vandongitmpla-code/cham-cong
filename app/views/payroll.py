@@ -533,7 +533,6 @@ def apply_adjustment():
         # ✅ LOGIC SỬA: Cho phép tăng ngày công vượt chuẩn khi không có ngày nghỉ
         overtime_days = overtime_hours / 8  # Chuyển giờ tăng ca thành ngày
         
-        # Tính số ngày có thể bù từ tăng ca (có thể vượt chuẩn)
         max_compensation_days = overtime_days  # Cho phép dùng tối đa tăng ca
         
         adjusted_days = original_days + max_compensation_days  # Ngày công sau gộp
