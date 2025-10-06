@@ -24,55 +24,68 @@ document.addEventListener("DOMContentLoaded", function(){
     tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
 
     // Xử lý click icon điều chỉnh (+)
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('adjustment-icon')) {
-            const employeeCode = e.target.getAttribute('data-employee-code');
-            const employeeName = e.target.getAttribute('data-employee-name');
-            const period = e.target.getAttribute('data-period');
-            const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
-            const actualDays = parseFloat(e.target.getAttribute('data-actual-days'));
-            const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
-            
-            console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, actualDays, overtimeHours});
-            
-            // ✅ TÍNH TOÁN THEO LOGIC MỚI - GỘP TOÀN BỘ TĂNG CA
-            const overtimeDays = overtimeHours / 8;  // Chuyển giờ thành ngày
-            let adjustedDays = originalDays + overtimeDays;  // Gộp toàn bộ
-            
-            // Giả sử ngày công chuẩn (có thể lấy từ server hoặc tính)
-            // Tháng 9 có 30 ngày, 4 chủ nhật, 1 ngày lễ -> 30 - 4 - (1*2) = 24 ngày
-            const standardDays = 24; 
-            
-            // Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn
-            if (adjustedDays > standardDays) {
-                adjustedDays = standardDays;
-            }
-            
-            const usedOvertimeDays = adjustedDays - originalDays;
-            const remainingHours = overtimeHours - (usedOvertimeDays * 8);
-            const usedHours = overtimeHours - remainingHours;
-            
-            console.log(`DEBUG: ${originalDays} ngày + ${overtimeHours} giờ (${overtimeDays} ngày) = ${adjustedDays} ngày`);
-            console.log(`DEBUG: Used: ${usedHours} giờ, Remaining: ${remainingHours} giờ`);
-
-            // Hiển thị modal
-            document.getElementById('modalEmployeeName').textContent = employeeName;
-            document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
-            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + overtimeDays.toFixed(1) + ' ngày)';
-            document.getElementById('modalAdjustedDays').textContent = adjustedDays.toFixed(1) + ' ngày';
-            document.getElementById('modalRemainingHours').textContent = remainingHours.toFixed(1) + ' giờ';
-            
-            // Điền form
-            document.getElementById('formEmployeeCode').value = employeeCode;
-            document.getElementById('formPeriod').value = period;
-            document.getElementById('formOriginalDays').value = originalDays;
-            document.getElementById('formOvertimeHours').value = overtimeHours;
-            
-            // Hiển thị modal
-            const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
-            modal.show();
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('adjustment-icon')) {
+        const employeeCode = e.target.getAttribute('data-employee-code');
+        const employeeName = e.target.getAttribute('data-employee-name');
+        const period = e.target.getAttribute('data-period');
+        const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
+        const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
+        const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
+        
+        console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, overtimeHours, currentAbsence});
+        
+        // ✅ TÍNH TOÁN THEO LOGIC MỚI - GỘP VÀ ĐIỀU CHỈNH NGÀY NGHỈ
+        const overtimeDays = overtimeHours / 8;  // Chuyển giờ thành ngày
+        
+        // Tính số ngày có thể bù từ tăng ca
+        const maxCompensationDays = Math.min(overtimeDays, currentAbsence);  // Tối đa bù bằng số ngày nghỉ
+        
+        let adjustedDays = originalDays + maxCompensationDays;  // Ngày công sau gộp
+        let newAbsenceDays = currentAbsence - maxCompensationDays;  // Ngày nghỉ mới
+        
+        // Giả sử ngày công chuẩn
+        const standardDays = 24; 
+        
+        // Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn
+        if (adjustedDays > standardDays) {
+            adjustedDays = standardDays;
+            // Điều chỉnh lại số ngày nghỉ
+            newAbsenceDays = currentAbsence - (standardDays - originalDays);
         }
-    });
+        
+        // Đảm bảo không âm
+        if (newAbsenceDays < 0) newAbsenceDays = 0;
+        
+        const usedOvertimeDays = adjustedDays - originalDays;
+        const remainingHours = overtimeHours - (usedOvertimeDays * 8);
+        const usedHours = overtimeHours - remainingHours;
+        
+        console.log(`DEBUG: ${originalDays} ngày + ${overtimeHours} giờ (${overtimeDays} ngày) = ${adjustedDays} ngày`);
+        console.log(`DEBUG: Ngày nghỉ: ${currentAbsence} -> ${newAbsenceDays}`);
+        console.log(`DEBUG: Used: ${usedHours} giờ, Remaining: ${remainingHours} giờ`);
+
+        // Hiển thị modal
+        document.getElementById('modalEmployeeName').textContent = employeeName;
+        document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
+        document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + overtimeDays.toFixed(1) + ' ngày)';
+        document.getElementById('modalCurrentAbsence').textContent = currentAbsence + ' ngày';
+        document.getElementById('modalAdjustedDays').textContent = adjustedDays.toFixed(1) + ' ngày';
+        document.getElementById('modalNewAbsence').textContent = newAbsenceDays.toFixed(1) + ' ngày';
+        document.getElementById('modalRemainingHours').textContent = remainingHours.toFixed(1) + ' giờ';
+        
+        // Điền form
+        document.getElementById('formEmployeeCode').value = employeeCode;
+        document.getElementById('formPeriod').value = period;
+        document.getElementById('formOriginalDays').value = originalDays;
+        document.getElementById('formOvertimeHours').value = overtimeHours;
+        document.getElementById('formCurrentAbsence').value = currentAbsence;
+        
+        // Hiển thị modal
+        const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
+        modal.show();
+    }
+});
 
     // Xử lý click icon reset (-)
     document.addEventListener('click', function(e) {
