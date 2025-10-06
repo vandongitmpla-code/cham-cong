@@ -1,4 +1,4 @@
-from flask import redirect, url_for, flash, render_template, current_app
+from flask import redirect, url_for, flash, render_template, current_app, request
 import os
 from app.utils.cleaning import clean_attendance_data
 import re
@@ -6,9 +6,8 @@ import calendar
 from datetime import datetime
 from app.models import db
 from . import bp
-from app.models import Holiday, db
-from flask import request
-from app.models import Employee, PayrollRecord, WorkAdjustment, Holiday, db  
+from app.models import Holiday
+from app.models import Employee, PayrollRecord, WorkAdjustment
 
 
 def _parse_holidays_for_month(holidays_config, ref_date):
@@ -208,12 +207,6 @@ def payroll(filename):
 # Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
-    import re
-    import calendar
-    from datetime import datetime
-    from app.models import Employee, PayrollRecord, Holiday, WorkAdjustment  # ✅ THÊM WorkAdjustment
-    from flask import current_app, request
-
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
     file_path = os.path.join(upload_folder, filename)
 
@@ -315,8 +308,6 @@ def import_payroll(filename):
         ngay_cong_chuan, so_chu_nhat = calculate_standard_work_days(year, month, len(holiday_days))
 
         # --- Xử lý từng nhân viên ---
-        records = []
-        adjustments = []  # ✅ TẠO LIST ĐỂ LƯU ADJUSTMENTS
         for _, row in df.iterrows():
             emp_code = str(row.get("Mã", "")).strip()
             emp = Employee.query.filter(
@@ -392,7 +383,7 @@ def import_payroll(filename):
 
             ghi_chu = " - ".join(parts) if parts else "Làm việc đủ ngày"
 
-            # --- Tạo PayrollRecord (CHỈ CÁC TRƯỜNG CỦA PAYROLL) ---
+            # --- Tạo PayrollRecord ---
             record = PayrollRecord(
                 employee_id=emp.id,
                 employee_code=emp.code,
@@ -421,11 +412,14 @@ def import_payroll(filename):
                 phong_ban=getattr(emp, "department", ""),
                 loai_hd=getattr(emp, "contract_type", "")
             )
-            records.append(record)
+            
+            # LƯU RECORD TRƯỚC ĐỂ CÓ ID
+            db.session.add(record)
+            db.session.flush()  # ✅ QUAN TRỌNG: Lấy ID ngay lập tức
 
-            # --- Tạo WorkAdjustment (SAU KHI CÓ RECORD) ---
+            # --- Tạo WorkAdjustment với payroll_record_id đã có ---
             adjustment = WorkAdjustment(
-                payroll_record=record,  # ✅ SỬ DỤNG RELATIONSHIP
+                payroll_record_id=record.id,  # ✅ ĐÃ CÓ ID
                 employee_id=emp.id,
                 period=period,
                 employee_code=emp.code,
@@ -439,14 +433,11 @@ def import_payroll(filename):
                 adjustment_type="overtime_compensation",
                 adjustment_reason=f"Bù {tang_ca_nghi_gio - tang_ca_nghi_con_lai} giờ tăng ca chủ nhật vào ngày công"
             )
-            adjustments.append(adjustment)
+            db.session.add(adjustment)
 
-        # --- Lưu vào DB ---
-        db.session.bulk_save_objects(records)
-        db.session.bulk_save_objects(adjustments)  # ✅ LƯU CẢ ADJUSTMENTS
+        # COMMIT CUỐI CÙNG
         db.session.commit()
-
-        flash(f"Đã import {len(records)} bản ghi payroll và {len(adjustments)} điều chỉnh!", "success")
+        flash("Đã import payroll thành công!", "success")
 
     except Exception as e:
         db.session.rollback()
@@ -539,7 +530,7 @@ def apply_adjustment():
             adjustment.used_overtime_hours = used_hours
             adjustment.adjustment_reason = f"Gộp {used_hours} giờ tăng ca vào ngày công"
         else:
-            # Tạo adjustment mới - SỬ DỤNG payroll_record_id THAY VÌ payroll_record
+            # Tạo adjustment mới
             adjustment = WorkAdjustment(
                 payroll_record_id=payroll_record.id,  
                 employee_id=emp.id,
@@ -574,7 +565,7 @@ def apply_adjustment():
         return redirect(url_for("main.index"))
 
 @bp.route("/reset_adjustment_payroll", methods=["POST"], endpoint="reset_adjustment_payroll")
-def reset_adjustment_payroll():  # ✅ ĐÃ SỬA TÊN HÀM
+def reset_adjustment_payroll():
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
@@ -596,7 +587,7 @@ def reset_adjustment_payroll():  # ✅ ĐÃ SỬA TÊN HÀM
             ).first()
             
             if payroll_record:
-                # Khôi phục dữ liệu gốc
+                # ✅ SỬA: Cập nhật PayrollRecord về giá trị gốc
                 payroll_record.ngay_cong = adjustment.original_work_days
                 payroll_record.tang_ca_nghi = adjustment.original_overtime_hours
                 print(f"Restored: {adjustment.original_work_days} days, {adjustment.original_overtime_hours} hours")
@@ -619,3 +610,4 @@ def reset_adjustment_payroll():  # ✅ ĐÃ SỬA TÊN HÀM
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
+    
