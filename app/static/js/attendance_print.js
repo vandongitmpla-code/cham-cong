@@ -35,22 +35,22 @@ document.addEventListener('click', function(e) {
         
         console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, overtimeHours, currentAbsence});
         
-        // ✅ CÔNG THỨC ĐÚNG: GỘP TOÀN BỘ TĂNG CA NHƯNG KHÔNG VƯỢT CHUẨN
-        const overtimeDays = overtimeHours / 8;  // Chuyển giờ thành ngày
+        // ✅ SỬA: TÍNH TOÁN ĐẦY ĐỦ
+        const overtimeDays = overtimeHours / 8;
         
-        // Giả sử ngày công chuẩn = 26 (có thể lấy từ server hoặc tính)
-        const standardDays = 26;  // Hoặc lấy từ data attribute
+        // Giả sử ngày công chuẩn = 26
+        const standardDays = 26;
         
         // Gộp toàn bộ tăng ca vào ngày công, nhưng không vượt chuẩn
         let adjustedDays = originalDays + overtimeDays;
         if (adjustedDays > standardDays) {
-            adjustedDays = standardDays;  // Giới hạn ở ngày công chuẩn
+            adjustedDays = standardDays;
         }
         
         // Tính số ngày thực tế được gộp
         const actualUsedDays = adjustedDays - originalDays;
         
-        // Ngày nghỉ giữ nguyên (vì không dùng để bù)
+        // Ngày nghỉ giữ nguyên
         let newAbsenceDays = currentAbsence;
         
         // Tính giờ tăng ca thực tế đã dùng
