@@ -104,11 +104,15 @@ class WorkAdjustment(db.Model):
     adjusted_work_days = db.Column(db.Float, default=0)
     remaining_overtime_hours = db.Column(db.Float, default=0)
     used_overtime_hours = db.Column(db.Float, default=0)
+    
+    # ✅ THÊM CÁC TRƯỜNG MỚI NẾU CẦN
+    original_absence_days = db.Column(db.Float, default=0)  # Số ngày nghỉ gốc
+    adjusted_absence_days = db.Column(db.Float, default=0)  # Số ngày nghỉ sau điều chỉnh
+    
     adjustment_type = db.Column(db.String(50), default="overtime_compensation")
     adjustment_reason = db.Column(db.Text)
     calculated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # ✅ QUAN HỆ ĐÚNG - sử dụng backref hoặc relationship
     payroll_record = db.relationship("PayrollRecord", backref="work_adjustments")
 
     def __repr__(self):
