@@ -529,8 +529,6 @@ def apply_adjustment():
                 sunday_count += 1
                 
         ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
-        
-        
         overtime_days = overtime_hours / 8  # Chuyển giờ tăng ca thành ngày
         max_compensation_days = overtime_days  # Cho phép dùng tối đa tăng ca
         adjusted_days = original_days + max_compensation_days  # Ngày công sau gộp
