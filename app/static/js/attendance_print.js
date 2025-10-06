@@ -35,35 +35,31 @@ document.addEventListener('click', function(e) {
         
         console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, overtimeHours, currentAbsence});
         
-        // ✅ TÍNH TOÁN THEO LOGIC MỚI - GỘP VÀ ĐIỀU CHỈNH NGÀY NGHỈ
+        // ✅ LOGIC MỚI: CHO PHÉP TĂNG NGÀY CÔNG VƯỢT CHUẨN
         const overtimeDays = overtimeHours / 8;  // Chuyển giờ thành ngày
         
-        // Tính số ngày có thể bù từ tăng ca
-        const maxCompensationDays = Math.min(overtimeDays, currentAbsence);  // Tối đa bù bằng số ngày nghỉ
+        // CHO PHÉP DÙNG TỐI ĐA TĂNG CA (KHÔNG GIỚI HẠN BẰNG NGÀY NGHỈ)
+        const maxCompensationDays = overtimeDays;
         
         let adjustedDays = originalDays + maxCompensationDays;  // Ngày công sau gộp
-        let newAbsenceDays = currentAbsence - maxCompensationDays;  // Ngày nghỉ mới
         
-        // Giả sử ngày công chuẩn
-        const standardDays = 24; 
+        // Tính ngày nghỉ mới (giảm nếu có ngày nghỉ để bù)
+        const usedDays = adjustedDays - originalDays;
+        let newAbsenceDays = Math.max(0, currentAbsence - usedDays);
         
-        // Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn
-        if (adjustedDays > standardDays) {
-            adjustedDays = standardDays;
-            // Điều chỉnh lại số ngày nghỉ
-            newAbsenceDays = currentAbsence - (standardDays - originalDays);
-        }
+        // Tính giờ tăng ca còn lại
+        let remainingHours = overtimeHours - (usedDays * 8);
         
         // Đảm bảo không âm
+        if (remainingHours < 0) remainingHours = 0;
         if (newAbsenceDays < 0) newAbsenceDays = 0;
         
-        const usedOvertimeDays = adjustedDays - originalDays;
-        const remainingHours = overtimeHours - (usedOvertimeDays * 8);
         const usedHours = overtimeHours - remainingHours;
         
-        console.log(`DEBUG: ${originalDays} ngày + ${overtimeHours} giờ (${overtimeDays} ngày) = ${adjustedDays} ngày`);
-        console.log(`DEBUG: Ngày nghỉ: ${currentAbsence} -> ${newAbsenceDays}`);
-        console.log(`DEBUG: Used: ${usedHours} giờ, Remaining: ${remainingHours} giờ`);
+        console.log(`DEBUG LOGIC MỚI:`);
+        console.log(`- Ngày công: ${originalDays} -> ${adjustedDays.toFixed(1)} (+${usedDays.toFixed(1)})`);
+        console.log(`- Ngày nghỉ: ${currentAbsence} -> ${newAbsenceDays.toFixed(1)} (-${(currentAbsence - newAbsenceDays).toFixed(1)})`);
+        console.log(`- Giờ tăng ca: ${overtimeHours} -> ${remainingHours.toFixed(1)} (đã dùng ${usedHours.toFixed(1)})`);
 
         // Hiển thị modal
         document.getElementById('modalEmployeeName').textContent = employeeName;
