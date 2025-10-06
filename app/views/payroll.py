@@ -530,24 +530,25 @@ def apply_adjustment():
                 
         ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
         
-        # ✅ LOGIC MỚI: Gộp toàn bộ tăng ca chủ nhật vào ngày công và điều chỉnh ngày nghỉ
+        # ✅ LOGIC SỬA: Cho phép tăng ngày công vượt chuẩn khi không có ngày nghỉ
         overtime_days = overtime_hours / 8  # Chuyển giờ tăng ca thành ngày
         
-        # Tính số ngày có thể bù từ tăng ca
-        max_compensation_days = min(overtime_days, current_absence)  # Tối đa bù bằng số ngày nghỉ
+        # Tính số ngày có thể bù từ tăng ca (có thể vượt chuẩn)
+        max_compensation_days = overtime_days  # Cho phép dùng tối đa tăng ca
         
         adjusted_days = original_days + max_compensation_days  # Ngày công sau gộp
-        new_absence_days = current_absence - max_compensation_days  # Ngày nghỉ mới
         
-        # Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn
-        if adjusted_days > ngay_cong_chuan:
-            adjusted_days = ngay_cong_chuan
-            # Điều chỉnh lại số ngày nghỉ nếu cần
-            new_absence_days = current_absence - (ngay_cong_chuan - original_days)
+        # Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn (TUỲ CHỌN)
+        # Bỏ comment dòng dưới nếu muốn giới hạn ngày công tối đa = ngày công chuẩn
+        # if adjusted_days > ngay_cong_chuan:
+        #     adjusted_days = ngay_cong_chuan
+        
+        # Tính ngày nghỉ mới (giảm nếu có ngày nghỉ để bù)
+        used_days = adjusted_days - original_days
+        new_absence_days = max(0, current_absence - used_days)
         
         # Tính giờ tăng ca còn lại
-        used_overtime_days = adjusted_days - original_days
-        remaining_hours = overtime_hours - (used_overtime_days * 8)
+        remaining_hours = overtime_hours - (used_days * 8)
         
         # Đảm bảo không âm
         if remaining_hours < 0:
@@ -574,7 +575,7 @@ def apply_adjustment():
             adjustment.used_overtime_hours = used_hours
             adjustment.adjustment_reason = f"Gộp {used_hours} giờ tăng ca vào ngày công, giảm {current_absence - new_absence_days} ngày nghỉ"
         else:
-            # Tạo adjustment mới - KHÔNG dùng original_absence_days và adjusted_absence_days
+            # Tạo adjustment mới
             adjustment = WorkAdjustment(
                 payroll_record_id=payroll_record.id,  
                 employee_id=emp.id,
@@ -594,6 +595,7 @@ def apply_adjustment():
         
         # ✅ CẬP NHẬT PayrollRecord với số ngày nghỉ mới
         payroll_record.ngay_vang = new_absence_days
+        payroll_record.ngay_cong = adjusted_days  # ✅ QUAN TRỌNG: Cập nhật ngày công mới
         
         db.session.commit()
         
@@ -607,7 +609,6 @@ def apply_adjustment():
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
-    
 
 
 
