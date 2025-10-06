@@ -51,7 +51,26 @@
                                 </div>
                             </div>
                         </div>
-    
+    <!-- HIỂN THỊ THÁNG BẢO HIỂM -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="editInsuranceLabel">
+                                {% if emp.insurance_start_month %}
+                                <div class="insurance-display vietnamese">
+                                    🏢 Bắt đầu đóng bảo hiểm từ: 
+                                    <strong>
+                                        {% set month = emp.insurance_start_month[5:7] %}
+                                        {% set year = emp.insurance_start_month[:4] %}
+                                        {% set month_names = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'] %}
+                                        {{ month_names[month|int - 1] }} năm {{ year }}
+                                    </strong>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <input type="hidden" name="insurance_start_month" id="editInsuranceMonth" value="{{ emp.insurance_start_month or '' }}">
+                        </div>
+                    </div>
+                </div>
 
     <button type="submit" class="btn btn-primary">Cập nhật</button>
     <a href="{{ url_for('main.employees') }}" class="btn btn-secondary">Hủy</a>
