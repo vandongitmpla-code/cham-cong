@@ -609,6 +609,10 @@ def apply_adjustment():
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
+    
+
+
+    
 @bp.route("/reset_adjustment_payroll", methods=["POST"], endpoint="reset_adjustment_payroll")
 def reset_adjustment_payroll():
     try:
