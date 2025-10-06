@@ -26,8 +26,35 @@
       <input type="text" name="contract_type" class="form-control">
     </div>
 
+    <!-- THÊM TRƯỜNG MỚI: THÁNG BẮT ĐẦU LÀM -->
+    <div class="mb-3">
+      <label class="form-label">Tháng bắt đầu làm</label>
+      <input type="month" name="start_month" id="startMonth" class="form-control" onchange="updateInsuranceMonth()">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" id="insuranceLabel">Bắt đầu đóng bảo hiểm từ tháng: </label>
+      <input type="hidden" name="insurance_start_month" id="insuranceMonth">
+    </div>
+
     <button type="submit" class="btn btn-primary">Lưu</button>
     <a href="{{ url_for('main.employees') }}" class="btn btn-secondary">Hủy</a>
   </form>
 </div>
+
+<script>
+function updateInsuranceMonth() {
+    const startMonth = document.getElementById('startMonth').value;
+    if (startMonth) {
+        const [year, month] = startMonth.split('-');
+        const insuranceMonth = `${month}/${year}`;
+        document.getElementById('insuranceLabel').textContent = 
+            `Bắt đầu đóng bảo hiểm từ tháng: ${insuranceMonth}`;
+        document.getElementById('insuranceMonth').value = startMonth;
+    } else {
+        document.getElementById('insuranceLabel').textContent = 'Bắt đầu đóng bảo hiểm từ tháng: ';
+        document.getElementById('insuranceMonth').value = '';
+    }
+}
+</script>
 {% endblock %}
