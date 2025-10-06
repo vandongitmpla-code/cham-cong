@@ -536,7 +536,7 @@ def apply_adjustment():
         # Gộp toàn bộ tăng ca vào ngày công, nhưng không vượt chuẩn
     adjusted_days = original_days + overtime_days
     if adjusted_days > ngay_cong_chuan:
-            adjusted_days = ngay_cong_chuan  # Giới hạn ở ngày công chuẩn
+        adjusted_days = ngay_cong_chuan  # Giới hạn ở ngày công chuẩn
         
         # Tính số ngày thực tế được gộp
         actual_used_days = adjusted_days - original_days
