@@ -45,24 +45,26 @@ def calculate_standard_work_days(year, month):
     standard_days = total_days - sunday_count - (holidays_count * 2)
     return standard_days
 
+# ✅ SỬA: CẬP NHẬT CÔNG THỨC TÍNH ĐIỀU CHỈNH THEO LOGIC MỚI
 def calculate_adjustment_details(original_days, standard_days, overtime_hours):
     """
-    Tính toán chi tiết điều chỉnh
+    CÔNG THỨC MỚI: Gộp toàn bộ tăng ca vào ngày công, nhưng không vượt chuẩn
     """
-    ngay_thieu = standard_days - original_days
-    if ngay_thieu <= 0:
-        return original_days, overtime_hours, 0
+    overtime_days = overtime_hours / 8
     
-    gio_can_bu = ngay_thieu * 8
-    if overtime_hours >= gio_can_bu:
+    # Gộp toàn bộ tăng ca vào ngày công
+    adjusted_days = original_days + overtime_days
+    
+    # Không được vượt quá ngày công chuẩn
+    if adjusted_days > standard_days:
         adjusted_days = standard_days
-        remaining_hours = overtime_hours - gio_can_bu
-        used_hours = gio_can_bu
-    else:
-        ngay_duoc_bu = overtime_hours // 8
-        adjusted_days = original_days + ngay_duoc_bu
-        remaining_hours = overtime_hours % 8
-        used_hours = overtime_hours - remaining_hours
+    
+    # Tính số ngày thực tế được gộp
+    actual_used_days = adjusted_days - original_days
+    
+    # Tính giờ tăng ca thực tế đã dùng
+    used_hours = actual_used_days * 8
+    remaining_hours = overtime_hours - used_hours
     
     return adjusted_days, remaining_hours, used_hours
 
@@ -76,6 +78,10 @@ def create_attendance_rows(records, period):
     rows = []
     stt = 1
 
+    # ✅ THÊM: TÍNH NGÀY CÔNG CHUẨN CHO PERIOD ĐỂ TRUYỀN CHO FRONTEND
+    year, month = map(int, period.split('-'))
+    standard_days = calculate_standard_work_days(year, month)
+
     for rec in records:
         # Kiểm tra xem có điều chỉnh không
         adjustment = WorkAdjustment.query.filter_by(
@@ -83,7 +89,6 @@ def create_attendance_rows(records, period):
             period=period
         ).first()
         
-        # THEO LOGIC MỚI: Cả hai cột đều từ payroll_record.ngay_cong
         if adjustment:
             # Đã điều chỉnh: HIỂN THỊ adjusted_work_days cho CẢ HAI CỘT
             ngay_cong_quy_dinh = adjustment.adjusted_work_days  # Cột quy định
@@ -91,6 +96,8 @@ def create_attendance_rows(records, period):
             tang_ca_nghi_hien_thi = adjustment.remaining_overtime_hours
             adjustment_info = adjustment.used_overtime_hours
             original_days = adjustment.original_work_days
+            # ✅ THÊM: Lấy ngày nghỉ từ adjustment nếu có
+            ngay_vang_hien_thi = adjustment.adjusted_absence_days if hasattr(adjustment, 'adjusted_absence_days') else rec.ngay_vang
         else:
             # Chưa điều chỉnh: HIỂN THỊ ngay_cong cho CẢ HAI CỘT
             ngay_cong_quy_dinh = rec.ngay_cong  # Cột quy định  
@@ -98,6 +105,7 @@ def create_attendance_rows(records, period):
             tang_ca_nghi_hien_thi = rec.tang_ca_nghi
             adjustment_info = 0
             original_days = rec.ngay_cong
+            ngay_vang_hien_thi = rec.ngay_vang
 
         # Kiểm tra có thể áp dụng điều chỉnh không
         has_adjustment_option = (
@@ -108,7 +116,7 @@ def create_attendance_rows(records, period):
         rows.append([
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
             ngay_cong_quy_dinh,   # ✅ Cột "Số ngày/giờ làm việc quy định trong tháng"
-            "", rec.ngay_vang, 
+            "", ngay_vang_hien_thi,  # ✅ SỬA: Dùng ngày vắng đúng (từ adjustment nếu có)
             ngay_cong_thuc_te,    # ✅ Cột "Số ngày/giờ làm việc thực tế trong tháng"  
             tang_ca_nghi_hien_thi,
             rec.le_tet_gio, rec.tang_ca_tuan, rec.ghi_chu or "", "", "", rec.to,
@@ -116,7 +124,8 @@ def create_attendance_rows(records, period):
                 'has_adjustment_option': has_adjustment_option,
                 'adjustment_info': adjustment_info,
                 'original_days': original_days,
-                'current_days': rec.ngay_cong  # Ngày công hiện tại trong payroll_record
+                'current_days': rec.ngay_cong,  # Ngày công hiện tại trong payroll_record
+                'standard_days': standard_days  # ✅ THÊM: Ngày công chuẩn để frontend tính toán
             }
         ])
         stt += 1
