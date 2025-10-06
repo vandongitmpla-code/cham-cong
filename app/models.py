@@ -5,19 +5,24 @@ from app.extensions import db
 from app.extensions import db
 from datetime import datetime
 
+# app/models.py - Cập nhật class Employee
 class Employee(db.Model):
     __tablename__ = "employees"
 
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(50), unique=True, nullable=False)    # Mã nhân viên
-    name = db.Column(db.String(100), nullable=False)                # Họ và tên
-    team = db.Column(db.String(100))                                # Tổ
-    department = db.Column(db.String(100))                          # Phòng ban
-    contract_type = db.Column(db.String(50))                        # Loại HĐ
-    salary_base = db.Column(db.Float, default=0)                    # Lương cơ bản
-    att_code = db.Column(db.String(50), unique=True)                # Mã chấm công (máy chấm công)
+    code = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    team = db.Column(db.String(100))
+    department = db.Column(db.String(100))
+    contract_type = db.Column(db.String(50))
+    salary_base = db.Column(db.Float, default=0)
+    att_code = db.Column(db.String(50), unique=True)
+    
+    # THÊM TRƯỜNG MỚI
+    start_month = db.Column(db.String(7))  # Format: YYYY-MM (ví dụ: 2025-07)
+    insurance_start_month = db.Column(db.String(7))  # Format: YYYY-MM
 
-    # Quan hệ (chỉ để sẵn, nếu chưa có bảng AttendanceLog / Payroll thì comment lại)
+    # Quan hệ
     attendances = db.relationship("AttendanceLog", backref="employee", lazy=True)
     payrolls = db.relationship("Payroll", backref="employee", lazy=True)
 
