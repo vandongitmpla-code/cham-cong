@@ -531,7 +531,7 @@ def apply_adjustment():
         ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
         
         # ✅ LOGIC MỚI: TÁCH BIỆT DỮ LIỆU GỐC VÀ ĐIỀU CHỈNH
-       overtime_days = overtime_hours / 8
+    overtime_days = overtime_hours / 8
         
         # Gộp toàn bộ tăng ca vào ngày công, nhưng không vượt chuẩn
     adjusted_days = original_days + overtime_days
