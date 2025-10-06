@@ -35,17 +35,32 @@ document.addEventListener("DOMContentLoaded", function(){
             
             console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, actualDays, overtimeHours});
             
-            // ✅ TÍNH TOÁN THEO LOGIC MỚI - ĐƠN GIẢN
-            const adjustedDays = originalDays + Math.floor(overtimeHours / 8);
-            const remainingHours = overtimeHours % 8;
+            // ✅ TÍNH TOÁN THEO LOGIC MỚI - GỘP TOÀN BỘ TĂNG CA
+            const overtimeDays = overtimeHours / 8;  // Chuyển giờ thành ngày
+            let adjustedDays = originalDays + overtimeDays;  // Gộp toàn bộ
+            
+            // Giả sử ngày công chuẩn (có thể lấy từ server hoặc tính)
+            // Tháng 9 có 30 ngày, 4 chủ nhật, 1 ngày lễ -> 30 - 4 - (1*2) = 24 ngày
+            const standardDays = 24; 
+            
+            // Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn
+            if (adjustedDays > standardDays) {
+                adjustedDays = standardDays;
+            }
+            
+            const usedOvertimeDays = adjustedDays - originalDays;
+            const remainingHours = overtimeHours - (usedOvertimeDays * 8);
             const usedHours = overtimeHours - remainingHours;
             
+            console.log(`DEBUG: ${originalDays} ngày + ${overtimeHours} giờ (${overtimeDays} ngày) = ${adjustedDays} ngày`);
+            console.log(`DEBUG: Used: ${usedHours} giờ, Remaining: ${remainingHours} giờ`);
+
             // Hiển thị modal
             document.getElementById('modalEmployeeName').textContent = employeeName;
-            document.getElementById('modalCurrentDays').textContent = actualDays + ' ngày';
-            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ';
-            document.getElementById('modalAdjustedDays').textContent = adjustedDays + ' ngày'; // ✅ CẢ HAI CỘT SẼ HIỂN THỊ GIÁ TRỊ NÀY
-            document.getElementById('modalRemainingHours').textContent = remainingHours + ' giờ';
+            document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
+            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + overtimeDays.toFixed(1) + ' ngày)';
+            document.getElementById('modalAdjustedDays').textContent = adjustedDays.toFixed(1) + ' ngày';
+            document.getElementById('modalRemainingHours').textContent = remainingHours.toFixed(1) + ' giờ';
             
             // Điền form
             document.getElementById('formEmployeeCode').value = employeeCode;
