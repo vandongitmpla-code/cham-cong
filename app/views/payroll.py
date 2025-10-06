@@ -492,8 +492,8 @@ def apply_adjustment():
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
-        original_days = float(request.form.get("original_days"))
-        overtime_hours = float(request.form.get("overtime_hours"))
+        original_days = float(request.form.get("original_days"))  # Ngày công hiện tại
+        overtime_hours = float(request.form.get("overtime_hours"))  # Giờ tăng ca CN
         filename = request.form.get("filename") or request.args.get("filename")
         
         # Tìm employee và payroll record
@@ -511,12 +511,46 @@ def apply_adjustment():
             flash("Không tìm thấy bản ghi payroll!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
-        # Tính toán điều chỉnh - THEO LOGIC MỚI
-        # Ngày công sau điều chỉnh = ngày công hiện tại + (giờ tăng ca / 8)
-        adjusted_days = original_days + (overtime_hours // 8)
-        remaining_hours = overtime_hours % 8
+        # ✅ TÍNH TOÁN LẠI THEO LOGIC MỚI
+        year, month = map(int, period.split('-'))
+        
+        # Lấy số ngày lễ để tính ngày công chuẩn
+        holidays = Holiday.query.filter(
+            db.extract("year", Holiday.date) == year,
+            db.extract("month", Holiday.date) == month
+        ).all()
+        
+        # Tính ngày công chuẩn
+        total_days = calendar.monthrange(year, month)[1]
+        sunday_count = 0
+        for day in range(1, total_days + 1):
+            if datetime(year, month, day).weekday() == 6:
+                sunday_count += 1
+                
+        ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
+        
+        # ✅ LOGIC MỚI: Gộp toàn bộ tăng ca chủ nhật vào ngày công
+        overtime_days = overtime_hours / 8  # Chuyển giờ tăng ca thành ngày
+        adjusted_days = original_days + overtime_days  # Ngày công sau gộp
+        
+        # Nếu vượt quá ngày công chuẩn thì chỉ lấy đến chuẩn
+        if adjusted_days > ngay_cong_chuan:
+            adjusted_days = ngay_cong_chuan
+        
+        # Tính giờ tăng ca còn lại
+        used_overtime_days = adjusted_days - original_days
+        remaining_hours = overtime_hours - (used_overtime_days * 8)
+        
+        # Đảm bảo không âm
+        if remaining_hours < 0:
+            remaining_hours = 0
+            
         used_hours = overtime_hours - remaining_hours
         
+        print(f"DEBUG: original_days={original_days}, overtime_hours={overtime_hours}")
+        print(f"DEBUG: ngay_cong_chuan={ngay_cong_chuan}, adjusted_days={adjusted_days}")
+        print(f"DEBUG: used_hours={used_hours}, remaining_hours={remaining_hours}")
+
         # Tạo hoặc cập nhật WorkAdjustment
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=employee_code,
@@ -538,7 +572,7 @@ def apply_adjustment():
                 employee_code=employee_code,
                 employee_name=emp.name,
                 original_work_days=original_days,
-                standard_work_days=original_days,  # Không dùng standard_days nữa
+                standard_work_days=ngay_cong_chuan,
                 original_overtime_hours=overtime_hours,
                 adjusted_work_days=adjusted_days,      # ✅ Giá trị mới cho CẢ HAI CỘT
                 remaining_overtime_hours=remaining_hours,
@@ -547,9 +581,6 @@ def apply_adjustment():
                 adjustment_reason=f"Gộp {used_hours} giờ tăng ca vào ngày công"
             )
             db.session.add(adjustment)
-        
-        # KHÔNG cập nhật PayrollRecord - giữ nguyên dữ liệu gốc
-        # payroll_record.ngay_cong = adjusted_days  # ❌ KHÔNG SỬA PAYROLL_RECORD
         
         db.session.commit()
         
@@ -563,7 +594,6 @@ def apply_adjustment():
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
-
 @bp.route("/reset_adjustment_payroll", methods=["POST"], endpoint="reset_adjustment_payroll")
 def reset_adjustment_payroll():
     try:
