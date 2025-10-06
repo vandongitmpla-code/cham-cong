@@ -583,9 +583,7 @@ def apply_adjustment():
             )
             db.session.add(adjustment)
         
-        # ✅ KHÔNG CẦN CẬP NHẬT PAYROLL_RECORD NỮA
-        # Dữ liệu gốc trong payroll_record giữ nguyên
-        # Chỉ hiển thị dữ liệu từ work_adjustment khi có điều chỉnh
+       
         
         db.session.commit()
         
