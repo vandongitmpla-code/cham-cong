@@ -538,7 +538,6 @@ def apply_adjustment():
             remaining_hours = 0
         if new_absence_days < 0:
             new_absence_days = 0
-            
         used_hours = overtime_hours - remaining_hours
         
         print(f"DEBUG: original_days={original_days}, overtime_hours={overtime_hours}, current_absence={current_absence}")
