@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function(){
     tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
 
     // Xử lý click icon điều chỉnh (+)
-// Trong static/js/attendance_print.js - sửa phần tính toán
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('adjustment-icon')) {
         const employeeCode = e.target.getAttribute('data-employee-code');
