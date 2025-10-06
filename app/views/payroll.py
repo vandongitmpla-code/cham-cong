@@ -599,35 +599,21 @@ def apply_adjustment():
         return redirect(url_for("main.index"))
 
 
-@bp.route("/reset_adjustment_payroll", methods=["POST"], endpoint="reset_adjustment_payroll")
+@bp.route("/reset_adjustment_payroll", methods=["POST"])
 def reset_adjustment_payroll():
     try:
         employee_code = request.form.get("employee_code")
         period = request.form.get("period")
         filename = request.form.get("filename") or request.args.get("filename")
         
-        print(f"Resetting adjustment for: {employee_code}, period: {period}")
-        
-        # Tìm adjustment
+        # Tìm và xóa adjustment
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=employee_code,
             period=period
         ).first()
         
         if adjustment:
-            # Tìm payroll record
-            payroll_record = PayrollRecord.query.filter_by(
-                employee_code=employee_code,
-                period=period
-            ).first()
-            
-            if payroll_record:
-                # ✅ SỬA: Cập nhật PayrollRecord về giá trị gốc
-                payroll_record.ngay_cong = adjustment.original_work_days
-                payroll_record.tang_ca_nghi = adjustment.original_overtime_hours
-                print(f"Restored: {adjustment.original_work_days} days, {adjustment.original_overtime_hours} hours")
-            
-            # Xóa adjustment
+            # ✅ KHÔNG CẦN KHÔI PHỤC PAYROLL_RECORD VÌ DỮ LIỆU GỐC VẪN GIỮ NGUYÊN
             db.session.delete(adjustment)
             db.session.commit()
             
@@ -637,12 +623,9 @@ def reset_adjustment_payroll():
             
     except Exception as e:
         db.session.rollback()
-        print(f"Reset error: {e}")
         flash(f"❌ Lỗi khi khôi phục: {e}", "danger")
     
-    # Xử lý filename an toàn
     if filename:
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
-    
