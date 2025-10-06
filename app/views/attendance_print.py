@@ -34,7 +34,18 @@ def attendance_print(filename):
             flash("Không xác định được kỳ công từ file!", "danger")
             return redirect(url_for("main.index"))
 
-        period = period_str.strip()
+        # ✅ SỬA: CHUYỂN ĐỔI period_str thành định dạng YYYY-MM
+        period = ""
+        if "~" in period_str:
+            # Format: "YYYY-MM-DD ~ YYYY-MM-DD" -> chuyển thành "YYYY-MM"
+            start_s = period_str.split("~")[0].strip()
+            start_date = datetime.strptime(start_s, "%Y-%m-%d")
+            period = start_date.strftime("%Y-%m")
+        else:
+            # Format: "YYYY-MM" -> giữ nguyên
+            period = period_str
+
+        print(f"DEBUG: Period from file: '{period_str}' -> '{period}'")  # Debug
 
         # ---- Lấy danh sách PayrollRecord ----
         records = (
@@ -44,9 +55,11 @@ def attendance_print(filename):
             .all()
         )
 
+        print(f"DEBUG: Found {len(records)} records for period: {period}")  # Debug
+
         if not records:
-            flash("Không tìm thấy dữ liệu Payroll cho kỳ công này!", "warning")
-            return redirect(url_for("main.index"))
+            flash(f"Không tìm thấy dữ liệu Payroll cho kỳ công {period}! Hãy import payroll trước.", "warning")
+            return redirect(url_for("main.payroll", filename=filename))
 
         # ---- Tạo danh sách weekdays và ngày ----
         start_date = datetime.strptime(period + "-01", "%Y-%m-%d")
