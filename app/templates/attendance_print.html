@@ -69,7 +69,7 @@
                   data-actual-days="{{ cell }}"
                   data-overtime-hours="{{ row[9] }}"
                   data-current-absence="{{ row[7] }}">  {# ✅ Thêm ngày nghỉ hiện tại #}
-                   data-standard-days="{{ row[-1].standard_days or 26 }}">
+                  data-standard-days="{{ row[-1].standard_days or 26 }}">
                 </i>
                 {% elif row[-1].adjustment_info > 0 %}
                 <!-- Đã điều chỉnh - Hiện nút - -->
