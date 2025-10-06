@@ -26,20 +26,27 @@
       <input type="text" name="contract_type" class="form-control">
     </div>
 
-    <!-- THÊM TRƯỜNG MỚI: THÁNG BẮT ĐẦU LÀM -->
-    <div class="mb-3">
-      <label class="form-label">Tháng bắt đầu làm</label>
-      <input type="month" name="start_month" id="startMonth" class="form-control" onchange="updateInsuranceMonth()">
+    <!-- TRƯỜNG CHỌN THÁNG MỚI -->
+    <div class="mb-4">
+        <label class="form-label">📅 Tháng bắt đầu làm</label>
+        <input type="month" name="start_month" id="startMonth" 
+               class="form-control form-control-lg" 
+               onchange="updateInsuranceMonth()"
+               required>
+        <div class="form-text">Chọn tháng và năm nhân viên bắt đầu làm việc</div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label" id="insuranceLabel">Bắt đầu đóng bảo hiểm từ tháng: </label>
-      <input type="hidden" name="insurance_start_month" id="insuranceMonth">
+    <div class="mb-4">
+        <div id="insuranceLabel">
+            <!-- Hiển thị thông báo bảo hiểm sẽ xuất hiện ở đây -->
+        </div>
+        <input type="hidden" name="insurance_start_month" id="insuranceMonth">
     </div>
 
-    <button type="submit" class="btn btn-primary">Lưu</button>
-    <a href="{{ url_for('main.employees') }}" class="btn btn-secondary">Hủy</a>
-  </form>
+    <button type="submit" class="btn btn-primary btn-lg w-100">
+        <i class="bi bi-check-circle"></i> Lưu thông tin
+    </button>
+</form>
 </div>
 
 <script>
