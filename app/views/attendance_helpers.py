@@ -48,7 +48,7 @@ def calculate_standard_work_days(year, month):
 # CẬP NHẬT CÔNG THỨC TÍNH ĐIỀU CHỈNH THEO LOGIC MỚI
 def calculate_adjustment_details(original_days, standard_days, overtime_hours, current_absence):
     """
-    Tính toán chi tiết điều chỉnh - KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+     KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
     """
     overtime_days = overtime_hours / 8
     
