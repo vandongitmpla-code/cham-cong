@@ -102,7 +102,6 @@ class WorkAdjustment(db.Model):
     adjusted_absence_days = db.Column(db.Float, default=0)
     remaining_overtime_hours = db.Column(db.Float, default=0)
     used_overtime_hours = db.Column(db.Float, default=0)
-    
     ngay_vang_ban_dau = db.Column(db.Float, default=0)      # Tham chiếu từ payroll_record.ngay_vang
     ngay_vang_sau_gop = db.Column(db.Float, default=0)      # Ngày vắng sau khi gộp
     
