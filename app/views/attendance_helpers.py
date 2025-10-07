@@ -88,8 +88,6 @@ def create_attendance_rows(records, period):
     
     rows = []
     stt = 1
-
-
     for rec in records:
         # ✅ LẤY TRỰC TIẾP TỪ PAYROLLRECORD
         standard_days = rec.standard_work_days
