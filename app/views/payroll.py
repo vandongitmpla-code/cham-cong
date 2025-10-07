@@ -635,7 +635,16 @@ def reset_adjustment_payroll():
         ).first()
         
         if adjustment:
-            # ✅ KHÔNG CẦN KHÔI PHỤC PAYROLL_RECORD VÌ DỮ LIỆU GỐC VẪN GIỮ NGUYÊN
+            # ✅ KHÔI PHỤC ngay_cong VỀ GIÁ TRỊ GỐC
+            payroll_record = PayrollRecord.query.filter_by(
+                employee_code=employee_code,
+                period=period
+            ).first()
+            
+            if payroll_record:
+                payroll_record.ngay_cong = adjustment.original_work_days
+                payroll_record.tang_ca_nghi = adjustment.original_overtime_hours
+            
             db.session.delete(adjustment)
             db.session.commit()
             
@@ -651,4 +660,3 @@ def reset_adjustment_payroll():
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
-
