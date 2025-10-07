@@ -64,6 +64,7 @@ class PayrollRecord(db.Model):
     employee_name = db.Column(db.String(100))
     period = db.Column(db.String(7), nullable=False)
     ngay_cong = db.Column(db.Float, default=0)
+    
     ngay_vang = db.Column(db.Float, default=0)
     chu_nhat = db.Column(db.Float, default=0)
     le_tet = db.Column(db.Float, default=0)
