@@ -81,15 +81,16 @@ def calculate_adjustment_details(original_days, standard_days, overtime_hours, c
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template attendance_print - LẤY STANDARD_DAYS TỪ DATABASE
+    Tạo dữ liệu rows cho template attendance_print - SỬA LỖI GỘP SAI CỘT
     """
     from datetime import datetime
     from app.models import WorkAdjustment
     
     rows = []
     stt = 1
+
     for rec in records:
-        # ✅ LẤY TRỰC TIẾP TỪ PAYROLLRECORD
+        # Lấy standard_days từ database
         standard_days = rec.standard_work_days
 
         # Kiểm tra xem có điều chỉnh không
@@ -99,9 +100,9 @@ def create_attendance_rows(records, period):
         ).first()
         
         if adjustment:
-            # ... code hiện tại
-            ngay_cong_quy_dinh = adjustment.adjusted_work_days
-            ngay_cong_thuc_te = adjustment.adjusted_work_days
+            # ✅ SỬA: CHỈ ÁP DỤNG ĐIỀU CHỈNH CHO CỘT "THỰC TẾ"
+            ngay_cong_quy_dinh = standard_days           # Cột quy định = NGÀY CÔNG CHUẨN
+            ngay_cong_thuc_te = adjustment.adjusted_work_days   # Cột thực tế = ĐÃ ĐIỀU CHỈNH
             ngay_vang_hien_thi = adjustment.ngay_vang_sau_gop
             tang_ca_nghi_hien_thi = adjustment.remaining_overtime_hours
             adjustment_info = adjustment.used_overtime_hours
@@ -109,9 +110,9 @@ def create_attendance_rows(records, period):
             ngay_vang_ban_dau = adjustment.ngay_vang_ban_dau
             has_adjustment = True
         else:
-            # ... code hiện tại
-            ngay_cong_quy_dinh = rec.ngay_cong
-            ngay_cong_thuc_te = rec.ngay_cong
+            # ✅ CHƯA ĐIỀU CHỈNH: CẢ HAI CỘT BẰNG NHAU
+            ngay_cong_quy_dinh = standard_days           # Cột quy định = NGÀY CÔNG CHUẨN
+            ngay_cong_thuc_te = rec.ngay_cong            # Cột thực tế = NGÀY CÔNG THỰC TẾ
             ngay_vang_hien_thi = rec.ngay_vang
             tang_ca_nghi_hien_thi = rec.tang_ca_nghi
             adjustment_info = 0
@@ -119,16 +120,16 @@ def create_attendance_rows(records, period):
             ngay_vang_ban_dau = rec.ngay_vang
             has_adjustment = False
 
-        # ✅ LUÔN CHO PHÉP ĐIỀU CHỈNH NẾU CÓ GIỜ TĂNG CA
+        # LUÔN CHO PHÉP ĐIỀU CHỈNH NẾU CÓ GIỜ TĂNG CA
         has_overtime = rec.tang_ca_nghi > 0
 
         rows.append([
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
-            ngay_cong_quy_dinh,
+            ngay_cong_quy_dinh,   # "Số ngày/giờ làm việc quy định trong tháng" = STANDARD
             "", 
-            ngay_vang_hien_thi,
-            ngay_cong_thuc_te,
-            tang_ca_nghi_hien_thi,
+            ngay_vang_hien_thi,   # "Số ngày nghỉ không lương"
+            ngay_cong_thuc_te,    # "Số ngày/giờ làm việc thực tế trong tháng" = ĐIỀU CHỈNH/GỐC
+            tang_ca_nghi_hien_thi, # "Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)"
             rec.le_tet_gio, 
             rec.tang_ca_tuan, 
             rec.ghi_chu or "", 
@@ -141,7 +142,7 @@ def create_attendance_rows(records, period):
                 'adjustment_info': adjustment_info,
                 'original_days': original_days,
                 'current_days': rec.ngay_cong,
-                'standard_days': standard_days,  # ✅ Lấy từ database
+                'standard_days': standard_days,
                 'ngay_vang_ban_dau': ngay_vang_ban_dau,
                 'ngay_vang_sau_gop': ngay_vang_hien_thi
             }
