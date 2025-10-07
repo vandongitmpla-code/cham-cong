@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     'Không thể gộp tăng ca'
                 );
                 return;
-            }
+                }
             
             // ✅ CÔNG THỨC MỚI: CHỈ GỘP VÀO NGÀY CÔNG, KHÔNG BÙ NGÀY NGHỈ
             const overtimeDays = overtimeHours / 8;
@@ -117,9 +117,9 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    // ✅ SỬA LỖI: Xử lý click icon reset (-) - DÙNG 'reset-icon'
+    // Xử lý click icon reset (-)
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('reset-icon')) {
+        if (e.target.classList.contains('adjustment-icon')) {
             const employeeCode = e.target.getAttribute('data-employee-code');
             const employeeName = e.target.getAttribute('data-employee-name');
             const period = e.target.getAttribute('data-period');
