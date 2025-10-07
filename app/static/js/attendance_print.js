@@ -37,31 +37,31 @@ document.addEventListener("DOMContentLoaded", function(){
             console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, overtimeHours, currentAbsence, standardDays});
             
             // ✅ CÔNG THỨC MỚI: GỘP TĂNG CA KHÔNG VƯỢT CHUẨN
-const overtimeDays = overtimeHours / 8;
+                const overtimeDays = overtimeHours / 8;
 
-// 1. Gộp toàn bộ tăng ca vào ngày công
-let adjustedDays = originalDays + overtimeDays;
+                // 1. Gộp toàn bộ tăng ca vào ngày công
+                let adjustedDays = originalDays + overtimeDays;
 
-// ✅ QUAN TRỌNG: KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
-if (adjustedDays > standardDays) {
-    adjustedDays = standardDays;
-}
+                // ✅ QUAN TRỌNG: KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
+                if (adjustedDays > standardDays) {
+                    adjustedDays = standardDays;
+                }
 
-// 2. Dùng tăng ca để bù ngày nghỉ (nếu có) - CŨNG KHÔNG VƯỢT CHUẨN
-let newAbsenceDays = currentAbsence;
-let remainingHours = overtimeHours;
+                // 2. Dùng tăng ca để bù ngày nghỉ (nếu có) - CŨNG KHÔNG VƯỢT CHUẨN
+                let newAbsenceDays = currentAbsence;
+                let remainingHours = overtimeHours;
 
-if (currentAbsence > 0) {
-    // Số ngày có thể bù từ tăng ca (KHÔNG VƯỢT CHUẨN)
-    const maxPossibleAdjustment = standardDays - originalDays; // Số ngày còn thiếu đến chuẩn
-    const maxCompensationDays = Math.min(overtimeDays, currentAbsence, maxPossibleAdjustment);
-    
-    newAbsenceDays = currentAbsence - maxCompensationDays;
-    remainingHours = overtimeHours - (maxCompensationDays * 8);
-}
+                if (currentAbsence > 0) {
+                    // Số ngày có thể bù từ tăng ca (KHÔNG VƯỢT CHUẨN)
+                    const maxPossibleAdjustment = standardDays - originalDays; // Số ngày còn thiếu đến chuẩn
+                    const maxCompensationDays = Math.min(overtimeDays, currentAbsence, maxPossibleAdjustment);
+                    
+                    newAbsenceDays = currentAbsence - maxCompensationDays;
+                    remainingHours = overtimeHours - (maxCompensationDays * 8);
+                }
 
-const usedHours = overtimeHours - remainingHours;
-            
+                const usedHours = overtimeHours - remainingHours;
+                            
             console.log(`DEBUG CÔNG THỨC MỚI:`);
             console.log(`- Ngày công ban đầu: ${originalDays} ngày`);
             console.log(`- Ngày CN đã làm: ${overtimeDays.toFixed(1)} ngày (${overtimeHours} giờ)`);
