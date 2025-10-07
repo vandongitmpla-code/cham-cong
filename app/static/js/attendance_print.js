@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 // 1. Gộp toàn bộ tăng ca vào ngày công
                 let adjustedDays = originalDays + overtimeDays;
 
-                // ✅ QUAN TRỌNG: KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
+                // KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
                 if (adjustedDays > standardDays) {
                     adjustedDays = standardDays;
                 }
