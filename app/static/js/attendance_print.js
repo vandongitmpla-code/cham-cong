@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 'Không thể gộp tăng ca'
             );
             return;
-             }
+            }
             
             // ✅ CÔNG THỨC MỚI: CHỈ GỘP VÀO NGÀY CÔNG, KHÔNG BÙ NGÀY NGHỈ
             const overtimeDays = overtimeHours / 8;
