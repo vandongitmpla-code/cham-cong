@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function(){
             // ✅ CÔNG THỨC MỚI: GỘP TĂNG CA KHÔNG VƯỢT CHUẨN
                 const overtimeDays = overtimeHours / 8;
 
-                // 1. Gộp toàn bộ tăng ca vào ngày công
+                // Gộp toàn bộ tăng ca vào ngày công
                 let adjustedDays = originalDays + overtimeDays;
 
                 // KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
