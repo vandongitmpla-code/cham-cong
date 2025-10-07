@@ -5,6 +5,7 @@ from app.extensions import db
 from app.extensions import db
 from datetime import datetime
 
+# app/models.py - Cập nhật class Employee
 class Employee(db.Model):
     __tablename__ = "employees"
 
@@ -58,6 +59,8 @@ class Holiday(db.Model):
 
     def __repr__(self):
         return f"<Holiday {self.date} - {self.name}>"
+        
+
 
 class PayrollRecord(db.Model):
     __tablename__ = "payroll_records"
@@ -87,6 +90,7 @@ class PayrollRecord(db.Model):
 
     def __repr__(self):
         return f"<PayrollRecord {self.employee_code} - {self.employee_name} ({self.period})>"
+    
 
 class WorkAdjustment(db.Model):
     __tablename__ = "work_adjustments"
@@ -100,18 +104,14 @@ class WorkAdjustment(db.Model):
     
     # DỮ LIỆU GỐC
     original_work_days = db.Column(db.Float, default=0)
-    original_absence_days = db.Column(db.Float, default=0)  # Ngày vắng gốc
+    original_absence_days = db.Column(db.Float, default=0)  # ✅ THÊM: ngày vắng gốc
     original_overtime_hours = db.Column(db.Float, default=0)
     
     # DỮ LIỆU SAU ĐIỀU CHỈNH
     adjusted_work_days = db.Column(db.Float, default=0)
-    adjusted_absence_days = db.Column(db.Float, default=0)  # Ngày vắng sau gộp
+    adjusted_absence_days = db.Column(db.Float, default=0)  # ✅ THÊM: ngày vắng sau gộp
     remaining_overtime_hours = db.Column(db.Float, default=0)
     used_overtime_hours = db.Column(db.Float, default=0)
-    
-    # ✅ THÊM CÁC TRƯỜNG MỚI CHO CÔNG THỨC TÍNH TOÁN MỚI
-    ngay_vang_ban_dau = db.Column(db.Float, default=0)      # Tham chiếu từ payroll_record.ngay_vang
-    ngay_vang_sau_gop = db.Column(db.Float, default=0)      # Ngày vắng sau khi gộp
     
     standard_work_days = db.Column(db.Float, default=0)
     adjustment_type = db.Column(db.String(50), default="overtime_compensation")
