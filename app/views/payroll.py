@@ -268,26 +268,26 @@ def import_payroll(filename):
             return standard_days, sunday_count
 
         def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio):
-            """
-            Gộp toàn bộ tăng ca vào ngày công, nhưng KHÔNG VƯỢT CHUẨN
-            """
-            overtime_days = tang_ca_nghi_gio / 8
-            
-            # Gộp toàn bộ tăng ca vào ngày công
-            adjusted_days = ngay_cong_thuc_te + overtime_days
-            
-            # ✅ QUAN TRỌNG: KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
-            if adjusted_days > ngay_cong_chuan:
-                adjusted_days = ngay_cong_chuan
-            
-            # Tính số ngày thực tế được gộp
-            actual_used_days = adjusted_days - ngay_cong_thuc_te
-            
-            # Tính giờ tăng ca còn lại
-            used_hours = actual_used_days * 8
-            remaining_hours = tang_ca_nghi_gio - used_hours
-            
-            return adjusted_days, remaining_hours, used_hours
+    """
+    CÔNG THỨC MỚI: Gộp toàn bộ tăng ca vào ngày công, KHÔNG BÙ NGÀY NGHỈ
+    """
+    overtime_days = tang_ca_nghi_gio / 8
+    
+    # Gộp toàn bộ tăng ca vào ngày công
+    adjusted_days = ngay_cong_thuc_te + overtime_days
+    
+    # KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
+    if adjusted_days > ngay_cong_chuan:
+        adjusted_days = ngay_cong_chuan
+    
+    # Tính số ngày thực tế được gộp
+    actual_used_days = adjusted_days - ngay_cong_thuc_te
+    
+    # Tính giờ tăng ca còn lại
+    used_hours = actual_used_days * 8
+    remaining_hours = tang_ca_nghi_gio - used_hours
+    
+    return adjusted_days, remaining_hours, used_hours
 
         # --- Hàm xác định trạng thái ---
         def render_status(cell_val):
