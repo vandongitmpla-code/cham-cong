@@ -48,34 +48,22 @@ def calculate_standard_work_days(year, month):
 # CẬP NHẬT CÔNG THỨC TÍNH ĐIỀU CHỈNH THEO LOGIC MỚI
 def calculate_adjustment_details(original_days, standard_days, overtime_hours, current_absence):
     """
-     KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+    Tính toán chi tiết điều chỉnh - CHỈ GỘP VÀO NGÀY CÔNG, KHÔNG BÙ NGÀY NGHỈ
     """
     overtime_days = overtime_hours / 8
     
-    # 1. Gộp toàn bộ tăng ca vào ngày công
+    # 1. Gộp toàn bộ tăng ca vào ngày công (KHÔNG VƯỢT CHUẨN)
     adjusted_days = original_days + overtime_days
-    
-    # KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
     if adjusted_days > standard_days:
         adjusted_days = standard_days
     
-    # 2. Dùng tăng ca để bù ngày nghỉ (nếu có)
-    ngay_vang_sau_gop = current_absence
-    remaining_hours = overtime_hours
+    # 2. ✅ KHÔNG DÙNG TĂNG CA ĐỂ BÙ NGÀY NGHỈ - GIỮ NGUYÊN
+    ngay_vang_sau_gop = current_absence  # Giữ nguyên ngày nghỉ
     
-    if current_absence > 0:
-        # Số ngày có thể bù từ tăng ca (KHÔNG VƯỢT CHUẨN)
-        max_possible_adjustment = standard_days - original_days  # Số ngày còn thiếu đến chuẩn
-        so_ngay_co_the_bu = min(overtime_days, current_absence, max_possible_adjustment)
-        
-        # Giảm ngày nghỉ
-        ngay_vang_sau_gop = current_absence - so_ngay_co_the_bu
-        
-        # Tính giờ tăng ca đã dùng để bù
-        gio_da_dung_de_bu = so_ngay_co_the_bu * 8
-        remaining_hours = overtime_hours - gio_da_dung_de_bu
-    
-    used_hours = overtime_hours - remaining_hours
+    # Tính giờ tăng ca đã sử dụng
+    used_days = adjusted_days - original_days
+    used_hours = used_days * 8
+    remaining_hours = overtime_hours - used_hours
     
     return adjusted_days, ngay_vang_sau_gop, remaining_hours, used_hours
 
