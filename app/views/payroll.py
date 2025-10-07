@@ -614,7 +614,6 @@ def reset_adjustment_payroll():
         
         # Tìm và xóa adjustment
         adjustment = WorkAdjustment.query.filter_by(
-        
             employee_code=employee_code,
             period=period
         ).first()
