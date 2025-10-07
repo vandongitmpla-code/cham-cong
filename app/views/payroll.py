@@ -393,37 +393,37 @@ def import_payroll(filename):
 
             # --- Tạo PayrollRecord ---
             record = PayrollRecord(
-            employee_id=emp.id,
-            employee_code=emp.code,
-            employee_name=emp.name,
-            period=period,
-            ngay_cong=ngay_cong_dieu_chinh,
-            ngay_vang=ngay_vang,
-            chu_nhat=x_chu_nhat,
-            le_tet=x_le,
-            le_tet_gio=le_tet_gio,
-            tang_ca_nghi=tang_ca_nghi_con_lai,
-            tang_ca_tuan=tang_ca_tuan,
-            
-            # ✅ ĐÃ THÊM - LƯU NGÀY CÔNG CHUẨN
-            standard_work_days=ngay_cong_chuan,
-            
-            ghi_chu=ghi_chu,
-            raw_data={
-                'daily_status': daily_status,
-                'summary': {
-                    'total_work_days': tong_x,
-                    'sunday_work_days': cn_days,
-                    'holiday_work_days': le_days,
-                    'absence_days': nghi_days,
-                    'standard_work_days': ngay_cong_chuan,
-                    'original_work_days': ngay_cong_thuc_te
-                }
-            },
-            to=getattr(emp, "team", ""),
-            phong_ban=getattr(emp, "department", ""),
-            loai_hd=getattr(emp, "contract_type", "")
-        )
+                employee_id=emp.id,
+                employee_code=emp.code,
+                employee_name=emp.name,
+                period=period,
+                ngay_cong=ngay_cong_dieu_chinh,
+                ngay_vang=ngay_vang,
+                chu_nhat=x_chu_nhat,
+                le_tet=x_le,
+                le_tet_gio=le_tet_gio,
+                tang_ca_nghi=tang_ca_nghi_con_lai,
+                tang_ca_tuan=tang_ca_tuan,
+                
+                # ✅ ĐÃ THÊM - LƯU NGÀY CÔNG CHUẨN
+                standard_work_days=ngay_cong_chuan,
+                
+                ghi_chu=ghi_chu,
+                raw_data={
+                    'daily_status': daily_status,
+                    'summary': {
+                        'total_work_days': tong_x,
+                        'sunday_work_days': cn_days,
+                        'holiday_work_days': le_days,
+                        'absence_days': nghi_days,
+                        'standard_work_days': ngay_cong_chuan,
+                        'original_work_days': ngay_cong_thuc_te
+                    }
+                },
+                to=getattr(emp, "team", ""),
+                phong_ban=getattr(emp, "department", ""),
+                loai_hd=getattr(emp, "contract_type", "")
+            )
             
             # LƯU RECORD TRƯỚC ĐỂ CÓ ID
             db.session.add(record)
