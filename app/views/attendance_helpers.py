@@ -81,7 +81,7 @@ def calculate_adjustment_details(original_days, standard_days, overtime_hours, c
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template attendance_print - LUÔN HIỆN CẢ 2 ICON
+    Tạo dữ liệu rows cho template attendance_print - LẤY STANDARD_DAYS TỪ DATABASE
     """
     from datetime import datetime
     from app.models import WorkAdjustment
@@ -89,11 +89,14 @@ def create_attendance_rows(records, period):
     rows = []
     stt = 1
 
-    # Tính ngày công chuẩn cho period
-    year, month = map(int, period.split('-'))
-    standard_days = calculate_standard_work_days(year, month)
+    # ❌ KHÔNG CẦN TÍNH LẠI NỮA
+    # year, month = map(int, period.split('-'))
+    # standard_days = calculate_standard_work_days(year, month)
 
     for rec in records:
+        # ✅ LẤY TRỰC TIẾP TỪ PAYROLLRECORD
+        standard_days = rec.standard_work_days
+
         # Kiểm tra xem có điều chỉnh không
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=rec.employee_code, 
@@ -101,7 +104,7 @@ def create_attendance_rows(records, period):
         ).first()
         
         if adjustment:
-            # ✅ ĐÃ ĐIỀU CHỈNH: HIỂN THỊ THEO CÔNG THỨC MỚI
+            # ... code hiện tại
             ngay_cong_quy_dinh = adjustment.adjusted_work_days
             ngay_cong_thuc_te = adjustment.adjusted_work_days
             ngay_vang_hien_thi = adjustment.ngay_vang_sau_gop
@@ -111,7 +114,7 @@ def create_attendance_rows(records, period):
             ngay_vang_ban_dau = adjustment.ngay_vang_ban_dau
             has_adjustment = True
         else:
-            # ✅ CHƯA ĐIỀU CHỈNH: HIỂN THỊ DỮ LIỆU GỐC
+            # ... code hiện tại
             ngay_cong_quy_dinh = rec.ngay_cong
             ngay_cong_thuc_te = rec.ngay_cong
             ngay_vang_hien_thi = rec.ngay_vang
@@ -138,12 +141,12 @@ def create_attendance_rows(records, period):
             "", 
             rec.to,
             {
-                'has_adjustment': has_adjustment,  # Để biết trạng thái hiện tại
-                'has_overtime': has_overtime,      # Có giờ tăng ca để điều chỉnh
+                'has_adjustment': has_adjustment,
+                'has_overtime': has_overtime,
                 'adjustment_info': adjustment_info,
                 'original_days': original_days,
                 'current_days': rec.ngay_cong,
-                'standard_days': standard_days,
+                'standard_days': standard_days,  # ✅ Lấy từ database
                 'ngay_vang_ban_dau': ngay_vang_ban_dau,
                 'ngay_vang_sau_gop': ngay_vang_hien_thi
             }
