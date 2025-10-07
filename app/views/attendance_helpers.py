@@ -55,7 +55,7 @@ def calculate_adjustment_details(original_days, standard_days, overtime_hours, c
     # 1. Gộp toàn bộ tăng ca vào ngày công
     adjusted_days = original_days + overtime_days
     
-    # ✅ QUAN TRỌNG: KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
+    # KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
     if adjusted_days > standard_days:
         adjusted_days = standard_days
     
