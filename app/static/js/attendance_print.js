@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function(){
             
             console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, overtimeHours, currentAbsence, standardDays});
             
-            // ✅ CÔNG THỨC MỚI: GỘP TĂNG CA KHÔNG VƯỢT CHUẨN
+            // GỘP TĂNG CA KHÔNG VƯỢT CHUẨN
                 const overtimeDays = overtimeHours / 8;
 
                 // Gộp toàn bộ tăng ca vào ngày công
