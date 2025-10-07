@@ -1,0 +1,171 @@
+/* static/css/notification-system.css */
+/* Hệ thống thông báo tái sử dụng cho toàn bộ ứng dụng */
+
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+.notification {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    margin-bottom: 10px;
+    min-width: 300px;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    border-left: 4px solid #17a2b8;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.hide {
+    transform: translateX(400px);
+    opacity: 0;
+}
+
+.notification-success {
+    border-left-color: #28a745;
+}
+
+.notification-error {
+    border-left-color: #dc3545;
+}
+
+.notification-warning {
+    border-left-color: #ffc107;
+}
+
+.notification-info {
+    border-left-color: #17a2b8;
+}
+
+.notification-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.notification-icon {
+    margin-right: 12px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.notification-success .notification-icon {
+    color: #28a745;
+}
+
+.notification-error .notification-icon {
+    color: #dc3545;
+}
+
+.notification-warning .notification-icon {
+    color: #ffc107;
+}
+
+.notification-info .notification-icon {
+    color: #17a2b8;
+}
+
+.notification-text {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.notification-message {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+.notification-close:hover {
+    background: #f8f9fa;
+    color: #666;
+}
+
+/* Progress bar for auto-close notifications */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+
+.notification-progress-bar {
+    height: 100%;
+    background: currentColor;
+    opacity: 0.3;
+    width: 100%;
+    transform: scaleX(1);
+    transform-origin: left;
+    transition: transform linear;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #notification-container {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification {
+        min-width: auto;
+        max-width: none;
+    }
+}
+
+/* Animation for different positions */
+.notification-top-left {
+    right: auto;
+    left: 20px;
+}
+
+.notification-bottom-right {
+    top: auto;
+    bottom: 20px;
+}
+
+.notification-bottom-left {
+    top: auto;
+    bottom: 20px;
+    right: auto;
+    left: 20px;
+}
