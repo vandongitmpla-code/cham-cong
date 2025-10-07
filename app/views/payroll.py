@@ -652,33 +652,3 @@ def reset_adjustment_payroll():
     else:
         return redirect(url_for("main.index"))
 
-@bp.route("/reset_adjustment_payroll", methods=["POST"])
-def reset_adjustment_payroll():
-    try:
-        employee_code = request.form.get("employee_code")
-        period = request.form.get("period")
-        filename = request.form.get("filename") or request.args.get("filename")
-        
-        # Tìm và xóa adjustment
-        adjustment = WorkAdjustment.query.filter_by(
-            employee_code=employee_code,
-            period=period
-        ).first()
-        
-        if adjustment:
-            # ✅ KHÔNG CẦN KHÔI PHỤC PAYROLL_RECORD VÌ DỮ LIỆU GỐC VẪN GIỮ NGUYÊN
-            db.session.delete(adjustment)
-            db.session.commit()
-            
-            flash(f"✅ Đã khôi phục dữ liệu gốc cho {adjustment.employee_name}", "success")
-        else:
-            flash("⚠️ Không tìm thấy điều chỉnh để khôi phục", "warning")
-            
-    except Exception as e:
-        db.session.rollback()
-        flash(f"❌ Lỗi khi khôi phục: {e}", "danger")
-    
-    if filename:
-        return redirect(url_for("main.attendance_print", filename=filename))
-    else:
-        return redirect(url_for("main.index"))
