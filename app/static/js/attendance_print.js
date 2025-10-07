@@ -66,13 +66,13 @@ document.addEventListener("DOMContentLoaded", function(){
             
             // ✅ KIỂM TRA: NẾU "THỰC TẾ" ĐÃ >= "QUY ĐỊNH" THÌ KHÔNG CHO GỘP
             if (actualDays >= standardDays) {
-            notificationSystem.warning(
-                `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
-                <strong>Lý do:</strong> Số ngày làm việc thực tế (${actualDays} ngày) đã đạt/vượt ngày công quy định (${standardDays} ngày).`,
-                'Không thể gộp tăng ca'
-            );
-            return;
-            }
+                notificationSystem.warning(
+                    `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
+                    <strong>Lý do:</strong> Số ngày làm việc thực tế (${actualDays} ngày) đã đạt/vượt ngày công quy định (${standardDays} ngày).`,
+                    'Không thể gộp tăng ca'
+                );
+                return;
+                }
             
             // ✅ CÔNG THỨC MỚI: CHỈ GỘP VÀO NGÀY CÔNG, KHÔNG BÙ NGÀY NGHỈ
             const overtimeDays = overtimeHours / 8;
