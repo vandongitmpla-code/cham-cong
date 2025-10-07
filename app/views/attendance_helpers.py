@@ -89,9 +89,6 @@ def create_attendance_rows(records, period):
     rows = []
     stt = 1
 
-    # ❌ KHÔNG CẦN TÍNH LẠI NỮA
-    # year, month = map(int, period.split('-'))
-    # standard_days = calculate_standard_work_days(year, month)
 
     for rec in records:
         # ✅ LẤY TRỰC TIẾP TỪ PAYROLLRECORD
