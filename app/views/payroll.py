@@ -269,7 +269,7 @@ def import_payroll(filename):
 
         def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio):
             """
-            CÔNG THỨC MỚI: Gộp toàn bộ tăng ca vào ngày công, nhưng KHÔNG VƯỢT CHUẨN
+            Gộp toàn bộ tăng ca vào ngày công, nhưng KHÔNG VƯỢT CHUẨN
             """
             overtime_days = tang_ca_nghi_gio / 8
             
