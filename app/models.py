@@ -70,6 +70,7 @@ class PayrollRecord(db.Model):
     le_tet_gio = db.Column(db.Float, default=0)
     tang_ca_nghi = db.Column(db.Float, default=0)
     tang_ca_tuan = db.Column(db.Float, default=0)
+    
     ghi_chu = db.Column(db.Text)
     raw_data = db.Column(db.JSON)
     to = db.Column(db.String(100))
