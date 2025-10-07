@@ -404,7 +404,6 @@ def import_payroll(filename):
                 le_tet_gio=le_tet_gio,
                 tang_ca_nghi=tang_ca_nghi_con_lai,
                 tang_ca_tuan=tang_ca_tuan,
-                
                 # ✅ ĐÃ THÊM - LƯU NGÀY CÔNG CHUẨN
                 standard_work_days=ngay_cong_chuan,
                 
