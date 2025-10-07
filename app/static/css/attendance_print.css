@@ -35,19 +35,7 @@
   border: 1px solid #b6d4fe !important;
 }
 
-.adjustable-cell {
-  position: relative;
-}
-.adjustment-icon:hover {
-  transform: scale(1.2);
-  transition: transform 0.2s;
-}
-.adjustment-details {
-  background-color: #f8f9fa;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
-}
+
 /* ===== ADJUSTMENT BUTTONS STYLING ===== */
 .adjustable-cell {
     position: relative;
