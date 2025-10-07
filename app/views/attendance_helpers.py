@@ -46,7 +46,7 @@ def calculate_standard_work_days(year, month):
     return standard_days
 
 # ✅ SỬA: CẬP NHẬT CÔNG THỨC TÍNH ĐIỀU CHỈNH THEO LOGIC MỚI
-def calculate_adjustment_details(original_days, standard_days, overtime_hours):
+
     def calculate_adjustment_details(original_days, standard_days, overtime_hours, current_absence):
     """
     Tính toán chi tiết điều chỉnh - KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
