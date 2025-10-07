@@ -70,7 +70,7 @@ def calculate_adjustment_details(original_days, standard_days, overtime_hours, c
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template attendance_print - SỬA LỖI GỘP SAI CỘT
+    Tạo dữ liệu rows cho template attendance_print
     """
     from datetime import datetime
     from app.models import WorkAdjustment
