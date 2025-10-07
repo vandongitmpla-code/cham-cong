@@ -547,6 +547,10 @@ def apply_adjustment():
         # 1. Gộp toàn bộ tăng ca vào ngày công thực tế
         adjusted_days = original_days + overtime_days
         
+        # ✅ THÊM: GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+        if adjusted_days > ngay_cong_chuan:
+            adjusted_days = ngay_cong_chuan
+        
         # 2. Dùng tăng ca để bù ngày nghỉ (nếu có)
         ngay_vang_sau_gop = current_absence
         gio_tang_ca_con_lai = overtime_hours
@@ -568,7 +572,7 @@ def apply_adjustment():
         print(f"DEBUG CÔNG THỨC MỚI:")
         print(f"- Ngày công ban đầu: {original_days}")
         print(f"- Ngày CN đã làm: {overtime_days} ngày ({overtime_hours} giờ)")
-        print(f"- Ngày công sau gộp: {adjusted_days} ngày")
+        print(f"- Ngày công sau gộp: {adjusted_days} ngày (ĐÃ GIỚI HẠN)")
         print(f"- Ngày nghỉ: {current_absence} -> {ngay_vang_sau_gop}")
         print(f"- Giờ tăng ca: {overtime_hours} -> {gio_tang_ca_con_lai} (đã dùng {used_hours} giờ)")
 
@@ -580,7 +584,7 @@ def apply_adjustment():
         
         if adjustment:
             # Cập nhật adjustment hiện có
-            adjustment.adjusted_work_days = adjusted_days
+            adjustment.adjusted_work_days = adjusted_days  # ✅ ĐÃ GIỚI HẠN
             adjustment.ngay_vang_ban_dau = current_absence
             adjustment.ngay_vang_sau_gop = ngay_vang_sau_gop
             adjustment.remaining_overtime_hours = gio_tang_ca_con_lai
@@ -597,7 +601,7 @@ def apply_adjustment():
                 original_work_days=original_days,
                 original_absence_days=current_absence,
                 original_overtime_hours=overtime_hours,
-                adjusted_work_days=adjusted_days,
+                adjusted_work_days=adjusted_days,  # ✅ ĐÃ GIỚI HẠN
                 ngay_vang_ban_dau=current_absence,      # ✅ Lưu ngày vắng ban đầu
                 ngay_vang_sau_gop=ngay_vang_sau_gop,    # ✅ Ngày vắng sau gộp
                 remaining_overtime_hours=gio_tang_ca_con_lai,
