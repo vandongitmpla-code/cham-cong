@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // Xử lý click icon reset (-)
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('reset-icon')) {
+    if (e.target.classList.contains('adjustment-icon')) {
             const employeeCode = e.target.getAttribute('data-employee-code');
             const employeeName = e.target.getAttribute('data-employee-name');
             const period = e.target.getAttribute('data-period');
