@@ -45,7 +45,7 @@ def calculate_standard_work_days(year, month):
     standard_days = total_days - sunday_count - (holidays_count * 2)
     return standard_days
 
-# CẬP NHẬT CÔNG THỨC TÍNH ĐIỀU CHỈNH THEO LOGIC MỚI
+#  CÔNG THỨC TÍNH ĐIỀU CHỈNH THEO LOGIC MỚI
 def calculate_adjustment_details(original_days, standard_days, overtime_hours, current_absence):
     """
     Tính toán chi tiết điều chỉnh - CHỈ GỘP VÀO NGÀY CÔNG, KHÔNG BÙ NGÀY NGHỈ
