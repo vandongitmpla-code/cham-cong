@@ -48,3 +48,45 @@
   border-radius: 5px;
   margin-top: 10px;
 }
+/* ===== ADJUSTMENT BUTTONS STYLING ===== */
+.adjustable-cell {
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.adjustable-cell:hover {
+    background-color: #f8f9fa !important;
+    box-shadow: inset 0 0 0 2px #dee2e6;
+}
+
+.adjustment-buttons {
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.adjustment-icon:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
+
+.reset-icon:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
+
+/* Đảm bảo nút không bị ẩn khi hover */
+.adjustable-cell:hover .adjustment-buttons {
+    display: block !important;
+}
+
+/* Khi in - ẩn nút điều chỉnh */
+@media print {
+    .adjustment-buttons {
+        display: none !important;
+    }
+    
+    .adjustable-cell:hover {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+}
