@@ -52,55 +52,55 @@
 
             {% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
             <td class="adjustable-cell position-relative" 
-    style="min-width: 120px; cursor: pointer;"
-    onmouseenter="showAdjustmentButtons(this)" 
-    onmouseleave="hideAdjustmentButtons(this)">
-  
-  {{ cell }}
-  
-  <!-- DEBUG INFO -->
-  <small class="text-muted d-block debug-info" style="font-size: 10px;">
-    has_adj: {{ row[-1].has_adjustment }}, 
-    overtime: {{ row[9] }},
-    orig: {{ row[-1].original_days }}
-  </small>
-  
-  <div class="adjustment-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
-    
-    <!-- ✅ NÚT "+" - CHỈ HIỆN KHI CHƯA ĐIỀU CHỈNH VÀ CÓ TĂNG CA -->
-    {% if row[-1].has_overtime and not row[-1].has_adjustment %}
-    <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
-       data-bs-toggle="tooltip"
-       data-bs-placement="top"
-       title="Gộp ngày tăng ca"
-       style="cursor:pointer; font-size: 16px;"
-       data-employee-code="{{ row[1] }}"
-       data-employee-name="{{ row[2] }}"
-       data-period="{{ period }}"
-       data-original-days="{{ row[-1].original_days }}"
-       data-actual-days="{{ cell }}"
-       data-overtime-hours="{{ row[9] }}"
-       data-current-absence="{{ row[7] }}"
-       data-standard-days="{{ row[-1].standard_days or 26 }}">
-    </i>
-    {% endif %}
-    
-    <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ ĐIỀU CHỈNH -->
-    {% if row[-1].has_adjustment %}
-    <i class="bi bi-dash-circle-fill text-danger reset-icon"
-       data-bs-toggle="tooltip"
-       data-bs-placement="top"
-       title="Khôi phục dữ liệu gốc"
-       style="cursor:pointer; font-size: 16px;"
-       data-employee-code="{{ row[1] }}"
-       data-employee-name="{{ row[2] }}"
-       data-period="{{ period }}"
-       data-filename="{{ filename }}">
-    </i>
-    {% endif %}
-    
-  </div>
-</td>
+                style="min-width: 120px; cursor: pointer;"
+                onmouseenter="showAdjustmentButtons(this)" 
+                onmouseleave="hideAdjustmentButtons(this)">
+              
+              {{ cell }}
+              
+              <!-- DEBUG INFO -->
+              <small class="text-muted d-block debug-info" style="font-size: 10px;">
+                has_adj: {{ row[-1].has_adjustment }}, 
+                overtime: {{ row[9] }},
+                orig: {{ row[-1].original_days }}
+              </small>
+              
+              <div class="adjustment-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
+                
+                <!-- ✅ NÚT "+" - CHỈ HIỆN KHI CHƯA ĐIỀU CHỈNH VÀ CÓ TĂNG CA -->
+                {% if row[-1].has_overtime and not row[-1].has_adjustment %}
+                <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Gộp ngày tăng ca"
+                  style="cursor:pointer; font-size: 16px;"
+                  data-employee-code="{{ row[1] }}"
+                  data-employee-name="{{ row[2] }}"
+                  data-period="{{ period }}"
+                  data-original-days="{{ row[-1].original_days }}"
+                  data-actual-days="{{ cell }}"
+                  data-overtime-hours="{{ row[9] }}"
+                  data-current-absence="{{ row[7] }}"
+                  data-standard-days="{{ row[-1].standard_days or 26 }}">
+                </i>
+                {% endif %}
+                
+                <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ ĐIỀU CHỈNH -->
+                {% if row[-1].has_adjustment %}
+                <i class="bi bi-dash-circle-fill text-danger reset-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Khôi phục dữ liệu gốc"
+                  style="cursor:pointer; font-size: 16px;"
+                  data-employee-code="{{ row[1] }}"
+                  data-employee-name="{{ row[2] }}"
+                  data-period="{{ period }}"
+                  data-filename="{{ filename }}">
+                </i>
+                {% endif %}
+                
+              </div>
+            </td>
             {% elif colname == "Số ngày nghỉ không lương" %}
               <td class="fw-bold absence-cell" 
                   data-bs-toggle="tooltip" 
