@@ -220,7 +220,6 @@ def calculate_leave_info(employee, period):
         print(f"Error calculating leave info: {e}")
         return "", 0, 0
     
-    
 def get_attendance_columns():
     """
     Trả về danh sách columns cho attendance_print
