@@ -309,6 +309,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
     console.log('Confirming leave reset...');
     document.getElementById('resetLeaveForm').submit();
+});
 
 // Xác nhận thêm phép năm
 document.getElementById('confirmLeave')?.addEventListener('click', function() {
