@@ -665,3 +665,4 @@ def reset_adjustment_payroll():
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
+    
