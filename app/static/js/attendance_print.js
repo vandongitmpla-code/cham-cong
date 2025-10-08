@@ -226,3 +226,49 @@ function debugLog(message, data = null) {
 }
 
 
+// Xử lý click icon phép năm
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('leave-icon')) {
+        const employeeId = e.target.getAttribute('data-employee-id');
+        const employeeName = e.target.getAttribute('data-employee-name');
+        const period = e.target.getAttribute('data-period');
+        const maxLeave = parseFloat(e.target.getAttribute('data-max-leave'));
+        const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
+        const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
+        
+        // Hiển thị modal
+        document.getElementById('leaveEmployeeName').textContent = employeeName;
+        document.getElementById('leaveDaysInput').value = currentLeave;
+        document.getElementById('leaveDaysInput').max = maxLeave;
+        document.getElementById('maxLeaveDays').textContent = maxLeave;
+        
+        // Điền form
+        document.getElementById('formEmployeeId').value = employeeId;
+        document.getElementById('formLeavePeriod').value = period;
+        
+        const modal = new bootstrap.Modal(document.getElementById('leaveModal'));
+        modal.show();
+    }
+});
+
+// Xác nhận thêm phép năm
+document.getElementById('confirmLeave')?.addEventListener('click', function() {
+    const leaveDays = parseFloat(document.getElementById('leaveDaysInput').value);
+    const maxLeave = parseFloat(document.getElementById('leaveDaysInput').max);
+    
+    if (leaveDays > maxLeave) {
+        notificationSystem.warning(
+            `Số ngày phép không được vượt quá ${maxLeave} ngày!`,
+            'Số ngày phép không hợp lệ'
+        );
+        return;
+    }
+    
+    if (leaveDays < 0) {
+        notificationSystem.warning('Số ngày phép không được âm!', 'Số ngày phép không hợp lệ');
+        return;
+    }
+    
+    document.getElementById('formLeaveDays').value = leaveDays;
+    document.getElementById('leaveForm').submit();
+});
