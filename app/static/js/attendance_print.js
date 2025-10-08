@@ -305,7 +305,11 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         });
 
-
+// ✅ XÁC NHẬN RESET PHÉP NĂM
+    document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
+        console.log('Confirming leave reset...');
+        document.getElementById('resetLeaveForm').submit();
+    });
 
 // Xác nhận thêm phép năm
 document.getElementById('confirmLeave')?.addEventListener('click', function() {
@@ -328,13 +332,3 @@ document.getElementById('confirmLeave')?.addEventListener('click', function() {
     document.getElementById('formLeaveDays').value = leaveDays;
     document.getElementById('leaveForm').submit();
 });
-// Hàm tiện ích debug
-function debugLog(message, data = null) {
-    if (console && console.log) {
-        if (data) {
-            console.log(`[Attendance Print] ${message}:`, data);
-        } else {
-            console.log(`[Attendance Print] ${message}`);
-        }
-    }
-}
