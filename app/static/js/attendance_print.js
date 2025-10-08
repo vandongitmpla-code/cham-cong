@@ -306,10 +306,10 @@ document.addEventListener("DOMContentLoaded", function(){
         });
 
 // ✅ XÁC NHẬN RESET PHÉP NĂM
-document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
-    console.log('Confirming leave reset...');
-    document.getElementById('resetLeaveForm').submit();
-});
+    document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
+        console.log('Confirming leave reset...');
+        document.getElementById('resetLeaveForm').submit();
+    });
 
 // Xác nhận thêm phép năm
 document.getElementById('confirmLeave')?.addEventListener('click', function() {
