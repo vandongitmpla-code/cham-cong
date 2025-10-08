@@ -259,6 +259,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     hideLeaveButtons(this);
                 });
             });
+            
         // Hiển thị modal
         document.getElementById('leaveEmployeeName').textContent = employeeName;
         document.getElementById('leaveDaysInput').value = currentLeave;
