@@ -261,31 +261,32 @@ document.addEventListener("DOMContentLoaded", function(){
             });
         
         // ✅ XỬ LÝ CLICK ICON THÊM PHÉP NĂM (+)
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('leave-add-icon')) {
-        const employeeId = e.target.getAttribute('data-employee-id');
-        const employeeName = e.target.getAttribute('data-employee-name');
-        const period = e.target.getAttribute('data-period');
-        const maxLeave = parseFloat(e.target.getAttribute('data-max-leave'));
-        const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
-        const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
-        
-        console.log('Leave add clicked:', {employeeId, employeeName, period, maxLeave, currentLeave, currentAbsence});
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('leave-add-icon')) {
+                const employeeId = e.target.getAttribute('data-employee-id');
+                const employeeName = e.target.getAttribute('data-employee-name');
+                const period = e.target.getAttribute('data-period');
+                const maxLeave = parseFloat(e.target.getAttribute('data-max-leave'));
+                const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
+                const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
+                
+                console.log('Leave add clicked:', {employeeId, employeeName, period, maxLeave, currentLeave, currentAbsence});
 
-        // Hiển thị modal thêm phép năm
-        document.getElementById('leaveEmployeeName').textContent = employeeName;
-        document.getElementById('leaveDaysInput').value = currentLeave;
-        document.getElementById('leaveDaysInput').max = maxLeave;
-        document.getElementById('maxLeaveDays').textContent = maxLeave;
+                // Hiển thị modal thêm phép năm
+                document.getElementById('leaveEmployeeName').textContent = employeeName;
+                document.getElementById('leaveDaysInput').value = currentLeave;
+                document.getElementById('leaveDaysInput').max = maxLeave;
+                document.getElementById('maxLeaveDays').textContent = maxLeave;
+                
+                // Điền form
+                document.getElementById('formEmployeeId').value = employeeId;
+                document.getElementById('formLeavePeriod').value = period;
+                
+                const modal = new bootstrap.Modal(document.getElementById('leaveModal'));
+                modal.show();
+            }
+        });
         
-        // Điền form
-        document.getElementById('formEmployeeId').value = employeeId;
-        document.getElementById('formLeavePeriod').value = period;
-        
-        const modal = new bootstrap.Modal(document.getElementById('leaveModal'));
-        modal.show();
-    }
-});
 
 // Xác nhận thêm phép năm
 document.getElementById('confirmLeave')?.addEventListener('click', function() {
