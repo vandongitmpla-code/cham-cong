@@ -74,6 +74,7 @@ def calculate_adjustment_details(original_days, standard_days, overtime_hours, c
     return adjusted_days, ngay_vang_sau_gop, remaining_hours, used_hours
 
 
+
 def create_attendance_rows(records, period):
     """
     Tạo dữ liệu rows cho template attendance_print - SỬA LỖI HIỂN THỊ VƯỢT CHUẨN
