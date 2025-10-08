@@ -79,3 +79,45 @@
     }
 }
 
+/* ===== LEAVE BUTTONS STYLING ===== */
+.leave-cell {
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.leave-cell:hover {
+    background-color: #f8f9fa !important;
+    box-shadow: inset 0 0 0 2px #dee2e6;
+}
+
+.leave-buttons {
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.leave-add-icon:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
+
+.leave-reset-icon:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
+
+/* Đảm bảo nút không bị ẩn khi hover */
+.leave-cell:hover .leave-buttons {
+    display: block !important;
+}
+
+/* Khi in - ẩn nút phép năm */
+@media print {
+    .leave-buttons {
+        display: none !important;
+    }
+    
+    .leave-cell:hover {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+}
