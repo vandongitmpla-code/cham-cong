@@ -7,7 +7,7 @@ from datetime import datetime
 from app.models import db
 from . import bp
 from app.models import Holiday
-from app.models import Employee, PayrollRecord, WorkAdjustment
+from app.models import Employee, PayrollRecord, WorkAdjustment, 
 
 
 def _parse_holidays_for_month(holidays_config, ref_date):
