@@ -241,7 +241,7 @@ function hideLeaveButtons(cell) {
 }
 
 // Xử lý click icon phép năm
-document.addEventListener('click', function(e) {
+document.addEventListener("DOMContentLoaded", function(){
     if (e.target.classList.contains('leave-icon')) {
         const employeeId = e.target.getAttribute('data-employee-id');
         const employeeName = e.target.getAttribute('data-employee-name');
