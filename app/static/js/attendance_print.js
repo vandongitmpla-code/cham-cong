@@ -303,7 +303,11 @@ document.addEventListener("DOMContentLoaded", function(){
                 const resetModal = new bootstrap.Modal(document.getElementById('resetLeaveModal'));
                 resetModal.show();
             }
-        
+        // ✅ XÁC NHẬN RESET PHÉP NĂM
+    document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
+        console.log('Confirming leave reset...');
+        document.getElementById('resetLeaveForm').submit();
+    });
 
 
 
