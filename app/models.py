@@ -82,7 +82,7 @@ class PayrollRecord(db.Model):
 
     def __repr__(self):
         return f"<PayrollRecord {self.employee_code} - {self.employee_name} ({self.period})>"
-#
+#-----------------------
 class WorkAdjustment(db.Model):
     __tablename__ = "work_adjustments"  # ✅ TABLE NAME ĐÚNG
 
