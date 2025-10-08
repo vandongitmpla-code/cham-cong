@@ -328,3 +328,13 @@ document.getElementById('confirmLeave')?.addEventListener('click', function() {
     document.getElementById('formLeaveDays').value = leaveDays;
     document.getElementById('leaveForm').submit();
 });
+// Hàm tiện ích debug
+function debugLog(message, data = null) {
+    if (console && console.log) {
+        if (data) {
+            console.log(`[Attendance Print] ${message}:`, data);
+        } else {
+            console.log(`[Attendance Print] ${message}`);
+        }
+    }
+}
