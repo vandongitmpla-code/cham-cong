@@ -250,15 +250,15 @@ document.addEventListener("DOMContentLoaded", function(){
         const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
         const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
         const leaveCells = document.querySelectorAll('.leave-cell');
-    leaveCells.forEach(cell => {
-        cell.addEventListener('mouseenter', function() {
-            showLeaveButtons(this);
-        });
-        
-        cell.addEventListener('mouseleave', function() {
-            hideLeaveButtons(this);
-        });
-    });
+            leaveCells.forEach(cell => {
+                cell.addEventListener('mouseenter', function() {
+                    showLeaveButtons(this);
+                });
+                
+                cell.addEventListener('mouseleave', function() {
+                    hideLeaveButtons(this);
+                });
+            });
         // Hiển thị modal
         document.getElementById('leaveEmployeeName').textContent = employeeName;
         document.getElementById('leaveDaysInput').value = currentLeave;
