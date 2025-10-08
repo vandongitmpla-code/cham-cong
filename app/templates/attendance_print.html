@@ -141,12 +141,12 @@
             </td>
 
             {% elif colname == "Số ngày nghỉ không lương" %}
-              <td class="fw-bold absence-cell" 
-                  data-bs-toggle="tooltip" 
-                  data-bs-placement="top"
-                  title="{% if row[-1].adjustment_info > 0 %}Bạn đã dùng {{ (row[-1].adjustment_info / 8)|round(1) }} ngày CN để bù vào ngày công, bạn đã nghỉ phép {{ cell }} ngày{% else %}{{ cell }} ngày nghỉ không lương{% endif %}">
-                {{ cell }}
-              </td>
+<td class="fw-bold absence-cell" 
+    data-bs-toggle="tooltip" 
+    data-bs-placement="top"
+    title="Ngày nghỉ gốc: {{ row[-1].ngay_vang_ban_dau }} - Phép năm: {{ row[-1].ngay_nghi_phep_nam }} = {{ cell }}">
+    {{ cell }} {# Hiển thị ngay_vang_sau_phep #}
+</td>
 
             {% elif colname == "Bắt đầu tính phép từ tháng" %}
               <!-- ✅ CỘT THÁNG BẮT ĐẦU TÍNH PHÉP -->
