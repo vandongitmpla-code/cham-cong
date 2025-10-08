@@ -73,44 +73,6 @@ def calculate_adjustment_details(original_days, standard_days, overtime_hours, c
     
     return adjusted_days, ngay_vang_sau_gop, remaining_hours, used_hours
 
-def calculate_leave_info(employee, period):
-    """
-    Tính toán thông tin phép năm từ start_month đến period hiện tại
-    """
-    if not employee.start_month:
-        return "", 0, 0
-    
-    try:
-        # Parse start_month và period
-        start_date = datetime.strptime(employee.start_month + "-01", "%Y-%m-%d")
-        current_date = datetime.strptime(period + "-01", "%Y-%m-%d")
-        
-        # Kiểm tra nếu start_month sau period
-        if start_date > current_date:
-            return "", 0, 0
-        
-        # Tính số tháng từ start_month đến period
-        months = []
-        total_months = 0
-        
-        temp_date = start_date
-        while temp_date <= current_date:
-            months.append(temp_date.month)
-            total_months += 1
-            # Tăng tháng
-            if temp_date.month == 12:
-                temp_date = temp_date.replace(year=temp_date.year + 1, month=1)
-            else:
-                temp_date = temp_date.replace(month=temp_date.month + 1)
-        
-        # Format months: "6,7,8,9,10"
-        months_str = ",".join(map(str, months))
-        
-        return months_str, total_months, total_months  # months_str, total_months, remaining_days
-    
-    except Exception as e:
-        print(f"Error calculating leave info: {e}")
-        return "", 0, 0
 
 def create_attendance_rows(records, period):
     """
