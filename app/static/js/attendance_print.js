@@ -478,7 +478,6 @@ document.addEventListener("DOMContentLoaded", function(){
     // ... phần code còn lại của bạn (ghi chú, chi tiết, etc.)
 });
 
-
 // Hàm tiện ích debug
 function debugLog(message, data = null) {
     if (console && console.log) {
