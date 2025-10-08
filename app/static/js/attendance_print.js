@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 const resetModal = new bootstrap.Modal(document.getElementById('resetLeaveModal'));
                 resetModal.show();
             }
-        });
+        
 
 
 
