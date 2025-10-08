@@ -349,13 +349,6 @@
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
-<!-- ✅ THÊM: Form ẩn cho phép năm -->
-<form id="leaveForm" method="POST" action="{{ url_for('main.add_paid_leave') }}" style="display: none;">
-  <input type="hidden" name="employee_id" id="formEmployeeId">
-  <input type="hidden" name="period" id="formLeavePeriod">
-  <input type="hidden" name="leave_days" id="formLeaveDays">
-  <input type="hidden" name="filename" value="{{ filename }}">
-</form>
 
 <!-- Xuất weekdays + day_count cho JS -->
 <script id="timesheet-data" type="application/json">
