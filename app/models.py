@@ -115,7 +115,7 @@ class WorkAdjustment(db.Model):
 
     def __repr__(self):
         return f"<WorkAdjustment {self.employee_code} - {self.period}>"
-#
+#phép năm
 class PaidLeave(db.Model):
     __tablename__ = "paid_leaves"
 
