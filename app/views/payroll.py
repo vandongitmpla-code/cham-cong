@@ -715,3 +715,33 @@ def add_paid_leave():
     
     return redirect(url_for("main.attendance_print", filename=filename))
 
+@bp.route("/reset_paid_leave", methods=["POST"])
+def reset_paid_leave():
+    try:
+        employee_id = request.form.get("employee_id")
+        period = request.form.get("period")
+        filename = request.form.get("filename")
+        
+        employee = Employee.query.get(employee_id)
+        if not employee:
+            flash("Không tìm thấy nhân viên!", "danger")
+            return redirect(url_for("main.attendance_print", filename=filename))
+        
+        # ✅ TÌM VÀ XÓA PAID_LEAVE RECORD
+        paid_leave = PaidLeave.query.filter_by(
+            employee_id=employee_id,
+            period=period
+        ).first()
+        
+        if paid_leave:
+            db.session.delete(paid_leave)
+            db.session.commit()
+            flash(f"Đã reset ngày phép năm về 0 cho {employee.name}!", "success")
+        else:
+            flash("Không tìm thấy dữ liệu phép năm để reset!", "warning")
+            
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi reset phép năm: {e}", "danger")
+    
+    return redirect(url_for("main.attendance_print", filename=filename))
