@@ -260,7 +260,19 @@ document.addEventListener("DOMContentLoaded", function(){
                 });
             });
         
-        // Hiển thị modal
+        // ✅ XỬ LÝ CLICK ICON THÊM PHÉP NĂM (+)
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('leave-add-icon')) {
+        const employeeId = e.target.getAttribute('data-employee-id');
+        const employeeName = e.target.getAttribute('data-employee-name');
+        const period = e.target.getAttribute('data-period');
+        const maxLeave = parseFloat(e.target.getAttribute('data-max-leave'));
+        const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
+        const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
+        
+        console.log('Leave add clicked:', {employeeId, employeeName, period, maxLeave, currentLeave, currentAbsence});
+
+        // Hiển thị modal thêm phép năm
         document.getElementById('leaveEmployeeName').textContent = employeeName;
         document.getElementById('leaveDaysInput').value = currentLeave;
         document.getElementById('leaveDaysInput').max = maxLeave;
