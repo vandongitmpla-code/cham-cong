@@ -286,6 +286,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 modal.show();
             }
         });
+        
 
 // Xác nhận thêm phép năm
 document.getElementById('confirmLeave')?.addEventListener('click', function() {
