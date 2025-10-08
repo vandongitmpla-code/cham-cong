@@ -8,7 +8,7 @@ from app.models import db
 from . import bp
 from app.models import Holiday
 from app.models import Employee, PayrollRecord, WorkAdjustment, PaidLeave
-from app.views.payroll import calculate_leave_info
+from .attendance_helpers import calculate_leave_info
 
 def _parse_holidays_for_month(holidays_config, ref_date):
     """
