@@ -523,6 +523,15 @@ def apply_adjustment():
             flash("Không tìm thấy bản ghi payroll!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
+        # ✅ QUAN TRỌNG: TÍNH LẠI current_absence SAU KHI TRỪ PHÉP NĂM
+        paid_leave = PaidLeave.query.filter_by(
+            employee_id=emp.id,
+            period=period
+        ).first()
+        
+        ngay_nghi_phep_nam = paid_leave.leave_days_used if paid_leave else 0
+        current_absence_sau_phep = max(0, current_absence - ngay_nghi_phep_nam)
+        
         # Tính toán điều chỉnh
         year, month = map(int, period.split('-'))
         
@@ -541,26 +550,26 @@ def apply_adjustment():
                 
         ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
         
-        # ✅ CÔNG THỨC MỚI: GỘP TĂNG CA VÀ BÙ NGÀY NGHỈ
+        # ✅ CÔNG THỨC MỚI: GỘP TĂNG CA VÀ BÙ NGÀY NGHỈ (DÙNG GIÁ TRỊ ĐÃ TRỪ PHÉP)
         overtime_days = overtime_hours / 8
         
         # 1. Gộp toàn bộ tăng ca vào ngày công thực tế
         adjusted_days = original_days + overtime_days
         
-        # ✅ THÊM: GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+        # ✅ GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
         if adjusted_days > ngay_cong_chuan:
             adjusted_days = ngay_cong_chuan
         
-        # 2. Dùng tăng ca để bù ngày nghỉ (nếu có)
-        ngay_vang_sau_gop = current_absence
+        # 2. Dùng tăng ca để bù ngày nghỉ (nếu có) - ✅ DÙNG current_absence_sau_phep
+        ngay_vang_sau_gop = current_absence_sau_phep  # ✅ ĐÃ TRỪ PHÉP
         gio_tang_ca_con_lai = overtime_hours
         
-        if current_absence > 0:
+        if current_absence_sau_phep > 0:  # ✅ DÙNG GIÁ TRỊ ĐÃ TRỪ PHÉP
             # Số ngày có thể bù từ tăng ca
-            so_ngay_co_the_bu = min(overtime_days, current_absence)
+            so_ngay_co_the_bu = min(overtime_days, current_absence_sau_phep)
             
             # Giảm ngày nghỉ
-            ngay_vang_sau_gop = current_absence - so_ngay_co_the_bu
+            ngay_vang_sau_gop = current_absence_sau_phep - so_ngay_co_the_bu
             
             # Tính giờ tăng ca đã dùng để bù
             gio_da_dung_de_bu = so_ngay_co_the_bu * 8
@@ -569,11 +578,14 @@ def apply_adjustment():
         # Tính giờ đã sử dụng
         used_hours = overtime_hours - gio_tang_ca_con_lai
 
-        print(f"DEBUG CÔNG THỨC MỚI:")
+        print(f"DEBUG CÔNG THỨC MỚI (ĐÃ TRỪ PHÉP NĂM):")
         print(f"- Ngày công ban đầu: {original_days}")
+        print(f"- Ngày nghỉ ban đầu: {current_absence}")
+        print(f"- Phép năm đã dùng: {ngay_nghi_phep_nam}")
+        print(f"- Ngày nghỉ sau phép: {current_absence_sau_phep}")  # ✅ QUAN TRỌNG
         print(f"- Ngày CN đã làm: {overtime_days} ngày ({overtime_hours} giờ)")
         print(f"- Ngày công sau gộp: {adjusted_days} ngày (ĐÃ GIỚI HẠN)")
-        print(f"- Ngày nghỉ: {current_absence} -> {ngay_vang_sau_gop}")
+        print(f"- Ngày nghỉ sau gộp: {ngay_vang_sau_gop}")
         print(f"- Giờ tăng ca: {overtime_hours} -> {gio_tang_ca_con_lai} (đã dùng {used_hours} giờ)")
 
         # Tạo hoặc cập nhật WorkAdjustment
@@ -585,11 +597,11 @@ def apply_adjustment():
         if adjustment:
             # Cập nhật adjustment hiện có
             adjustment.adjusted_work_days = adjusted_days  # ✅ ĐÃ GIỚI HẠN
-            adjustment.ngay_vang_ban_dau = current_absence
-            adjustment.ngay_vang_sau_gop = ngay_vang_sau_gop
+            adjustment.ngay_vang_ban_dau = current_absence  # Vẫn lưu giá trị gốc
+            adjustment.ngay_vang_sau_gop = ngay_vang_sau_gop  # ✅ Giá trị sau gộp (đã trừ phép)
             adjustment.remaining_overtime_hours = gio_tang_ca_con_lai
             adjustment.used_overtime_hours = used_hours
-            adjustment.adjustment_reason = f"Gộp {overtime_days} ngày CN vào ngày công, bù {used_hours/8} ngày nghỉ"
+            adjustment.adjustment_reason = f"Gộp {overtime_days} ngày CN vào ngày công, bù {used_hours/8} ngày nghỉ (đã trừ {ngay_nghi_phep_nam} ngày phép năm)"
         else:
             # Tạo adjustment mới với đầy đủ thông tin
             adjustment = WorkAdjustment(
@@ -599,22 +611,24 @@ def apply_adjustment():
                 employee_code=employee_code,
                 employee_name=emp.name,
                 original_work_days=original_days,
-                original_absence_days=current_absence,
+                original_absence_days=current_absence,  # Lưu giá trị gốc
                 original_overtime_hours=overtime_hours,
                 adjusted_work_days=adjusted_days,  # ✅ ĐÃ GIỚI HẠN
-                ngay_vang_ban_dau=current_absence,      # ✅ Lưu ngày vắng ban đầu
-                ngay_vang_sau_gop=ngay_vang_sau_gop,    # ✅ Ngày vắng sau gộp
+                ngay_vang_ban_dau=current_absence,      # ✅ Lưu ngày vắng ban đầu (gốc)
+                ngay_vang_sau_gop=ngay_vang_sau_gop,    # ✅ Ngày vắng sau gộp (đã trừ phép)
                 remaining_overtime_hours=gio_tang_ca_con_lai,
                 used_overtime_hours=used_hours,
                 standard_work_days=ngay_cong_chuan,
                 adjustment_type="overtime_compensation",
-                adjustment_reason=f"Gộp {overtime_days} ngày CN vào ngày công, bù {used_hours/8} ngày nghỉ"
+                adjustment_reason=f"Gộp {overtime_days} ngày CN vào ngày công, bù {used_hours/8} ngày nghỉ (đã trừ {ngay_nghi_phep_nam} ngày phép năm)"
             )
             db.session.add(adjustment)
         
         db.session.commit()
         
-        flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Gộp {overtime_days} ngày CN, bù {used_hours/8} ngày nghỉ.", "success")
+        # ✅ CẬP NHẬT THÔNG BÁO VỚI THÔNG TIN PHÉP NĂM
+        thong_bao_phep = f" (đã trừ {ngay_nghi_phep_nam} ngày phép năm)" if ngay_nghi_phep_nam > 0 else ""
+        flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Gộp {overtime_days} ngày CN, bù {used_hours/8} ngày nghỉ{thong_bao_phep}.", "success")
         
     except Exception as e:
         db.session.rollback()
