@@ -77,7 +77,7 @@ class PayrollRecord(db.Model):
     phong_ban = db.Column(db.String(100))
     loai_hd = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-
+    
     employee = db.relationship("Employee", backref="payroll_records")
 
     def __repr__(self):
