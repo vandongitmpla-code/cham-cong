@@ -714,3 +714,4 @@ def add_paid_leave():
         flash(f"Lỗi khi cập nhật phép năm: {e}", "danger")
     
     return redirect(url_for("main.attendance_print", filename=filename))
+
