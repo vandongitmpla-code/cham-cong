@@ -305,7 +305,32 @@
     </div>
   </div>
 </div>
+<!-- ✅ THÊM: Modal xác nhận reset phép năm -->
+<div class="modal fade" id="resetLeaveModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reset ngày phép năm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có muốn reset ngày phép năm về 0 cho <strong id="resetLeaveEmployeeName"></strong>?</p>
+        <p class="text-muted">Tất cả ngày phép năm đã sử dụng sẽ được khôi phục về 0.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-danger" id="confirmResetLeave">Có, reset</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- ✅ THÊM: Form ẩn để reset phép năm -->
+<form id="resetLeaveForm" method="POST" action="{{ url_for('main.reset_paid_leave') }}" style="display: none;">
+  <input type="hidden" name="employee_id" id="resetLeaveEmployeeId">
+  <input type="hidden" name="period" id="resetLeavePeriod">
+  <input type="hidden" name="filename" value="{{ filename }}">
+</form>
 
 <!-- ✅ CẬP NHẬT: Form ẩn để submit điều chỉnh với ngày nghỉ -->
 <form id="adjustmentForm" method="POST" action="{{ url_for('main.apply_adjustment') }}" style="display: none;">
