@@ -331,4 +331,3 @@ document.getElementById('confirmLeave')?.addEventListener('click', function() {
     
     document.getElementById('formLeaveDays').value = leaveDays;
     document.getElementById('leaveForm').submit();
-});
