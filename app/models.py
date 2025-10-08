@@ -80,6 +80,7 @@ class PayrollRecord(db.Model):
     ngay_nghi_phep_nam = db.Column(db.Float, default=0)  # Số ngày nghỉ phép năm
     ngay_phep_con_lai = db.Column(db.Float, default=0)   # Số ngày phép còn tồn
     thang_bat_dau_tinh_phep = db.Column(db.String(50), default="")  # "6,7,8,9,10"
+    
     employee = db.relationship("Employee", backref="payroll_records")
 
     def __repr__(self):
