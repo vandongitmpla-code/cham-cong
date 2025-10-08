@@ -76,7 +76,7 @@ def calculate_adjustment_details(original_days, standard_days, overtime_hours, c
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template attendance_print - THÊM TÍNH NĂNG PHÉP NĂM
+    Tạo dữ liệu rows cho template attendance_print - SỬA LỖI LOGIC PHÉP NĂM
     """
     from datetime import datetime
     from app.models import WorkAdjustment, PaidLeave
@@ -88,13 +88,7 @@ def create_attendance_rows(records, period):
         # Lấy standard_days từ database
         standard_days = rec.standard_work_days
 
-        # Kiểm tra xem có điều chỉnh không
-        adjustment = WorkAdjustment.query.filter_by(
-            employee_code=rec.employee_code, 
-            period=period
-        ).first()
-        
-        # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM
+        # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM TRƯỚC
         employee = rec.employee
         thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_con_lai = calculate_leave_info(employee, period)
         
@@ -109,7 +103,17 @@ def create_attendance_rows(records, period):
             so_ngay_phep_con_lai = paid_leave.remaining_leave_days
         else:
             ngay_nghi_phep_nam = 0
-            so_ngay_phep_con_lai = so_thang_duoc_huong  # Mặc định bằng số tháng được hưởng
+            so_ngay_phep_con_lai = so_thang_duoc_huong
+
+        # ✅ TÍNH NGÀY NGHỈ SAU KHI TRỪ PHÉP NĂM (QUAN TRỌNG)
+        # Đây là giá trị cơ bản sau khi trừ phép năm, chưa tính đến điều chỉnh tăng ca
+        ngay_vang_sau_phep = max(0, rec.ngay_vang - ngay_nghi_phep_nam)
+
+        # Kiểm tra xem có điều chỉnh không
+        adjustment = WorkAdjustment.query.filter_by(
+            employee_code=rec.employee_code, 
+            period=period
+        ).first()
         
         if adjustment:
             # ✅ SỬA: GIỚI HẠN adjusted_work_days KHÔNG VƯỢT QUÁ standard_days
@@ -117,35 +121,42 @@ def create_attendance_rows(records, period):
             if adjusted_days > standard_days:
                 adjusted_days = standard_days
                 
-            ngay_cong_quy_dinh = standard_days           # Cột quy định = NGÀY CÔNG CHUẨN
-            ngay_cong_thuc_te = adjusted_days            # Cột thực tế = ĐÃ ĐIỀU CHỈNH (ĐÃ GIỚI HẠN)
+            ngay_cong_quy_dinh = standard_days
+            ngay_cong_thuc_te = adjusted_days
             
-            # ✅ ĐIỀU CHỈNH NGÀY NGHỈ KHÔNG LƯƠNG SAU KHI TRỪ PHÉP NĂM
-            ngay_vang_hien_thi = adjustment.ngay_vang_sau_gop
-            if ngay_nghi_phep_nam > 0:
-                ngay_vang_hien_thi = max(0, ngay_vang_hien_thi - ngay_nghi_phep_nam)
-                
+            # ✅ QUAN TRỌNG: TÍNH LẠI NGÀY NGHỈ SAU KHI GỘP TĂNG CA + TRỪ PHÉP NĂM
+            # Bước 1: Tính ngày nghỉ sau khi trừ phép năm (từ payroll_record gốc)
+            ngay_vang_sau_phep_co_ban = max(0, rec.ngay_vang - ngay_nghi_phep_nam)
+            
+            # Bước 2: Áp dụng điều chỉnh tăng ca lên ngày nghỉ đã trừ phép
+            # adjustment.ngay_vang_sau_gop là giá trị SAU KHI gộp tăng ca từ giá trị GỐC
+            # Chúng ta cần tính lại từ ngày nghỉ đã trừ phép
+            gio_da_dung_de_bu = adjustment.used_overtime_hours
+            ngay_da_bu_tu_tang_ca = gio_da_dung_de_bu / 8
+            
+            # Ngày nghỉ cuối cùng = (Ngày nghỉ sau phép) - (Số ngày đã bù từ tăng ca)
+            ngay_vang_hien_thi = max(0, ngay_vang_sau_phep_co_ban - ngay_da_bu_tu_tang_ca)
+            
             tang_ca_nghi_hien_thi = adjustment.remaining_overtime_hours
             adjustment_info = adjustment.used_overtime_hours
             original_days = adjustment.original_work_days
-            ngay_vang_ban_dau = adjustment.ngay_vang_ban_dau
             has_adjustment = True
             
-            print(f"DEBUG ADJUSTMENT: {rec.employee_code} - Original: {original_days}, Adjusted: {adjustment.adjusted_work_days}, Limited: {adjusted_days}, Standard: {standard_days}")
-        else:
-            # ✅ CHƯA ĐIỀU CHỈNH
-            ngay_cong_quy_dinh = standard_days           # Cột quy định = NGÀY CÔNG CHUẨN
-            ngay_cong_thuc_te = rec.ngay_cong            # Cột thực tế = NGÀY CÔNG THỰC TẾ
+            print(f"DEBUG ADJUSTMENT với phép năm: {rec.employee_code}")
+            print(f"- Ngày nghỉ gốc: {rec.ngay_vang}")
+            print(f"- Phép năm: {ngay_nghi_phep_nam}")
+            print(f"- Ngày nghỉ sau phép: {ngay_vang_sau_phep_co_ban}")
+            print(f"- Ngày đã bù từ tăng ca: {ngay_da_bu_tu_tang_ca}")
+            print(f"- Ngày nghỉ cuối cùng: {ngay_vang_hien_thi}")
             
-            # ✅ ĐIỀU CHỈNH NGÀY NGHỈ KHÔNG LƯƠNG SAU KHI TRỪ PHÉP NĂM
-            ngay_vang_hien_thi = rec.ngay_vang
-            if ngay_nghi_phep_nam > 0:
-                ngay_vang_hien_thi = max(0, rec.ngay_vang - ngay_nghi_phep_nam)
-                
+        else:
+            # ✅ CHƯA ĐIỀU CHỈNH - CHỈ CẦN TRỪ PHÉP NĂM
+            ngay_cong_quy_dinh = standard_days
+            ngay_cong_thuc_te = rec.ngay_cong
+            ngay_vang_hien_thi = ngay_vang_sau_phep  # ✅ DÙNG GIÁ TRỊ ĐÃ TRỪ PHÉP
             tang_ca_nghi_hien_thi = rec.tang_ca_nghi
             adjustment_info = 0
             original_days = rec.ngay_cong
-            ngay_vang_ban_dau = rec.ngay_vang
             has_adjustment = False
 
         # LUÔN CHO PHÉP ĐIỀU CHỈNH NẾU CÓ GIỜ TĂNG CA
@@ -155,14 +166,14 @@ def create_attendance_rows(records, period):
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
             ngay_cong_quy_dinh,
             ngay_nghi_phep_nam,  # ✅ "Số ngày nghỉ phép năm"
-            ngay_vang_hien_thi,  # ✅ "Số ngày nghỉ không lương" (đã trừ phép)
+            ngay_vang_hien_thi,  # ✅ "Số ngày nghỉ không lương" (đã trừ phép VÀ điều chỉnh tăng ca)
             ngay_cong_thuc_te,
             tang_ca_nghi_hien_thi,
             rec.le_tet_gio, 
             rec.tang_ca_tuan, 
             rec.ghi_chu or "", 
-            thang_bat_dau_tinh_phep,  # ✅ "Bắt đầu tính phép từ tháng"
-            so_ngay_phep_con_lai,     # ✅ "Số ngày phép còn tồn"
+            thang_bat_dau_tinh_phep,
+            so_ngay_phep_con_lai,
             rec.to,
             {
                 'has_adjustment': has_adjustment,
@@ -171,10 +182,11 @@ def create_attendance_rows(records, period):
                 'original_days': original_days,
                 'current_days': rec.ngay_cong,
                 'standard_days': standard_days,
-                'ngay_vang_ban_dau': ngay_vang_ban_dau,
-                'ngay_vang_sau_gop': ngay_vang_hien_thi,
-                'so_thang_duoc_huong': so_thang_duoc_huong,  # ✅ Thêm cho validation
-                'employee_id': employee.id  # ✅ Thêm cho form
+                'ngay_vang_ban_dau': rec.ngay_vang,        # Giá trị gốc từ payroll
+                'ngay_vang_sau_phep': ngay_vang_sau_phep,  # ✅ Giá trị sau trừ phép (chưa điều chỉnh tăng ca)
+                'ngay_nghi_phep_nam': ngay_nghi_phep_nam,  # Số ngày phép đã dùng
+                'so_thang_duoc_huong': so_thang_duoc_huong,
+                'employee_id': employee.id
             }
         ])
         stt += 1
