@@ -225,7 +225,20 @@ function debugLog(message, data = null) {
     }
 }
 
+// ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM KHI HOVER
+function showLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
 
+function hideLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
 
 // Xử lý click icon phép năm
 document.addEventListener('click', function(e) {
