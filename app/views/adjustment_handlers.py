@@ -114,10 +114,10 @@ def calculate_leave_info(employee, period):
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template attendance_print - SỬA LỖI HIỂN THỊ VƯỢT CHUẨN
+    Tạo dữ liệu rows cho template attendance_print - THÊM TÍNH NĂNG PHÉP NĂM
     """
     from datetime import datetime
-    from app.models import WorkAdjustment
+    from app.models import WorkAdjustment, PaidLeave
     
     rows = []
     stt = 1
@@ -132,6 +132,23 @@ def create_attendance_rows(records, period):
             period=period
         ).first()
         
+        # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM
+        employee = rec.employee
+        thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_con_lai = calculate_leave_info(employee, period)
+        
+        # ✅ LẤY THÔNG TIN PHÉP ĐÃ SỬ DỤNG TỪ PAID_LEAVE
+        paid_leave = PaidLeave.query.filter_by(
+            employee_id=employee.id,
+            period=period
+        ).first()
+        
+        if paid_leave:
+            ngay_nghi_phep_nam = paid_leave.leave_days_used
+            so_ngay_phep_con_lai = paid_leave.remaining_leave_days
+        else:
+            ngay_nghi_phep_nam = 0
+            so_ngay_phep_con_lai = so_thang_duoc_huong  # Mặc định bằng số tháng được hưởng
+        
         if adjustment:
             # ✅ SỬA: GIỚI HẠN adjusted_work_days KHÔNG VƯỢT QUÁ standard_days
             adjusted_days = adjustment.adjusted_work_days
@@ -140,7 +157,12 @@ def create_attendance_rows(records, period):
                 
             ngay_cong_quy_dinh = standard_days           # Cột quy định = NGÀY CÔNG CHUẨN
             ngay_cong_thuc_te = adjusted_days            # Cột thực tế = ĐÃ ĐIỀU CHỈNH (ĐÃ GIỚI HẠN)
+            
+            # ✅ ĐIỀU CHỈNH NGÀY NGHỈ KHÔNG LƯƠNG SAU KHI TRỪ PHÉP NĂM
             ngay_vang_hien_thi = adjustment.ngay_vang_sau_gop
+            if ngay_nghi_phep_nam > 0:
+                ngay_vang_hien_thi = max(0, ngay_vang_hien_thi - ngay_nghi_phep_nam)
+                
             tang_ca_nghi_hien_thi = adjustment.remaining_overtime_hours
             adjustment_info = adjustment.used_overtime_hours
             original_days = adjustment.original_work_days
@@ -152,7 +174,12 @@ def create_attendance_rows(records, period):
             # ✅ CHƯA ĐIỀU CHỈNH
             ngay_cong_quy_dinh = standard_days           # Cột quy định = NGÀY CÔNG CHUẨN
             ngay_cong_thuc_te = rec.ngay_cong            # Cột thực tế = NGÀY CÔNG THỰC TẾ
+            
+            # ✅ ĐIỀU CHỈNH NGÀY NGHỈ KHÔNG LƯƠNG SAU KHI TRỪ PHÉP NĂM
             ngay_vang_hien_thi = rec.ngay_vang
+            if ngay_nghi_phep_nam > 0:
+                ngay_vang_hien_thi = max(0, rec.ngay_vang - ngay_nghi_phep_nam)
+                
             tang_ca_nghi_hien_thi = rec.tang_ca_nghi
             adjustment_info = 0
             original_days = rec.ngay_cong
@@ -165,15 +192,15 @@ def create_attendance_rows(records, period):
         rows.append([
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
             ngay_cong_quy_dinh,
-            "", 
-            ngay_vang_hien_thi,
+            ngay_nghi_phep_nam,  # ✅ "Số ngày nghỉ phép năm"
+            ngay_vang_hien_thi,  # ✅ "Số ngày nghỉ không lương" (đã trừ phép)
             ngay_cong_thuc_te,
             tang_ca_nghi_hien_thi,
             rec.le_tet_gio, 
             rec.tang_ca_tuan, 
             rec.ghi_chu or "", 
-            "", 
-            "", 
+            thang_bat_dau_tinh_phep,  # ✅ "Bắt đầu tính phép từ tháng"
+            so_ngay_phep_con_lai,     # ✅ "Số ngày phép còn tồn"
             rec.to,
             {
                 'has_adjustment': has_adjustment,
@@ -183,13 +210,53 @@ def create_attendance_rows(records, period):
                 'current_days': rec.ngay_cong,
                 'standard_days': standard_days,
                 'ngay_vang_ban_dau': ngay_vang_ban_dau,
-                'ngay_vang_sau_gop': ngay_vang_hien_thi
+                'ngay_vang_sau_gop': ngay_vang_hien_thi,
+                'so_thang_duoc_huong': so_thang_duoc_huong,  # ✅ Thêm cho validation
+                'employee_id': employee.id  # ✅ Thêm cho form
             }
         ])
         stt += 1
     
     return rows
 
+def calculate_leave_info(employee, period):
+    """
+    Tính toán thông tin phép năm từ start_month đến period hiện tại
+    """
+    if not employee.start_month:
+        return "", 0, 0
+    
+    try:
+        # Parse start_month và period
+        start_date = datetime.strptime(employee.start_month + "-01", "%Y-%m-%d")
+        current_date = datetime.strptime(period + "-01", "%Y-%m-%d")
+        
+        # Kiểm tra nếu start_month sau period
+        if start_date > current_date:
+            return "", 0, 0
+        
+        # Tính số tháng từ start_month đến period
+        months = []
+        total_months = 0
+        
+        temp_date = start_date
+        while temp_date <= current_date:
+            months.append(temp_date.month)
+            total_months += 1
+            # Tăng tháng
+            if temp_date.month == 12:
+                temp_date = temp_date.replace(year=temp_date.year + 1, month=1)
+            else:
+                temp_date = temp_date.replace(month=temp_date.month + 1)
+        
+        # Format months: "6,7,8,9,10"
+        months_str = ",".join(map(str, months))
+        
+        return months_str, total_months, total_months  # months_str, total_months, remaining_days
+    
+    except Exception as e:
+        print(f"Error calculating leave info: {e}")
+        return "", 0, 0
 def get_attendance_columns():
     """
     Trả về danh sách columns cho attendance_print
