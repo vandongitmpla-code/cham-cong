@@ -666,3 +666,51 @@ def reset_adjustment_payroll():
     else:
         return redirect(url_for("main.index"))
     
+@bp.route("/add_paid_leave", methods=["POST"])
+def add_paid_leave():
+    try:
+        employee_id = request.form.get("employee_id")
+        period = request.form.get("period")
+        leave_days = float(request.form.get("leave_days", 0))
+        filename = request.form.get("filename")
+        
+        employee = Employee.query.get(employee_id)
+        if not employee:
+            flash("Không tìm thấy nhân viên!", "danger")
+            return redirect(url_for("main.attendance_print", filename=filename))
+        
+        # ✅ KIỂM TRA SỐ NGÀY PHÉP TỐI ĐA
+        thang_bat_dau_tinh_phep, so_thang_duoc_huong, _ = calculate_leave_info(employee, period)
+        max_leave_days = so_thang_duoc_huong
+        
+        if leave_days > max_leave_days:
+            flash(f"Số ngày phép không được vượt quá {max_leave_days} ngày!", "danger")
+            return redirect(url_for("main.attendance_print", filename=filename))
+        
+        # ✅ TÌM HOẶC TẠO PAID_LEAVE RECORD
+        paid_leave = PaidLeave.query.filter_by(
+            employee_id=employee_id,
+            period=period
+        ).first()
+        
+        if paid_leave:
+            paid_leave.leave_days_used = leave_days
+            paid_leave.remaining_leave_days = max_leave_days - leave_days
+            paid_leave.updated_at = datetime.utcnow()
+        else:
+            paid_leave = PaidLeave(
+                employee_id=employee_id,
+                period=period,
+                leave_days_used=leave_days,
+                remaining_leave_days=max_leave_days - leave_days
+            )
+            db.session.add(paid_leave)
+        
+        db.session.commit()
+        flash(f"Đã cập nhật {leave_days} ngày phép năm cho {employee.name}!", "success")
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi cập nhật phép năm: {e}", "danger")
+    
+    return redirect(url_for("main.attendance_print", filename=filename))
