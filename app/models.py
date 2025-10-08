@@ -53,7 +53,7 @@ class Holiday(db.Model):
 
     def __repr__(self):
         return f"<Holiday {self.date} - {self.name}>"
-
+#----------------------------------------------bảng công tính lương
 class PayrollRecord(db.Model):
     __tablename__ = "payroll_records"
 
