@@ -281,30 +281,38 @@
   </div>
 </div>
 
-<!-- ✅ THÊM: Modal thêm phép năm -->
+<!-- Modal thêm phép năm -->
 <div class="modal fade" id="leaveModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Thêm ngày phép năm</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p>Nhân viên: <strong id="leaveEmployeeName"></strong></p>
-        <div class="mb-3">
-          <label class="form-label">Số ngày phép năm sử dụng:</label>
-          <input type="number" class="form-control" id="leaveDaysInput" 
-                 step="0.5" min="0" max="0">
-          <div class="form-text">Số ngày tối đa có thể sử dụng: <span id="maxLeaveDays">0</span> ngày</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm ngày phép năm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Nhân viên: <strong id="leaveEmployeeName"></strong></p>
+                <div class="mb-3">
+                    <label class="form-label">Số ngày phép năm sử dụng:</label>
+                    <input type="number" class="form-control" id="leaveDaysInput" 
+                           step="0.5" min="0" max="0">
+                    <div class="form-text">Số ngày tối đa có thể sử dụng: <span id="maxLeaveDays">0</span> ngày</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmLeave">Xong</button>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-        <button type="button" class="btn btn-primary" id="confirmLeave">Xong</button>
-      </div>
     </div>
-  </div>
 </div>
+
+<!-- Form ẩn cho phép năm -->
+<form id="leaveForm" method="POST" action="{{ url_for('main.add_paid_leave') }}" style="display: none;">
+    <input type="hidden" name="employee_id" id="formEmployeeId">
+    <input type="hidden" name="period" id="formLeavePeriod">
+    <input type="hidden" name="leave_days" id="formLeaveDays">
+    <input type="hidden" name="filename" value="{{ filename }}">
+</form>
 <!-- ✅ THÊM: Modal xác nhận reset phép năm -->
 <div class="modal fade" id="resetLeaveModal" tabindex="-1">
   <div class="modal-dialog">
