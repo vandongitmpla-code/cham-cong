@@ -226,6 +226,7 @@ function debugLog(message, data = null) {
 }
 
 
+
 // Xử lý click icon phép năm
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('leave-icon')) {
