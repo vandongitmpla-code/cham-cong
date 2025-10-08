@@ -105,38 +105,39 @@
               <span class="leave-days">{{ cell }}</span>
               
               <div class="leave-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
-                
-                <!-- ✅ NÚT "+" - LUÔN HIỆN KHI CÓ QUYỀN SỬ DỤNG PHÉP -->
-                {% if row[-1].so_thang_duoc_huong > 0 %}
-                <i class="bi bi-plus-circle-fill text-success me-1 leave-add-icon"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Thêm ngày phép năm"
-                  style="cursor:pointer; font-size: 16px;"
-                  data-employee-id="{{ row[-1].employee_id }}"
-                  data-employee-name="{{ row[2] }}"
-                  data-period="{{ period }}"
-                  data-max-leave="{{ row[-1].so_thang_duoc_huong }}"
-                  data-current-leave="{{ cell }}"
-                  data-current-absence="{{ row[7] }}"
-                  data-filename="{{ filename }}">
-                </i>
-                {% endif %}
-                
-                <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ CÓ PHÉP NĂM -->
-                {% if cell > 0 %}
-                <i class="bi bi-dash-circle-fill text-danger leave-reset-icon"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Reset ngày phép năm"
-                  style="cursor:pointer; font-size: 16px;"
-                  data-employee-id="{{ row[-1].employee_id }}"
-                  data-employee-name="{{ row[2] }}"
-                  data-period="{{ period }}"
-                  data-filename="{{ filename }}">
-                </i>
-                {% endif %}
-              </div>
+    
+    <!-- ✅ NÚT "+" - LUÔN HIỆN KHI CÓ QUYỀN SỬ DỤNG PHÉP -->
+    {% if row[-1].so_thang_duoc_huong > 0 %}
+    <i class="bi bi-plus-circle-fill text-success me-1 leave-add-icon"
+       data-bs-toggle="tooltip"
+       data-bs-placement="top"
+       title="Thêm ngày phép năm"
+       style="cursor:pointer; font-size: 16px;"
+       data-employee-id="{{ row[-1].employee_id }}"
+       data-employee-name="{{ row[2] }}"
+       data-period="{{ period }}"
+       data-max-leave="{{ row[-1].so_thang_duoc_huong }}"
+       data-current-leave="{{ cell }}"
+       data-current-absence="{{ row[7] }}"
+       data-filename="{{ filename }}">
+    </i>
+    {% endif %}
+    
+    <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ CÓ PHÉP NĂM -->
+    {% if cell > 0 %}
+    <i class="bi bi-dash-circle-fill text-danger leave-reset-icon"
+       data-bs-toggle="tooltip"
+       data-bs-placement="top"
+       title="Reset ngày phép năm"
+       style="cursor:pointer; font-size: 16px;"
+       data-employee-id="{{ row[-1].employee_id }}"
+       data-employee-name="{{ row[2] }}"
+       data-period="{{ period }}"
+       data-filename="{{ filename }}">
+    </i>
+    {% endif %}
+    
+</div>
             </td>
 
             {% elif colname == "Số ngày nghỉ không lương" %}
