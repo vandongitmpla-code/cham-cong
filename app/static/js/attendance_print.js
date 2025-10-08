@@ -287,23 +287,23 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         });
         // ✅ XỬ LÝ CLICK ICON RESET PHÉP NĂM (-)
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('leave-reset-icon')) {
-        const employeeId = e.target.getAttribute('data-employee-id');
-        const employeeName = e.target.getAttribute('data-employee-name');
-        const period = e.target.getAttribute('data-period');
-        
-        console.log('Leave reset clicked:', {employeeId, employeeName, period});
-        
-        // Hiển thị modal xác nhận reset phép năm
-        document.getElementById('resetLeaveEmployeeName').textContent = employeeName;
-        document.getElementById('resetLeaveEmployeeId').value = employeeId;
-        document.getElementById('resetLeavePeriod').value = period;
-        
-        const resetModal = new bootstrap.Modal(document.getElementById('resetLeaveModal'));
-        resetModal.show();
-    }
-});
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('leave-reset-icon')) {
+            const employeeId = e.target.getAttribute('data-employee-id');
+            const employeeName = e.target.getAttribute('data-employee-name');
+            const period = e.target.getAttribute('data-period');
+            
+            console.log('Leave reset clicked:', {employeeId, employeeName, period});
+            
+            // Hiển thị modal xác nhận reset phép năm
+            document.getElementById('resetLeaveEmployeeName').textContent = employeeName;
+            document.getElementById('resetLeaveEmployeeId').value = employeeId;
+            document.getElementById('resetLeavePeriod').value = period;
+            
+            const resetModal = new bootstrap.Modal(document.getElementById('resetLeaveModal'));
+            resetModal.show();
+        }
+    });
 
 // ✅ XÁC NHẬN RESET PHÉP NĂM
 document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
