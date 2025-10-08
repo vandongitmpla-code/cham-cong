@@ -115,3 +115,20 @@ class WorkAdjustment(db.Model):
 
     def __repr__(self):
         return f"<WorkAdjustment {self.employee_code} - {self.period}>"
+
+class PaidLeave(db.Model):
+    __tablename__ = "paid_leaves"
+
+    id = db.Column(db.Integer, primary_key=True)
+    employee_id = db.Column(db.Integer, db.ForeignKey("employees.id"), nullable=False)
+    period = db.Column(db.String(7), nullable=False)  # YYYY-MM
+    leave_days_used = db.Column(db.Float, default=0)  # Số ngày phép đã sử dụng
+    remaining_leave_days = db.Column(db.Float, default=0)  # Số ngày phép còn lại
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    employee = db.relationship("Employee", backref="paid_leaves")
+
+    def __repr__(self):
+        return f"<PaidLeave {self.employee_id} - {self.period}>"
+    
