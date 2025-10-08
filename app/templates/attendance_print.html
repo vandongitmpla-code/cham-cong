@@ -94,6 +94,24 @@
                 
               </div>
             </td>
+
+            {% elif colname == "Số ngày nghỉ phép năm" %}
+            <!-- ✅ CỘT PHÉP NĂM VỚI ICON THÊM -->
+            <td class="position-relative leave-cell">
+              <span class="leave-days">{{ cell }}</span>
+              <i class="bi bi-plus-circle text-primary ms-1 leave-icon"
+                 style="cursor: pointer; font-size: 14px;"
+                 data-bs-toggle="tooltip"
+                 title="Thêm ngày phép năm"
+                 data-employee-id="{{ row[-1].employee_id }}"
+                 data-employee-name="{{ row[2] }}"
+                 data-period="{{ period }}"
+                 data-max-leave="{{ row[-1].so_thang_duoc_huong }}"
+                 data-current-leave="{{ cell }}"
+                 data-current-absence="{{ row[7] }}">
+              </i>
+            </td>
+
             {% elif colname == "Số ngày nghỉ không lương" %}
               <td class="fw-bold absence-cell" 
                   data-bs-toggle="tooltip" 
@@ -101,6 +119,19 @@
                   title="{% if row[-1].adjustment_info > 0 %}Bạn đã dùng {{ (row[-1].adjustment_info / 8)|round(1) }} ngày CN để bù vào ngày công, bạn đã nghỉ phép {{ cell }} ngày{% else %}{{ cell }} ngày nghỉ không lương{% endif %}">
                 {{ cell }}
               </td>
+
+            {% elif colname == "Bắt đầu tính phép từ tháng" %}
+              <!-- ✅ CỘT THÁNG BẮT ĐẦU TÍNH PHÉP -->
+              <td class="text-info fw-bold">
+                {{ cell }}
+              </td>
+
+            {% elif colname == "Số ngày phép còn tồn" %}
+              <!-- ✅ CỘT SỐ NGÀY PHÉP CÒN LẠI -->
+              <td class="text-success fw-bold">
+                {{ cell }}
+              </td>
+
             {% elif colname in ["Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)", 
                                "Số giờ làm việc tăng ca (ngày lễ)",
                                "Số giờ làm việc tăng ca (ngày làm trong tuần)"] %}
@@ -108,6 +139,7 @@
               <td class="fw-bold text-primary">
                 {{ cell }}
               </td>
+
             {% elif colname == "Ghi chú" %}
               <td class="note-cell" data-emp="{{ row[1] }}">
                 {% if cell == "ICON_ONLY" or (cell is string and cell.endswith("|||ICON")) %}
@@ -124,6 +156,7 @@
                   {{ cell }}
                 {% endif %}
               </td>
+
             {% else %}
               <td>{{ cell }}</td>
             {% endif %}
@@ -220,20 +253,53 @@
   </div>
 </div>
 
+<!-- ✅ THÊM: Modal thêm phép năm -->
+<div class="modal fade" id="leaveModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm ngày phép năm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Nhân viên: <strong id="leaveEmployeeName"></strong></p>
+        <div class="mb-3">
+          <label class="form-label">Số ngày phép năm sử dụng:</label>
+          <input type="number" class="form-control" id="leaveDaysInput" 
+                 step="0.5" min="0" max="0">
+          <div class="form-text">Số ngày tối đa có thể sử dụng: <span id="maxLeaveDays">0</span> ngày</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" id="confirmLeave">Xong</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ✅ CẬP NHẬT: Form ẩn để submit điều chỉnh với ngày nghỉ -->
 <form id="adjustmentForm" method="POST" action="{{ url_for('main.apply_adjustment') }}" style="display: none;">
   <input type="hidden" name="employee_code" id="formEmployeeCode">
   <input type="hidden" name="period" id="formPeriod">
   <input type="hidden" name="original_days" id="formOriginalDays">
   <input type="hidden" name="overtime_hours" id="formOvertimeHours">
-  <input type="hidden" name="current_absence" id="formCurrentAbsence">  {# ✅ Thêm ngày nghỉ #}
+  <input type="hidden" name="current_absence" id="formCurrentAbsence">
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
-<!-- ✅ Sửa form reset để dùng endpoint mới -->
+<!-- ✅ Form reset -->
 <form id="resetForm" method="POST" action="{{ url_for('main.reset_adjustment_payroll') }}" style="display: none;">
   <input type="hidden" name="employee_code" id="resetEmployeeCode">
   <input type="hidden" name="period" id="resetPeriod">
+  <input type="hidden" name="filename" value="{{ filename }}">
+</form>
+
+<!-- ✅ THÊM: Form ẩn cho phép năm -->
+<form id="leaveForm" method="POST" action="{{ url_for('main.add_paid_leave') }}" style="display: none;">
+  <input type="hidden" name="employee_id" id="formEmployeeId">
+  <input type="hidden" name="period" id="formLeavePeriod">
+  <input type="hidden" name="leave_days" id="formLeaveDays">
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
