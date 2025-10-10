@@ -268,43 +268,43 @@ def import_payroll(filename):
             return standard_days, sunday_count
 
     def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio, ngay_vang_ban_dau, ngay_nghi_phep_nam_da_dung=0):
-    """
-    CÔNG THỨC MỚI: Tính toán điều chỉnh ngày công
-    """
-    overtime_days = tang_ca_nghi_gio / 8
-    
-    # Tính số ngày có thể bù từ tăng ca
-    ngay_vang_con_lai_sau_phep = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung)
-    so_ngay_bu_tu_tang_ca = min(overtime_days, ngay_vang_con_lai_sau_phep)
-    
-    # Tính ngày công tạm thời
-    ngay_cong_tam = ngay_cong_thuc_te + ngay_nghi_phep_nam_da_dung + so_ngay_bu_tu_tang_ca
-    
-    # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
-    ngay_nghi_phep_nam_da_dung_final = ngay_nghi_phep_nam_da_dung
-    so_ngay_bu_tu_tang_ca_final = so_ngay_bu_tu_tang_ca
-    
-    if ngay_cong_tam > ngay_cong_chuan:
-        ngay_thua = ngay_cong_tam - ngay_cong_chuan
+        """
+        CÔNG THỨC MỚI: Tính toán điều chỉnh ngày công
+        """
+        overtime_days = tang_ca_nghi_gio / 8
         
-        if so_ngay_bu_tu_tang_ca_final >= ngay_thua:
-            so_ngay_bu_tu_tang_ca_final -= ngay_thua
-            ngay_thua = 0
-        else:
-            ngay_thua -= so_ngay_bu_tu_tang_ca_final
-            so_ngay_bu_tu_tang_ca_final = 0
+        # Tính số ngày có thể bù từ tăng ca
+        ngay_vang_con_lai_sau_phep = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung)
+        so_ngay_bu_tu_tang_ca = min(overtime_days, ngay_vang_con_lai_sau_phep)
+        
+        # Tính ngày công tạm thời
+        ngay_cong_tam = ngay_cong_thuc_te + ngay_nghi_phep_nam_da_dung + so_ngay_bu_tu_tang_ca
+        
+        # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+        ngay_nghi_phep_nam_da_dung_final = ngay_nghi_phep_nam_da_dung
+        so_ngay_bu_tu_tang_ca_final = so_ngay_bu_tu_tang_ca
+        
+        if ngay_cong_tam > ngay_cong_chuan:
+            ngay_thua = ngay_cong_tam - ngay_cong_chuan
             
-        if ngay_thua > 0:
-            ngay_nghi_phep_nam_da_dung_final -= ngay_thua
+            if so_ngay_bu_tu_tang_ca_final >= ngay_thua:
+                so_ngay_bu_tu_tang_ca_final -= ngay_thua
+                ngay_thua = 0
+            else:
+                ngay_thua -= so_ngay_bu_tu_tang_ca_final
+                so_ngay_bu_tu_tang_ca_final = 0
+                
+            if ngay_thua > 0:
+                ngay_nghi_phep_nam_da_dung_final -= ngay_thua
+            
+            adjusted_days = ngay_cong_chuan
+        else:
+            adjusted_days = ngay_cong_tam
         
-        adjusted_days = ngay_cong_chuan
-    else:
-        adjusted_days = ngay_cong_tam
-    
-    # Tính kết quả cuối
-    ngay_vang_cuoi = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung_final - so_ngay_bu_tu_tang_ca_final)
-    remaining_hours = tang_ca_nghi_gio - (so_ngay_bu_tu_tang_ca_final * 8)
-    used_hours = so_ngay_bu_tu_tang_ca_final * 8
+        # Tính kết quả cuối
+        ngay_vang_cuoi = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung_final - so_ngay_bu_tu_tang_ca_final)
+        remaining_hours = tang_ca_nghi_gio - (so_ngay_bu_tu_tang_ca_final * 8)
+        used_hours = so_ngay_bu_tu_tang_ca_final * 8
     
     return adjusted_days, ngay_vang_cuoi, remaining_hours, used_hours, so_ngay_bu_tu_tang_ca_final, ngay_nghi_phep_nam_da_dung_fin
 
