@@ -512,33 +512,7 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
     }
 }
 
-// ✅ SỬA LẠI: Xử lý click xác nhận trong modal
-document.addEventListener('DOMContentLoaded', function() {
-    const confirmBtn = document.getElementById('confirmAdjustment');
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', function() {
-            const employeeCode = document.getElementById('formEmployeeCode').value;
-            const period = document.getElementById('formPeriod').value;
-            const filename = document.getElementById('formFilename').value;
-            
-            console.log('=== MODAL CONFIRM CLICKED ===');
-            console.log('Employee Code:', employeeCode);
-            console.log('Period:', period);
-            console.log('Filename:', filename);
-            
-            // Đóng modal trước
-            const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
-            if (modal) {
-                modal.hide();
-            }
-            
-            // Gọi hàm điều chỉnh
-            applyAdjustment(employeeCode, period, filename);
-        });
-    } else {
-        console.error('confirmAdjustment button not found!');
-    }
-});
+
 
 // ✅ THÊM CÁC HÀM BỊ THIẾU
 function showAdjustmentButtons(cell) {
