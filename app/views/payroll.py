@@ -510,7 +510,7 @@ def apply_adjustment():
             standard_days=ngay_cong_chuan,
             ngay_vang_ban_dau=current_absence,
             overtime_hours=overtime_hours,
-            ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung
+            ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
             use_extra_leave=use_extra_leave  # Thêm tham số này
         )
 
