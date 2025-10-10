@@ -618,15 +618,16 @@ def reset_adjustment_payroll():
         ).first()
         
         if adjustment:
-            # ✅ KHÔI PHỤC ngay_cong VỀ GIÁ TRỊ GỐC
+            # ✅ KHÔI PHỤC VỀ GIÁ TRỊ GỐC TỪ PAYROLL RECORD
             payroll_record = PayrollRecord.query.filter_by(
                 employee_code=employee_code,
                 period=period
             ).first()
             
             if payroll_record:
-                payroll_record.ngay_cong = adjustment.original_work_days
-                payroll_record.tang_ca_nghi = adjustment.original_overtime_hours
+                # KHÔNG cần cập nhật payroll_record vì chúng ta dùng adjustment để tính toán
+                # Chỉ cần xóa adjustment là đủ
+                pass
             
             db.session.delete(adjustment)
             db.session.commit()
