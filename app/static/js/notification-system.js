@@ -1,5 +1,4 @@
 // static/js/notification-system.js
-
 class NotificationSystem {
     constructor() {
         this.container = null;
