@@ -571,3 +571,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// ✅ THÊM CÁC HÀM BỊ THIẾU
+function showAdjustmentButtons(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+function hideAdjustmentButtons(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
+
+function showLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+function hideLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
