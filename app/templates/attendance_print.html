@@ -16,7 +16,32 @@
 
 <div class="print-container">
 
+  <!-- DEBUG DATA - THÊM VÀO ĐẦU TEMPLATE -->
+<div class="alert alert-danger debug-info">
+  <h5>🔍 DEBUG - KIỂM TRA DATA</h5>
   
+  <p><strong>Số cột:</strong> {{ cols|length }}</p>
+  <p><strong>Số dòng:</strong> {{ rows|length if rows else 0 }}</p>
+  
+  {% if rows %}
+  <p><strong>Dòng đầu tiên - Số phần tử:</strong> {{ rows[0]|length }}</p>
+  <p><strong>Cột 13 (Bắt đầu tính phép):</strong> "{{ rows[0][13] }}"</p>
+  <p><strong>Cột 14 (Phép còn tồn):</strong> "{{ rows[0][14] }}"</p>
+  <p><strong>Cột 6 (Phép năm đã dùng):</strong> "{{ rows[0][6] }}"</p>
+  
+  <p><strong>Metadata - so_thang_duoc_huong:</strong> {{ rows[0][-1].so_thang_duoc_huong }}</p>
+  <p><strong>Metadata - employee_id:</strong> {{ rows[0][-1].employee_id }}</p>
+  {% else %}
+  <p>Không có dữ liệu rows</p>
+  {% endif %}
+  
+  <p><strong>Danh sách cột:</strong></p>
+  <ol>
+    {% for col in cols %}
+    <li>{{ col }}</li>
+    {% endfor %}
+  </ol>
+</div>
 
   <!-- Thông tin công ty -->
   <table class="table table-borderless w-100 mb-1">
