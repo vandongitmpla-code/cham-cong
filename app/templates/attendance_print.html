@@ -50,51 +50,44 @@
             {% set colname = cols[i] %}
             {% set cell = row[i] %}
 
-            {% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
-            <td class="adjustable-cell position-relative" 
-                style="min-width: 120px; cursor: pointer;"
-                onmouseenter="showAdjustmentButtons(this)" 
-                onmouseleave="hideAdjustmentButtons(this)">
-              
-              {{ cell }}
+            <!-- TRONG TEMPLATE, SỬA CÁC THUỘC TÍNH DATA -->
+
+{% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
+<td class="adjustable-cell position-relative" style="min-width: 120px;">
+  {{ cell }}
+  <div class="adjustment-buttons">
+    {% if row[-1].has_overtime and not row[-1].has_adjustment %}
+    <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Gộp ngày tăng ca"
+      style="cursor:pointer; font-size: 16px;"
+      data-employee-code="{{ row[1] }}"
+      data-employee-name="{{ row[2] }}"
+      data-period="{{ period }}"
+      data-original-days="{{ row[-1].original_days }}"
+      data-actual-days="{{ cell }}"
+      data-overtime-hours="{{ row[-1].tong_gio_tang_ca }}"  <!-- ✅ SỬA THÀNH tong_gio_tang_ca -->
+      data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
+      data-standard-days="{{ row[-1].standard_days or 26 }}"
+      data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}">
+    </i>
+    {% endif %}
     
-              <div class="adjustment-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
-                
-                <!-- ✅ NÚT "+" - CHỈ HIỆN KHI CHƯA ĐIỀU CHỈNH VÀ CÓ TĂNG CA -->
-                {% if row[-1].has_overtime and not row[-1].has_adjustment %}
-                <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Gộp ngày tăng ca"
-                  style="cursor:pointer; font-size: 16px;"
-                  data-employee-code="{{ row[1] }}"
-                  data-employee-name="{{ row[2] }}"
-                  data-period="{{ period }}"
-                  data-original-days="{{ row[-1].original_days }}"
-                  data-actual-days="{{ cell }}"
-                  data-overtime-hours="{{ row[-1].tang_ca_nghi_ban_dau }}"
-                  data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
-                  data-standard-days="{{ row[-1].standard_days or 26 }}"
-                  data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}">  <!-- ✅ THÊM THUỘC TÍNH NÀY -->
-                </i>
-                {% endif %}
-                
-                <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ ĐIỀU CHỈNH -->
-                {% if row[-1].has_adjustment %}
-                <i class="bi bi-dash-circle-fill text-danger reset-icon"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="Khôi phục dữ liệu gốc"
-                  style="cursor:pointer; font-size: 16px;"
-                  data-employee-code="{{ row[1] }}"
-                  data-employee-name="{{ row[2] }}"
-                  data-period="{{ period }}"
-                  data-filename="{{ filename }}">
-                </i>
-                {% endif %}
-                
-              </div>
-            </td>
+    {% if row[-1].has_adjustment %}
+    <i class="bi bi-dash-circle-fill text-danger reset-icon"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Khôi phục dữ liệu gốc"
+      style="cursor:pointer; font-size: 16px;"
+      data-employee-code="{{ row[1] }}"
+      data-employee-name="{{ row[2] }}"
+      data-period="{{ period }}"
+      data-filename="{{ filename }}">
+    </i>
+    {% endif %}
+  </div>
+</td>
 
             {% elif colname == "Số ngày nghỉ phép năm" %}
             <!-- ✅ CỘT PHÉP NĂM VỚI ICON "+" VÀ "-" -->
