@@ -1,4 +1,29 @@
-
+// ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP - THÊM VÀO ĐẦU FILE
+function handleConfirmAdjustment() {
+    console.log('=== HANDLE CONFIRM ADJUSTMENT CALLED ===');
+    
+    const employeeCode = document.getElementById('formEmployeeCode').value;
+    const period = document.getElementById('formPeriod').value;
+    const filename = document.getElementById('formFilename').value;
+    
+    console.log('Form values:', {
+        employeeCode: employeeCode,
+        period: period,
+        filename: filename,
+        originalDays: document.getElementById('formOriginalDays').value,
+        overtimeHours: document.getElementById('formOvertimeHours').value,
+        currentAbsence: document.getElementById('formCurrentAbsence').value
+    });
+    
+    // Đóng modal trước
+    const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Gọi hàm điều chỉnh
+    applyAdjustment(employeeCode, period, filename);
+}
 
 // attendance_print.js - JavaScript cho trang attendance_print - CÔNG THỨC MỚI ĐÃ SỬA
 document.addEventListener("DOMContentLoaded", function(){
