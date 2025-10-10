@@ -227,7 +227,10 @@ def calculate_leave_info(employee, period):
         # Format months: "6,7,8,9,10"
         months_str = ",".join(map(str, months))
         
-        return months_str, total_months, total_months  # months_str, total_months, remaining_days
+        # ✅ TÍNH SỐ NGÀY PHÉP ĐƯỢC HƯỞNG (1 tháng = 1 ngày phép)
+        so_ngay_phep_duoc_huong = total_months
+        
+        return months_str, so_ngay_phep_duoc_huong, so_ngay_phep_duoc_huong
     
     except Exception as e:
         print(f"Error calculating leave info: {e}")
