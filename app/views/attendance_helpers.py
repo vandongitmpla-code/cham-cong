@@ -45,21 +45,21 @@ def calculate_standard_work_days(year, month):
     standard_days = total_days - sunday_count - (holidays_count * 2)
     return standard_days
 
-def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung):
+def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung, use_extra_leave=False):
     """
-    Tính toán điều chỉnh theo logic mới - ĐÃ SỬA LỖI LOGIC
+    Tính toán điều chỉnh theo logic mới - CÓ THÊM XÁC NHẬN PHÉP NĂM
     """
     # Chuyển giờ tăng ca sang ngày
     overtime_days = overtime_hours / 8
     
-    # TÍNH TOÁN THEO THỨ TỰ ƯU TIÊN ĐÚNG
+    # TÍNH TOÁN BAN ĐẦU
     # 1. Dùng phép năm bù ngày vắng (tối đa = ngày vắng)
     ngay_phep_su_dung = min(ngay_nghi_phep_nam_da_dung, ngay_vang_ban_dau)
     
     # 2. Ngày vắng còn lại sau khi dùng phép năm
     ngay_vang_con_sau_phep = ngay_vang_ban_dau - ngay_phep_su_dung
     
-    # 3. Dùng tăng ca bù ngày vắng còn lại (tối đa = ngày vắng còn lại HOẶC số tăng ca có)
+    # 3. Dùng tăng ca bù ngày vắng còn lại
     ngay_tang_ca_su_dung = min(overtime_days, ngay_vang_con_sau_phep)
     
     # 4. Tính ngày công tạm thời
@@ -67,36 +67,47 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
     
     # 5. KIỂM TRA GIỚI HẠN: Không được vượt quá ngày công chuẩn
     if ngay_cong_tam > standard_days:
-        # Tính số vượt quá
         vuot_qua = ngay_cong_tam - standard_days
         
-        # Ưu tiên giảm tăng ca sử dụng trước
         if ngay_tang_ca_su_dung >= vuot_qua:
             ngay_tang_ca_su_dung -= vuot_qua
         else:
             vuot_qua -= ngay_tang_ca_su_dung
             ngay_tang_ca_su_dung = 0
             
-            # Nếu vẫn vượt, giảm phép năm sử dụng
             if ngay_phep_su_dung >= vuot_qua:
                 ngay_phep_su_dung -= vuot_qua
             else:
                 vuot_qua -= ngay_phep_su_dung
                 ngay_phep_su_dung = 0
         
-        # Tính lại ngày công cuối
         ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
     else:
         ngay_cong_cuoi = ngay_cong_tam
     
-    # 6. QUAN TRỌNG: Nếu đã đạt công chuẩn thì KHÔNG CÓ ngày nghỉ không lương
-    if ngay_cong_cuoi >= standard_days:
-        ngay_vang_cuoi = 0  # Đã đủ công → không có ngày nghỉ không lương
-    else:
-        # Tính ngày vắng cuối cùng (nghỉ không lương)
-        ngay_vang_cuoi = ngay_vang_ban_dau - ngay_phep_su_dung - ngay_tang_ca_su_dung
+    # 6. Tính ngày vắng cuối cùng BAN ĐẦU
+    ngay_vang_cuoi = ngay_vang_ban_dau - ngay_phep_su_dung - ngay_tang_ca_su_dung
     
-    # 7. Tính toán kết quả cuối
+    # 7. XỬ LÝ XÁC NHẬN THÊM PHÉP NĂM (nếu được yêu cầu)
+    if use_extra_leave and ngay_vang_cuoi > 0:
+        # Tính số phép năm còn lại có thể dùng
+        phep_nam_con_lai_kha_dung = ngay_nghi_phep_nam_da_dung - ngay_phep_su_dung
+        
+        if phep_nam_con_lai_kha_dung >= ngay_vang_cuoi:
+            # Dùng hết phép năm còn lại để bù nốt
+            ngay_phep_su_dung += ngay_vang_cuoi
+            ngay_vang_cuoi = 0
+            ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
+            
+            # Kiểm tra lại không vượt quá chuẩn
+            if ngay_cong_cuoi > standard_days:
+                ngay_cong_cuoi = standard_days
+        else:
+            # Không đủ phép năm → không thể bù hết
+            # Có thể trả về thông báo lỗi ở đây
+            pass
+    
+    # 8. Tính toán kết quả cuối
     tang_ca_con_lai = overtime_hours - (ngay_tang_ca_su_dung * 8)
     phep_nam_con_lai = ngay_nghi_phep_nam_da_dung - ngay_phep_su_dung
 
@@ -105,9 +116,10 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
         'ngay_vang_cuoi': ngay_vang_cuoi,
         'tang_ca_con_lai': tang_ca_con_lai,
         'so_ngay_bu_tu_tang_ca': ngay_tang_ca_su_dung,
-        'ngay_nghi_phep_nam_da_dung': ngay_phep_su_dung,  # Số phép năm THỰC SỰ dùng
+        'ngay_nghi_phep_nam_da_dung': ngay_phep_su_dung,
         'gio_tang_ca_da_dung': ngay_tang_ca_su_dung * 8,
-        'phep_nam_con_lai': phep_nam_con_lai  # Phép năm còn tồn
+        'phep_nam_con_lai': phep_nam_con_lai,
+        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and not use_extra_leave  # Flag để frontend biết cần hỏi thêm
     }
 
 
