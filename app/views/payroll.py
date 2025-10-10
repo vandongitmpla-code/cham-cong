@@ -464,8 +464,9 @@ def apply_adjustment():
         overtime_hours = float(request.form.get("overtime_hours"))
         current_absence = float(request.form.get("current_absence", 0))
         filename = request.form.get("filename") or request.args.get("filename")
+        use_extra_leave = request.form.get("use_extra_leave") == "true"  # Tham số mới
+        
         emp = Employee.query.filter_by(code=employee_code).first()
-        use_extra_leave = request.form.get("use_extra_leave") == "true"  
         if not emp:
             flash("Không tìm thấy nhân viên!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
@@ -502,7 +503,7 @@ def apply_adjustment():
                 
         ngay_cong_chuan = total_days - sunday_count - (holidays * 2)
 
-        # ✅ TÍNH TOÁN ĐIỀU CHỈNH THEO LOGIC MỚI
+        # ✅ TÍNH TOÁN ĐIỀU CHỈNH THEO LOGIC MỚI (CÓ THÊM use_extra_leave)
         from .attendance_helpers import calculate_adjustment_details
         
         result = calculate_adjustment_details(
@@ -511,8 +512,18 @@ def apply_adjustment():
             ngay_vang_ban_dau=current_absence,
             overtime_hours=overtime_hours,
             ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
-            use_extra_leave=use_extra_leave  
+            use_extra_leave=use_extra_leave  # Thêm tham số này
         )
+
+        # ✅ Nếu cần xác nhận thêm phép năm, trả về JSON thay vì tạo adjustment
+        if result.get('can_xac_nhan_them_phep') and not use_extra_leave:
+            return {
+                'need_extra_leave_confirmation': True,
+                'remaining_absence': result['ngay_vang_con_lai'],
+                'available_leave': result['phep_nam_kha_dung'],
+                'employee_code': employee_code,
+                'period': period
+            }
 
         # ✅ Tạo hoặc cập nhật WorkAdjustment
         adjustment = WorkAdjustment.query.filter_by(
