@@ -45,33 +45,56 @@ def calculate_standard_work_days(year, month):
     standard_days = total_days - sunday_count - (holidays_count * 2)
     return standard_days
 
-def calculate_adjustment_details(original_days, standard_days, overtime_hours, current_absence):
+def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung):
     """
-    Tính toán chi tiết điều chỉnh - CÔNG THỨC MỚI
+    Tính toán điều chỉnh theo logic mới
     """
+    # Chuyển giờ tăng ca sang ngày
     overtime_days = overtime_hours / 8
     
-    # 1. Gộp toàn bộ tăng ca vào ngày công
-    adjusted_days = original_days + overtime_days
+    # Tính số ngày có thể bù từ tăng ca
+    ngay_vang_con_lai_sau_phep = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung)
+    so_ngay_bu_tu_tang_ca = min(overtime_days, ngay_vang_con_lai_sau_phep)
     
-    # 2. Dùng tăng ca để bù ngày nghỉ
-    ngay_vang_sau_gop = current_absence
-    remaining_hours = overtime_hours
+    # Tính ngày công tạm thời
+    ngay_cong_tam = original_days + ngay_nghi_phep_nam_da_dung + so_ngay_bu_tu_tang_ca
     
-    if current_absence > 0:
-        # Số ngày có thể bù từ tăng ca
-        so_ngay_co_the_bu = min(overtime_days, current_absence)
+    # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+    ngay_nghi_phep_nam_da_dung_final = ngay_nghi_phep_nam_da_dung
+    so_ngay_bu_tu_tang_ca_final = so_ngay_bu_tu_tang_ca
+    
+    if ngay_cong_tam > standard_days:
+        # Tính số ngày thừa
+        ngay_thua = ngay_cong_tam - standard_days
         
-        # Giảm ngày nghỉ
-        ngay_vang_sau_gop = current_absence - so_ngay_co_the_bu
+        # Giảm số ngày bù từ tăng ca trước
+        if so_ngay_bu_tu_tang_ca_final >= ngay_thua:
+            so_ngay_bu_tu_tang_ca_final -= ngay_thua
+            ngay_thua = 0
+        else:
+            ngay_thua -= so_ngay_bu_tu_tang_ca_final
+            so_ngay_bu_tu_tang_ca_final = 0
+            
+        # Nếu vẫn thừa, giảm phép năm đã dùng
+        if ngay_thua > 0:
+            ngay_nghi_phep_nam_da_dung_final -= ngay_thua
         
-        # Tính giờ tăng ca đã dùng để bù
-        gio_da_dung_de_bu = so_ngay_co_the_bu * 8
-        remaining_hours = overtime_hours - gio_da_dung_de_bu
+        ngay_cong_cuoi = standard_days
+    else:
+        ngay_cong_cuoi = ngay_cong_tam
     
-    used_hours = overtime_hours - remaining_hours
+    # Tính kết quả cuối
+    ngay_vang_cuoi = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung_final - so_ngay_bu_tu_tang_ca_final)
+    tang_ca_con_lai = overtime_hours - (so_ngay_bu_tu_tang_ca_final * 8)
     
-    return adjusted_days, ngay_vang_sau_gop, remaining_hours, used_hours
+    return {
+        'ngay_cong_cuoi': ngay_cong_cuoi,
+        'ngay_vang_cuoi': ngay_vang_cuoi,
+        'tang_ca_con_lai': tang_ca_con_lai,
+        'so_ngay_bu_tu_tang_ca': so_ngay_bu_tu_tang_ca_final,
+        'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung_final,
+        'gio_tang_ca_da_dung': so_ngay_bu_tu_tang_ca_final * 8
+    }
 
 
 def create_attendance_rows(records, period):
