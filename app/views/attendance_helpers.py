@@ -128,11 +128,7 @@ def create_attendance_rows(records, period):
         # ✅ QUAN TRỌNG: LẤY GIÁ TRỊ GỐC TỪ PAYROLL RECORD (KHÔNG ĐIỀU CHỈNH)
         ngay_cong_ban_dau = rec.ngay_cong  # Giá trị gốc từ import
         ngay_vang_ban_dau = rec.ngay_vang  # Giá trị gốc từ import
-        
-        # ✅ SỬA QUAN TRỌNG: TÍNH TỔNG GIỜ TĂNG CA TỪ SỐ NGÀY CHỦ NHẬT
-        # rec.chu_nhat là số ngày CN đã làm, mỗi ngày = 8 giờ tăng ca
-        tong_gio_tang_ca = rec.chu_nhat * 8  # ✅ TÍNH TỔNG GIỜ TĂNG CA
-        gio_tang_ca_con_lai = rec.tang_ca_nghi  # Giờ tăng ca còn lại
+        tang_ca_nghi_ban_dau = rec.tang_ca_nghi  # Giá trị gốc từ import
 
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=rec.employee_code, 
@@ -152,13 +148,12 @@ def create_attendance_rows(records, period):
             # ✅ CHƯA ĐIỀU CHỈNH - DÙNG GIÁ TRỊ GỐC (KHÔNG TÍNH TOÁN)
             ngay_cong_hien_thi = ngay_cong_ban_dau
             ngay_vang_hien_thi = ngay_vang_ban_dau
-            tang_ca_nghi_hien_thi = gio_tang_ca_con_lai  # Dùng giờ còn lại
+            tang_ca_nghi_hien_thi = tang_ca_nghi_ban_dau
             
             has_adjustment = False
             adjustment_info = 0
 
-        # ✅ SỬA QUAN TRỌNG: has_overtime DỰA VÀO TỔNG GIỜ TĂNG CA
-        has_overtime = tong_gio_tang_ca > 0
+        has_overtime = tang_ca_nghi_ban_dau > 0
 
         rows.append([
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
@@ -184,8 +179,7 @@ def create_attendance_rows(records, period):
                 'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,
                 'so_thang_duoc_huong': so_thang_duoc_huong,
                 'employee_id': employee.id,
-                'tong_gio_tang_ca': tong_gio_tang_ca,  # ✅ THÊM TỔNG GIỜ TĂNG CA
-                'gio_tang_ca_con_lai': gio_tang_ca_con_lai
+                'tang_ca_nghi_ban_dau': tang_ca_nghi_ban_dau
             }
         ])
         stt += 1
