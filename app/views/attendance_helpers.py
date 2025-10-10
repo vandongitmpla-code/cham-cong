@@ -255,3 +255,4 @@ def get_company_info(period):
         "address": "KCN phường 8, phường Lý Văn Lâm, Tỉnh Cà Mau, Việt Nam",
         "title": f"BẢNG CHẤM CÔNG VÀ HIỆU SUẤT {period}"
     }
+
