@@ -119,7 +119,9 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
         'ngay_nghi_phep_nam_da_dung': ngay_phep_su_dung,
         'gio_tang_ca_da_dung': ngay_tang_ca_su_dung * 8,
         'phep_nam_con_lai': phep_nam_con_lai,
-        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and not use_extra_leave  # Flag để frontend biết cần hỏi thêm
+        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and not use_extra_leave,  # Flag để frontend biết cần hỏi thêm
+        'ngay_vang_con_lai': ngay_vang_cuoi,  # Thêm để frontend hiển thị
+        'phep_nam_kha_dung': phep_nam_con_lai  # Thêm để frontend kiểm tra
     }
 
 
