@@ -1,6 +1,35 @@
 // ✅ THÊM DEBUG ĐỂ KIỂM TRA
 console.log('🎯 attendance_print.js loaded - handleConfirmAdjustment defined:', typeof handleConfirmAdjustment);
 
+// ✅ CÁC HÀM HIỂN THỊ/ẨN NÚT - ĐẶT NGOÀI DOMContentLoaded
+function showAdjustmentButtons(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+function hideAdjustmentButtons(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
+
+function showLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+function hideLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
+
 // ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP
 function handleConfirmAdjustment() {
     console.log('🎯 === HANDLE CONFIRM ADJUSTMENT CALLED ===');
@@ -116,60 +145,6 @@ document.addEventListener("DOMContentLoaded", function(){
             gioTangCaDaDung: soNgayBuTuTangCaFinal * 8
         };
     }
-
-    // ✅ HÀM HIỂN THỊ/ẨN NÚT ĐIỀU CHỈNH KHI HOVER
-    function showAdjustmentButtons(cell) {
-        const buttons = cell.querySelector('.adjustment-buttons');
-        if (buttons) {
-            buttons.style.display = 'block';
-        }
-    }
-
-    function hideAdjustmentButtons(cell) {
-        const buttons = cell.querySelector('.adjustment-buttons');
-        if (buttons) {
-            buttons.style.display = 'none';
-        }
-    }
-
-    // ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM KHI HOVER
-    function showLeaveButtons(cell) {
-        const buttons = cell.querySelector('.leave-buttons');
-        if (buttons) {
-            buttons.style.display = 'block';
-        }
-    }
-
-    function hideLeaveButtons(cell) {
-        const buttons = cell.querySelector('.leave-buttons');
-        if (buttons) {
-            buttons.style.display = 'none';
-        }
-    }
-
-    // ✅ KHỞI TẠO SỰ KIỆN HOVER CHO TẤT CẢ CÁC Ô CÓ THỂ ĐIỀU CHỈNH
-    const adjustableCells = document.querySelectorAll('.adjustable-cell');
-    adjustableCells.forEach(cell => {
-        cell.addEventListener('mouseenter', function() {
-            showAdjustmentButtons(this);
-        });
-        
-        cell.addEventListener('mouseleave', function() {
-            hideAdjustmentButtons(this);
-        });
-    });
-
-    // ✅ KHỞI TẠO SỰ KIỆN HOVER CHO CÁC Ô PHÉP NĂM
-    const leaveCells = document.querySelectorAll('.leave-cell');
-    leaveCells.forEach(cell => {
-        cell.addEventListener('mouseenter', function() {
-            showLeaveButtons(this);
-        });
-        
-        cell.addEventListener('mouseleave', function() {
-            hideLeaveButtons(this);
-        });
-    });
 
     // Khởi tạo tooltip Bootstrap
     const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
