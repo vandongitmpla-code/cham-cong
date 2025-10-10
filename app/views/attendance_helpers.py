@@ -47,63 +47,67 @@ def calculate_standard_work_days(year, month):
 
 def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung):
     """
-    Tính toán điều chỉnh theo logic mới - ĐÃ SỬA LỖI
+    Tính toán điều chỉnh theo logic mới - ĐÃ SỬA LỖI LOGIC
     """
     # Chuyển giờ tăng ca sang ngày
     overtime_days = overtime_hours / 8
     
-    # Tính số ngày có thể bù từ tăng ca
-    ngay_vang_con_lai_sau_phep = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung)
-    so_ngay_bu_tu_tang_ca = min(overtime_days, ngay_vang_con_lai_sau_phep)
+    # TÍNH TOÁN THEO THỨ TỰ ƯU TIÊN ĐÚNG
+    # 1. Dùng phép năm bù ngày vắng (tối đa = ngày vắng)
+    ngay_phep_su_dung = min(ngay_nghi_phep_nam_da_dung, ngay_vang_ban_dau)
     
-    # Tính ngày công tạm thời
-    ngay_cong_tam = original_days + ngay_nghi_phep_nam_da_dung + so_ngay_bu_tu_tang_ca
+    # 2. Ngày vắng còn lại sau khi dùng phép năm
+    ngay_vang_con_sau_phep = ngay_vang_ban_dau - ngay_phep_su_dung
     
-    # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN - LOGIC ĐÃ SỬA
-    ngay_nghi_phep_nam_da_dung_final = ngay_nghi_phep_nam_da_dung
-    so_ngay_bu_tu_tang_ca_final = so_ngay_bu_tu_tang_ca
+    # 3. Dùng tăng ca bù ngày vắng còn lại (tối đa = ngày vắng còn lại HOẶC số tăng ca có)
+    ngay_tang_ca_su_dung = min(overtime_days, ngay_vang_con_sau_phep)
     
+    # 4. Tính ngày công tạm thời
+    ngay_cong_tam = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
+    
+    # 5. KIỂM TRA GIỚI HẠN: Không được vượt quá ngày công chuẩn
     if ngay_cong_tam > standard_days:
-        # Tính số ngày thừa
-        ngay_thua = ngay_cong_tam - standard_days
+        # Tính số vượt quá
+        vuot_qua = ngay_cong_tam - standard_days
         
-        # ƯU TIÊN 1: Giảm số ngày bù từ tăng ca trước
-        if so_ngay_bu_tu_tang_ca_final >= ngay_thua:
-            so_ngay_bu_tu_tang_ca_final -= ngay_thua
-            ngay_thua = 0
+        # Ưu tiên giảm tăng ca sử dụng trước
+        if ngay_tang_ca_su_dung >= vuot_qua:
+            ngay_tang_ca_su_dung -= vuot_qua
         else:
-            ngay_thua -= so_ngay_bu_tu_tang_ca_final
-            so_ngay_bu_tu_tang_ca_final = 0
+            vuot_qua -= ngay_tang_ca_su_dung
+            ngay_tang_ca_su_dung = 0
             
-        # ƯU TIÊN 2: Nếu vẫn thừa, giảm phép năm đã dùng
-        if ngay_thua > 0 and ngay_nghi_phep_nam_da_dung_final >= ngay_thua:
-            ngay_nghi_phep_nam_da_dung_final -= ngay_thua
-            ngay_thua = 0
-        elif ngay_thua > 0:
-            # Nếu phép năm không đủ để giảm hết ngày thừa
-            ngay_thua -= ngay_nghi_phep_nam_da_dung_final
-            ngay_nghi_phep_nam_da_dung_final = 0
+            # Nếu vẫn vượt, giảm phép năm sử dụng
+            if ngay_phep_su_dung >= vuot_qua:
+                ngay_phep_su_dung -= vuot_qua
+            else:
+                vuot_qua -= ngay_phep_su_dung
+                ngay_phep_su_dung = 0
         
-        # Tính ngày công cuối cùng - QUAN TRỌNG: phải tính lại từ đầu
-        ngay_cong_cuoi = original_days + ngay_nghi_phep_nam_da_dung_final + so_ngay_bu_tu_tang_ca_final
-        
-        # ĐẢM BẢO KHÔNG VƯỢT QUÁ CHUẨN (double check)
-        if ngay_cong_cuoi > standard_days:
-            ngay_cong_cuoi = standard_days
+        # Tính lại ngày công cuối
+        ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
     else:
         ngay_cong_cuoi = ngay_cong_tam
     
-    # Tính kết quả cuối
-    ngay_vang_cuoi = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung_final - so_ngay_bu_tu_tang_ca_final)
-    tang_ca_con_lai = overtime_hours - (so_ngay_bu_tu_tang_ca_final * 8)
+    # 6. QUAN TRỌNG: Nếu đã đạt công chuẩn thì KHÔNG CÓ ngày nghỉ không lương
+    if ngay_cong_cuoi >= standard_days:
+        ngay_vang_cuoi = 0  # Đã đủ công → không có ngày nghỉ không lương
+    else:
+        # Tính ngày vắng cuối cùng (nghỉ không lương)
+        ngay_vang_cuoi = ngay_vang_ban_dau - ngay_phep_su_dung - ngay_tang_ca_su_dung
     
+    # 7. Tính toán kết quả cuối
+    tang_ca_con_lai = overtime_hours - (ngay_tang_ca_su_dung * 8)
+    phep_nam_con_lai = ngay_nghi_phep_nam_da_dung - ngay_phep_su_dung
+
     return {
         'ngay_cong_cuoi': ngay_cong_cuoi,
         'ngay_vang_cuoi': ngay_vang_cuoi,
         'tang_ca_con_lai': tang_ca_con_lai,
-        'so_ngay_bu_tu_tang_ca': so_ngay_bu_tu_tang_ca_final,
-        'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung_final,
-        'gio_tang_ca_da_dung': so_ngay_bu_tu_tang_ca_final * 8
+        'so_ngay_bu_tu_tang_ca': ngay_tang_ca_su_dung,
+        'ngay_nghi_phep_nam_da_dung': ngay_phep_su_dung,  # Số phép năm THỰC SỰ dùng
+        'gio_tang_ca_da_dung': ngay_tang_ca_su_dung * 8,
+        'phep_nam_con_lai': phep_nam_con_lai  # Phép năm còn tồn
     }
 
 
