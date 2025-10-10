@@ -267,27 +267,46 @@ def import_payroll(filename):
             standard_days = total_days - sunday_count - (holiday_count * 2)
             return standard_days, sunday_count
 
-        def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio):
-            """
-            CÔNG THỨC MỚI: Gộp toàn bộ tăng ca vào ngày công, KHÔNG BÙ NGÀY NGHỈ
-            """
-            overtime_days = tang_ca_nghi_gio / 8
+        def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio, ngay_vang_ban_dau, ngay_nghi_phep_nam_da_dung=0):
+    """
+    CÔNG THỨC MỚI: Tính toán điều chỉnh ngày công
+    """
+    overtime_days = tang_ca_nghi_gio / 8
+    
+    # Tính số ngày có thể bù từ tăng ca
+    ngay_vang_con_lai_sau_phep = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung)
+    so_ngay_bu_tu_tang_ca = min(overtime_days, ngay_vang_con_lai_sau_phep)
+    
+    # Tính ngày công tạm thời
+    ngay_cong_tam = ngay_cong_thuc_te + ngay_nghi_phep_nam_da_dung + so_ngay_bu_tu_tang_ca
+    
+    # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+    ngay_nghi_phep_nam_da_dung_final = ngay_nghi_phep_nam_da_dung
+    so_ngay_bu_tu_tang_ca_final = so_ngay_bu_tu_tang_ca
+    
+    if ngay_cong_tam > ngay_cong_chuan:
+        ngay_thua = ngay_cong_tam - ngay_cong_chuan
+        
+        if so_ngay_bu_tu_tang_ca_final >= ngay_thua:
+            so_ngay_bu_tu_tang_ca_final -= ngay_thua
+            ngay_thua = 0
+        else:
+            ngay_thua -= so_ngay_bu_tu_tang_ca_final
+            so_ngay_bu_tu_tang_ca_final = 0
             
-            # Gộp toàn bộ tăng ca vào ngày công
-            adjusted_days = ngay_cong_thuc_te + overtime_days
-            
-            # KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
-            if adjusted_days > ngay_cong_chuan:
-                adjusted_days = ngay_cong_chuan
-            
-            # Tính số ngày thực tế được gộp
-            actual_used_days = adjusted_days - ngay_cong_thuc_te
-            
-            # Tính giờ tăng ca còn lại
-            used_hours = actual_used_days * 8
-            remaining_hours = tang_ca_nghi_gio - used_hours
-            
-            return adjusted_days, remaining_hours, used_hours
+        if ngay_thua > 0:
+            ngay_nghi_phep_nam_da_dung_final -= ngay_thua
+        
+        adjusted_days = ngay_cong_chuan
+    else:
+        adjusted_days = ngay_cong_tam
+    
+    # Tính kết quả cuối
+    ngay_vang_cuoi = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung_final - so_ngay_bu_tu_tang_ca_final)
+    remaining_hours = tang_ca_nghi_gio - (so_ngay_bu_tu_tang_ca_final * 8)
+    used_hours = so_ngay_bu_tu_tang_ca_final * 8
+    
+    return adjusted_days, ngay_vang_cuoi, remaining_hours, used_hours, so_ngay_bu_tu_tang_ca_final, ngay_nghi_phep_nam_da_dung_fin
 
         # --- Hàm xác định trạng thái ---
         def render_status(cell_val):
