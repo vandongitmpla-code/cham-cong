@@ -1,4 +1,4 @@
-// attendance_print.js - JavaScript cho trang attendance_print - CÔNG THỨC MỚI
+// attendance_print.js - JavaScript cho trang attendance_print - CÔNG THỨC MỚI ĐÃ SỬA
 document.addEventListener("DOMContentLoaded", function(){
     // Khởi tạo timesheet data
     (function(){
@@ -19,6 +19,56 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     })();
 
+    // ✅ HÀM TÍNH TOÁN ĐIỀU CHỈNH MỚI (ĐỒNG BỘ VỚI BACKEND)
+    function calculateAdjustedWorkDays(originalDays, standardDays, overtimeHours, currentAbsence, ngayNghiPhepNamDaDung = 0) {
+        const overtimeDays = overtimeHours / 8;
+        
+        // BƯỚC 1: Tính số ngày có thể bù từ tăng ca
+        const ngayVangConLaiSauPhep = Math.max(0, currentAbsence - ngayNghiPhepNamDaDung);
+        const soNgayBuTuTangCa = Math.min(overtimeDays, ngayVangConLaiSauPhep);
+        
+        // BƯỚC 2: Tính ngày công tạm thời
+        const ngayCongTam = originalDays + ngayNghiPhepNamDaDung + soNgayBuTuTangCa;
+        
+        // BƯỚC 3: Giới hạn không vượt quá chuẩn
+        let ngayNghiPhepNamDaDungFinal = ngayNghiPhepNamDaDung;
+        let soNgayBuTuTangCaFinal = soNgayBuTuTangCa;
+        let ngayCongCuoi = ngayCongTam;
+        
+        if (ngayCongTam > standardDays) {
+            let ngayThua = ngayCongTam - standardDays;
+            
+            // Giảm số ngày bù từ tăng ca trước
+            if (soNgayBuTuTangCaFinal >= ngayThua) {
+                soNgayBuTuTangCaFinal -= ngayThua;
+                ngayThua = 0;
+            } else {
+                ngayThua -= soNgayBuTuTangCaFinal;
+                soNgayBuTuTangCaFinal = 0;
+            }
+            
+            // Nếu vẫn thừa, giảm phép năm đã dùng
+            if (ngayThua > 0) {
+                ngayNghiPhepNamDaDungFinal -= ngayThua;
+            }
+            
+            ngayCongCuoi = standardDays;
+        }
+        
+        // Tính kết quả cuối
+        const ngayVangCuoi = Math.max(0, currentAbsence - ngayNghiPhepNamDaDungFinal - soNgayBuTuTangCaFinal);
+        const tangCaConLai = overtimeHours - (soNgayBuTuTangCaFinal * 8);
+        
+        return {
+            ngayCongCuoi,
+            ngayVangCuoi,
+            tangCaConLai,
+            soNgayBuTuTangCa: soNgayBuTuTangCaFinal,
+            ngayNghiPhepNamDaDung: ngayNghiPhepNamDaDungFinal,
+            gioTangCaDaDung: soNgayBuTuTangCaFinal * 8
+        };
+    }
+
     // ✅ HÀM HIỂN THỊ/ẨN NÚT ĐIỀU CHỈNH KHI HOVER
     function showAdjustmentButtons(cell) {
         const buttons = cell.querySelector('.adjustment-buttons');
@@ -29,6 +79,21 @@ document.addEventListener("DOMContentLoaded", function(){
 
     function hideAdjustmentButtons(cell) {
         const buttons = cell.querySelector('.adjustment-buttons');
+        if (buttons) {
+            buttons.style.display = 'none';
+        }
+    }
+
+    // ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM KHI HOVER
+    function showLeaveButtons(cell) {
+        const buttons = cell.querySelector('.leave-buttons');
+        if (buttons) {
+            buttons.style.display = 'block';
+        }
+    }
+
+    function hideLeaveButtons(cell) {
+        const buttons = cell.querySelector('.leave-buttons');
         if (buttons) {
             buttons.style.display = 'none';
         }
@@ -46,11 +111,23 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     });
 
+    // ✅ KHỞI TẠO SỰ KIỆN HOVER CHO CÁC Ô PHÉP NĂM
+    const leaveCells = document.querySelectorAll('.leave-cell');
+    leaveCells.forEach(cell => {
+        cell.addEventListener('mouseenter', function() {
+            showLeaveButtons(this);
+        });
+        
+        cell.addEventListener('mouseleave', function() {
+            hideLeaveButtons(this);
+        });
+    });
+
     // Khởi tạo tooltip Bootstrap
     const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
 
-    // Trong phần xử lý click icon điều chỉnh
+    // ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('adjustment-icon')) {
             const employeeCode = e.target.getAttribute('data-employee-code');
@@ -60,49 +137,60 @@ document.addEventListener("DOMContentLoaded", function(){
             const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
             const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
             const standardDays = parseFloat(e.target.getAttribute('data-standard-days') || 26);
-            const actualDays = parseFloat(e.target.getAttribute('data-actual-days') || originalDays);
+            const ngayNghiPhepNamDaDung = parseFloat(e.target.getAttribute('data-ngay-nghi-phep-nam') || 0);
             
-            console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, overtimeHours, currentAbsence, standardDays, actualDays});
+            console.log('Adjustment clicked:', {
+                employeeCode, 
+                employeeName, 
+                period, 
+                originalDays, 
+                overtimeHours, 
+                currentAbsence, 
+                standardDays, 
+                ngayNghiPhepNamDaDung
+            });
             
-            // ✅ KIỂM TRA: NẾU "THỰC TẾ" ĐÃ >= "QUY ĐỊNH" THÌ KHÔNG CHO GỘP
-            if (actualDays >= standardDays) {
-                notificationSystem.warning(
-                    `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
-                    <strong>Lý do:</strong> Số ngày làm việc thực tế (${actualDays} ngày) đã đạt/vượt ngày công quy định (${standardDays} ngày).`,
-                    'Không thể gộp tăng ca'
-                );
+            // ✅ KIỂM TRA: NẾU ĐÃ ĐẠT CHUẨN THÌ KHÔNG CHO GỘP
+            if (originalDays >= standardDays) {
+                if (typeof notificationSystem !== 'undefined') {
+                    notificationSystem.warning(
+                        `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
+                        <strong>Lý do:</strong> Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`,
+                        'Không thể gộp tăng ca'
+                    );
+                } else {
+                    alert(`Không thể gộp tăng ca cho ${employeeName}! Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`);
+                }
                 return;
             }
             
-            // ✅ CÔNG THỨC MỚI: CHỈ GỘP VÀO NGÀY CÔNG, KHÔNG BÙ NGÀY NGHỈ
-            const overtimeDays = overtimeHours / 8;
+            // ✅ TÍNH TOÁN THEO CÔNG THỨC MỚI
+            const result = calculateAdjustedWorkDays(
+                originalDays, 
+                standardDays, 
+                overtimeHours, 
+                currentAbsence, 
+                ngayNghiPhepNamDaDung
+            );
             
-            // 1. Gộp toàn bộ tăng ca vào ngày công (KHÔNG VƯỢT CHUẨN)
-            let adjustedDays = originalDays + overtimeDays;
-            if (adjustedDays > standardDays) {
-                adjustedDays = standardDays;
-            }
-            
-            // 2. ✅ KHÔNG DÙNG TĂNG CA ĐỂ BÙ NGÀY NGHỈ - GIỮ NGUYÊN NGÀY NGHỈ
-            const newAbsenceDays = currentAbsence; // Giữ nguyên
-            const remainingHours = overtimeHours - ((adjustedDays - originalDays) * 8);
-            const usedHours = overtimeHours - remainingHours;
-            
-            console.log(`DEBUG CÔNG THỨC MỚI (KHÔNG BÙ NGÀY NGHỈ):`);
+            console.log(`DEBUG CÔNG THỨC MỚI:`);
             console.log(`- Ngày công ban đầu: ${originalDays} ngày`);
-            console.log(`- Ngày CN đã làm: ${overtimeDays.toFixed(1)} ngày (${overtimeHours} giờ)`);
-            console.log(`- Ngày công sau gộp: ${adjustedDays.toFixed(1)} ngày`);
-            console.log(`- Ngày nghỉ: ${currentAbsence} -> ${newAbsenceDays.toFixed(1)} ngày (GIỮ NGUYÊN)`);
-            console.log(`- Giờ tăng ca: ${overtimeHours} -> ${remainingHours.toFixed(1)} giờ (đã dùng ${usedHours.toFixed(1)} giờ)`);
+            console.log(`- Phép năm đã dùng: ${ngayNghiPhepNamDaDung} ngày`);
+            console.log(`- Ngày CN đã làm: ${(overtimeHours/8).toFixed(1)} ngày (${overtimeHours} giờ)`);
+            console.log(`- Ngày công sau gộp: ${result.ngayCongCuoi.toFixed(1)} ngày`);
+            console.log(`- Ngày nghỉ: ${currentAbsence} -> ${result.ngayVangCuoi.toFixed(1)} ngày`);
+            console.log(`- Giờ tăng ca: ${overtimeHours} -> ${result.tangCaConLai.toFixed(1)} giờ (đã dùng ${result.gioTangCaDaDung.toFixed(1)} giờ)`);
+            console.log(`- Phép năm đã dùng: ${result.ngayNghiPhepNamDaDung} ngày`);
 
             // Hiển thị modal
             document.getElementById('modalEmployeeName').textContent = employeeName;
             document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
-            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + overtimeDays.toFixed(1) + ' ngày)';
+            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + (overtimeHours/8).toFixed(1) + ' ngày)';
             document.getElementById('modalCurrentAbsence').textContent = currentAbsence + ' ngày';
-            document.getElementById('modalAdjustedDays').textContent = adjustedDays.toFixed(1) + ' ngày';
-            document.getElementById('modalNewAbsence').textContent = newAbsenceDays.toFixed(1) + ' ngày (giữ nguyên)';
-            document.getElementById('modalRemainingHours').textContent = remainingHours.toFixed(1) + ' giờ';
+            document.getElementById('modalAdjustedDays').textContent = result.ngayCongCuoi.toFixed(1) + ' ngày';
+            document.getElementById('modalNewAbsence').textContent = result.ngayVangCuoi.toFixed(1) + ' ngày';
+            document.getElementById('modalRemainingHours').textContent = result.tangCaConLai.toFixed(1) + ' giờ';
+            document.getElementById('modalPhepNamUsed').textContent = result.ngayNghiPhepNamDaDung + ' ngày';
             
             // Điền form
             document.getElementById('formEmployeeCode').value = employeeCode;
@@ -117,7 +205,53 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    // ✅ SỬA LỖI: Xử lý click icon reset (-) - DÙNG 'reset-icon'
+    // ✅ XỬ LÝ CLICK ICON THÊM PHÉP NĂM (+)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('leave-add-icon')) {
+            const employeeId = e.target.getAttribute('data-employee-id');
+            const employeeName = e.target.getAttribute('data-employee-name');
+            const period = e.target.getAttribute('data-period');
+            const maxLeave = parseFloat(e.target.getAttribute('data-max-leave'));
+            const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
+            const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
+            
+            console.log('Leave add clicked:', {employeeId, employeeName, period, maxLeave, currentLeave, currentAbsence});
+
+            // Hiển thị modal thêm phép năm
+            document.getElementById('leaveEmployeeName').textContent = employeeName;
+            document.getElementById('leaveDaysInput').value = currentLeave;
+            document.getElementById('leaveDaysInput').max = maxLeave;
+            document.getElementById('maxLeaveDays').textContent = maxLeave;
+            
+            // Điền form
+            document.getElementById('formEmployeeId').value = employeeId;
+            document.getElementById('formLeavePeriod').value = period;
+            
+            const modal = new bootstrap.Modal(document.getElementById('leaveModal'));
+            modal.show();
+        }
+    });
+
+    // ✅ XỬ LÝ CLICK ICON RESET PHÉP NĂM (-)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('leave-reset-icon')) {
+            const employeeId = e.target.getAttribute('data-employee-id');
+            const employeeName = e.target.getAttribute('data-employee-name');
+            const period = e.target.getAttribute('data-period');
+            
+            console.log('Leave reset clicked:', {employeeId, employeeName, period});
+            
+            // Hiển thị modal xác nhận reset phép năm
+            document.getElementById('resetLeaveEmployeeName').textContent = employeeName;
+            document.getElementById('resetLeaveEmployeeId').value = employeeId;
+            document.getElementById('resetLeavePeriod').value = period;
+            
+            const resetModal = new bootstrap.Modal(document.getElementById('resetLeaveModal'));
+            resetModal.show();
+        }
+    });
+
+    // ✅ XỬ LÝ CLICK ICON RESET ĐIỀU CHỈNH (-)
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('reset-icon')) {
             const employeeCode = e.target.getAttribute('data-employee-code');
@@ -142,10 +276,46 @@ document.addEventListener("DOMContentLoaded", function(){
         document.getElementById('adjustmentForm').submit();
     });
 
-    // Xác nhận reset
+    // Xác nhận reset điều chỉnh
     document.getElementById('confirmReset')?.addEventListener('click', function() {
         console.log('Confirming reset...');
         document.getElementById('resetForm').submit();
+    });
+
+    // ✅ XÁC NHẬN RESET PHÉP NĂM
+    document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
+        console.log('Confirming leave reset...');
+        document.getElementById('resetLeaveForm').submit();
+    });
+
+    // Xác nhận thêm phép năm
+    document.getElementById('confirmLeave')?.addEventListener('click', function() {
+        const leaveDays = parseFloat(document.getElementById('leaveDaysInput').value);
+        const maxLeave = parseFloat(document.getElementById('leaveDaysInput').max);
+        
+        if (leaveDays > maxLeave) {
+            if (typeof notificationSystem !== 'undefined') {
+                notificationSystem.warning(
+                    `Số ngày phép không được vượt quá ${maxLeave} ngày!`,
+                    'Số ngày phép không hợp lệ'
+                );
+            } else {
+                alert(`Số ngày phép không được vượt quá ${maxLeave} ngày!`);
+            }
+            return;
+        }
+        
+        if (leaveDays < 0) {
+            if (typeof notificationSystem !== 'undefined') {
+                notificationSystem.warning('Số ngày phép không được âm!', 'Số ngày phép không hợp lệ');
+            } else {
+                alert('Số ngày phép không được âm!');
+            }
+            return;
+        }
+        
+        document.getElementById('formLeaveDays').value = leaveDays;
+        document.getElementById('leaveForm').submit();
     });
 
     // Xử lý ghi chú động
@@ -212,270 +382,6 @@ document.addEventListener("DOMContentLoaded", function(){
             document.getElementById('detailModal').style.display = 'none';
         });
     }
-});
-
-// Hàm tiện ích debug
-function debugLog(message, data = null) {
-    if (console && console.log) {
-        if (data) {
-            console.log(`[Attendance Print] ${message}:`, data);
-        } else {
-            console.log(`[Attendance Print] ${message}`);
-        }
-    }
-}
-
-// ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM KHI HOVER
-function showLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
-    }
-}
-
-// ✅ HÀM HIỂN THỊ/ẨN NÚT ĐIỀU CHỈNH KHI HOVER
-function showAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-    // Khởi tạo timesheet data
-    (function(){
-        try {
-            const el = document.getElementById('timesheet-data');
-            const raw = el ? el.textContent.trim() : null;
-            if (!raw) {
-                window.__TIMESHEET__ = { weekdays: {}, day_count: 31 };
-                return;
-            }
-            const cfg = JSON.parse(raw);
-            cfg.weekdays = cfg.weekdays || {};
-            cfg.day_count = Number(cfg.day_count) || 31;
-            window.__TIMESHEET__ = cfg;
-        } catch (err) {
-            console.error("Error parsing timesheet config:", err);
-            window.__TIMESHEET__ = { weekdays: {}, day_count: 31 };
-        }
-    })();
-
-    // ✅ KHỞI TẠO SỰ KIỆN HOVER CHO TẤT CẢ CÁC Ô CÓ THỂ ĐIỀU CHỈNH
-    const adjustableCells = document.querySelectorAll('.adjustable-cell');
-    adjustableCells.forEach(cell => {
-        cell.addEventListener('mouseenter', function() {
-            showAdjustmentButtons(this);
-        });
-        
-        cell.addEventListener('mouseleave', function() {
-            hideAdjustmentButtons(this);
-        });
-    });
-
-    // ✅ KHỞI TẠO SỰ KIỆN HOVER CHO CÁC Ô PHÉP NĂM
-    const leaveCells = document.querySelectorAll('.leave-cell');
-    leaveCells.forEach(cell => {
-        cell.addEventListener('mouseenter', function() {
-            showLeaveButtons(this);
-        });
-        
-        cell.addEventListener('mouseleave', function() {
-            hideLeaveButtons(this);
-        });
-    });
-
-    // Khởi tạo tooltip Bootstrap
-    const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
-
-    // Trong phần xử lý click icon điều chỉnh
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('adjustment-icon')) {
-            const employeeCode = e.target.getAttribute('data-employee-code');
-            const employeeName = e.target.getAttribute('data-employee-name');
-            const period = e.target.getAttribute('data-period');
-            const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
-            const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
-            const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
-            const standardDays = parseFloat(e.target.getAttribute('data-standard-days') || 26);
-            const actualDays = parseFloat(e.target.getAttribute('data-actual-days') || originalDays);
-            
-            console.log('Adjustment clicked:', {employeeCode, employeeName, period, originalDays, overtimeHours, currentAbsence, standardDays, actualDays});
-            
-            // ✅ KIỂM TRA: NẾU "THỰC TẾ" ĐÃ >= "QUY ĐỊNH" THÌ KHÔNG CHO GỘP
-            if (actualDays >= standardDays) {
-                notificationSystem.warning(
-                    `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
-                    <strong>Lý do:</strong> Số ngày làm việc thực tế (${actualDays} ngày) đã đạt/vượt ngày công quy định (${standardDays} ngày).`,
-                    'Không thể gộp tăng ca'
-                );
-                return;
-            }
-            
-            // ✅ CÔNG THỨC MỚI: CHỈ GỘP VÀO NGÀY CÔNG, KHÔNG BÙ NGÀY NGHỈ
-            const overtimeDays = overtimeHours / 8;
-            
-            // 1. Gộp toàn bộ tăng ca vào ngày công (KHÔNG VƯỢT CHUẨN)
-            let adjustedDays = originalDays + overtimeDays;
-            if (adjustedDays > standardDays) {
-                adjustedDays = standardDays;
-            }
-            
-            // 2. ✅ KHÔNG DÙNG TĂNG CA ĐỂ BÙ NGÀY NGHỈ - GIỮ NGUYÊN NGÀY NGHỈ
-            const newAbsenceDays = currentAbsence; // Giữ nguyên
-            const remainingHours = overtimeHours - ((adjustedDays - originalDays) * 8);
-            const usedHours = overtimeHours - remainingHours;
-            
-            console.log(`DEBUG CÔNG THỨC MỚI (KHÔNG BÙ NGÀY NGHỈ):`);
-            console.log(`- Ngày công ban đầu: ${originalDays} ngày`);
-            console.log(`- Ngày CN đã làm: ${overtimeDays.toFixed(1)} ngày (${overtimeHours} giờ)`);
-            console.log(`- Ngày công sau gộp: ${adjustedDays.toFixed(1)} ngày`);
-            console.log(`- Ngày nghỉ: ${currentAbsence} -> ${newAbsenceDays.toFixed(1)} ngày (GIỮ NGUYÊN)`);
-            console.log(`- Giờ tăng ca: ${overtimeHours} -> ${remainingHours.toFixed(1)} giờ (đã dùng ${usedHours.toFixed(1)} giờ)`);
-
-            // Hiển thị modal
-            document.getElementById('modalEmployeeName').textContent = employeeName;
-            document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
-            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + overtimeDays.toFixed(1) + ' ngày)';
-            document.getElementById('modalCurrentAbsence').textContent = currentAbsence + ' ngày';
-            document.getElementById('modalAdjustedDays').textContent = adjustedDays.toFixed(1) + ' ngày';
-            document.getElementById('modalNewAbsence').textContent = newAbsenceDays.toFixed(1) + ' ngày (giữ nguyên)';
-            document.getElementById('modalRemainingHours').textContent = remainingHours.toFixed(1) + ' giờ';
-            
-            // Điền form
-            document.getElementById('formEmployeeCode').value = employeeCode;
-            document.getElementById('formPeriod').value = period;
-            document.getElementById('formOriginalDays').value = originalDays;
-            document.getElementById('formOvertimeHours').value = overtimeHours;
-            document.getElementById('formCurrentAbsence').value = currentAbsence;
-            
-            // Hiển thị modal
-            const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
-            modal.show();
-        }
-    });
-
-    // ✅ XỬ LÝ CLICK ICON THÊM PHÉP NĂM (+)
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('leave-add-icon')) {
-            const employeeId = e.target.getAttribute('data-employee-id');
-            const employeeName = e.target.getAttribute('data-employee-name');
-            const period = e.target.getAttribute('data-period');
-            const maxLeave = parseFloat(e.target.getAttribute('data-max-leave'));
-            const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
-            const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
-            
-            console.log('Leave add clicked:', {employeeId, employeeName, period, maxLeave, currentLeave, currentAbsence});
-
-            // Hiển thị modal thêm phép năm
-            document.getElementById('leaveEmployeeName').textContent = employeeName;
-            document.getElementById('leaveDaysInput').value = currentLeave;
-            document.getElementById('leaveDaysInput').max = maxLeave;
-            document.getElementById('maxLeaveDays').textContent = maxLeave;
-            
-            // Điền form
-            document.getElementById('formEmployeeId').value = employeeId;
-            document.getElementById('formLeavePeriod').value = period;
-            
-            const modal = new bootstrap.Modal(document.getElementById('leaveModal'));
-            modal.show();
-        }
-    });
-
-    // ✅ XỬ LÝ CLICK ICON RESET PHÉP NĂM (-)
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('leave-reset-icon')) {
-            const employeeId = e.target.getAttribute('data-employee-id');
-            const employeeName = e.target.getAttribute('data-employee-name');
-            const period = e.target.getAttribute('data-period');
-            
-            console.log('Leave reset clicked:', {employeeId, employeeName, period});
-            
-            // Hiển thị modal xác nhận reset phép năm
-            document.getElementById('resetLeaveEmployeeName').textContent = employeeName;
-            document.getElementById('resetLeaveEmployeeId').value = employeeId;
-            document.getElementById('resetLeavePeriod').value = period;
-            
-            const resetModal = new bootstrap.Modal(document.getElementById('resetLeaveModal'));
-            resetModal.show();
-        }
-    });
-
-    // Xử lý click icon reset (-)
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('reset-icon')) {
-            const employeeCode = e.target.getAttribute('data-employee-code');
-            const employeeName = e.target.getAttribute('data-employee-name');
-            const period = e.target.getAttribute('data-period');
-            
-            console.log('Reset clicked:', {employeeCode, employeeName, period});
-            
-            // Hiển thị modal xác nhận reset
-            document.getElementById('resetEmployeeName').textContent = employeeName;
-            document.getElementById('resetEmployeeCode').value = employeeCode;
-            document.getElementById('resetPeriod').value = period;
-            
-            const resetModal = new bootstrap.Modal(document.getElementById('resetModal'));
-            resetModal.show();
-        }
-    });
-
-    // Xác nhận áp dụng điều chỉnh
-    document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
-        console.log('Confirming adjustment...');
-        document.getElementById('adjustmentForm').submit();
-    });
-
-    // Xác nhận reset
-    document.getElementById('confirmReset')?.addEventListener('click', function() {
-        console.log('Confirming reset...');
-        document.getElementById('resetForm').submit();
-    });
-
-    // ✅ XÁC NHẬN RESET PHÉP NĂM
-    document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
-        console.log('Confirming leave reset...');
-        document.getElementById('resetLeaveForm').submit();
-    });
-
-    // Xác nhận thêm phép năm
-    document.getElementById('confirmLeave')?.addEventListener('click', function() {
-        const leaveDays = parseFloat(document.getElementById('leaveDaysInput').value);
-        const maxLeave = parseFloat(document.getElementById('leaveDaysInput').max);
-        
-        if (leaveDays > maxLeave) {
-            notificationSystem.warning(
-                `Số ngày phép không được vượt quá ${maxLeave} ngày!`,
-                'Số ngày phép không hợp lệ'
-            );
-            return;
-        }
-        
-        if (leaveDays < 0) {
-            notificationSystem.warning('Số ngày phép không được âm!', 'Số ngày phép không hợp lệ');
-            return;
-        }
-        
-        document.getElementById('formLeaveDays').value = leaveDays;
-        document.getElementById('leaveForm').submit();
-    });
-
-    // ... phần code còn lại của bạn (ghi chú, chi tiết, etc.)
 });
 
 // Hàm tiện ích debug

@@ -45,40 +45,62 @@ def calculate_standard_work_days(year, month):
     standard_days = total_days - sunday_count - (holidays_count * 2)
     return standard_days
 
-def calculate_adjustment_details(original_days, standard_days, overtime_hours, current_absence):
+def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung):
     """
-    Tính toán chi tiết điều chỉnh - CÔNG THỨC MỚI
+    Tính toán điều chỉnh theo logic mới
     """
+    # Chuyển giờ tăng ca sang ngày
     overtime_days = overtime_hours / 8
     
-    # 1. Gộp toàn bộ tăng ca vào ngày công
-    adjusted_days = original_days + overtime_days
+    # Tính số ngày có thể bù từ tăng ca
+    ngay_vang_con_lai_sau_phep = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung)
+    so_ngay_bu_tu_tang_ca = min(overtime_days, ngay_vang_con_lai_sau_phep)
     
-    # 2. Dùng tăng ca để bù ngày nghỉ
-    ngay_vang_sau_gop = current_absence
-    remaining_hours = overtime_hours
+    # Tính ngày công tạm thời
+    ngay_cong_tam = original_days + ngay_nghi_phep_nam_da_dung + so_ngay_bu_tu_tang_ca
     
-    if current_absence > 0:
-        # Số ngày có thể bù từ tăng ca
-        so_ngay_co_the_bu = min(overtime_days, current_absence)
+    # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+    ngay_nghi_phep_nam_da_dung_final = ngay_nghi_phep_nam_da_dung
+    so_ngay_bu_tu_tang_ca_final = so_ngay_bu_tu_tang_ca
+    
+    if ngay_cong_tam > standard_days:
+        # Tính số ngày thừa
+        ngay_thua = ngay_cong_tam - standard_days
         
-        # Giảm ngày nghỉ
-        ngay_vang_sau_gop = current_absence - so_ngay_co_the_bu
+        # Giảm số ngày bù từ tăng ca trước
+        if so_ngay_bu_tu_tang_ca_final >= ngay_thua:
+            so_ngay_bu_tu_tang_ca_final -= ngay_thua
+            ngay_thua = 0
+        else:
+            ngay_thua -= so_ngay_bu_tu_tang_ca_final
+            so_ngay_bu_tu_tang_ca_final = 0
+            
+        # Nếu vẫn thừa, giảm phép năm đã dùng
+        if ngay_thua > 0:
+            ngay_nghi_phep_nam_da_dung_final -= ngay_thua
         
-        # Tính giờ tăng ca đã dùng để bù
-        gio_da_dung_de_bu = so_ngay_co_the_bu * 8
-        remaining_hours = overtime_hours - gio_da_dung_de_bu
+        ngay_cong_cuoi = standard_days
+    else:
+        ngay_cong_cuoi = ngay_cong_tam
     
-    used_hours = overtime_hours - remaining_hours
+    # Tính kết quả cuối
+    ngay_vang_cuoi = max(0, ngay_vang_ban_dau - ngay_nghi_phep_nam_da_dung_final - so_ngay_bu_tu_tang_ca_final)
+    tang_ca_con_lai = overtime_hours - (so_ngay_bu_tu_tang_ca_final * 8)
     
-    return adjusted_days, ngay_vang_sau_gop, remaining_hours, used_hours
+    return {
+        'ngay_cong_cuoi': ngay_cong_cuoi,
+        'ngay_vang_cuoi': ngay_vang_cuoi,
+        'tang_ca_con_lai': tang_ca_con_lai,
+        'so_ngay_bu_tu_tang_ca': so_ngay_bu_tu_tang_ca_final,
+        'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung_final,
+        'gio_tang_ca_da_dung': so_ngay_bu_tu_tang_ca_final * 8
+    }
 
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template - SỬA LOGIC PHÉP NĂM: TĂNG NGÀY CÔNG
+    Tạo dữ liệu rows cho template - LOGIC ĐƠN GIẢN: HIỂN THỊ GIÁ TRỊ GỐC KHI CHƯA ĐIỀU CHỈNH
     """
-    from datetime import datetime
     from app.models import WorkAdjustment, PaidLeave
     
     rows = []
@@ -97,15 +119,16 @@ def create_attendance_rows(records, period):
         ).first()
         
         if paid_leave:
-            ngay_nghi_phep_nam = paid_leave.leave_days_used
+            ngay_nghi_phep_nam_da_dung = paid_leave.leave_days_used
             so_ngay_phep_con_lai = paid_leave.remaining_leave_days
         else:
-            ngay_nghi_phep_nam = 0
+            ngay_nghi_phep_nam_da_dung = 0
             so_ngay_phep_con_lai = so_thang_duoc_huong
 
-        # ✅ QUAN TRỌNG: TÍNH NGÀY CÔNG & NGÀY NGHỈ SAU KHI ÁP DỤNG PHÉP NĂM
-        ngay_cong_sau_phep = rec.ngay_cong + ngay_nghi_phep_nam  # ✅ TĂNG NGÀY CÔNG
-        ngay_vang_sau_phep = max(0, rec.ngay_vang - ngay_nghi_phep_nam)  # GIẢM NGÀY NGHỈ
+        # ✅ QUAN TRỌNG: LẤY GIÁ TRỊ GỐC TỪ PAYROLL RECORD (KHÔNG ĐIỀU CHỈNH)
+        ngay_cong_ban_dau = rec.ngay_cong  # Giá trị gốc từ import
+        ngay_vang_ban_dau = rec.ngay_vang  # Giá trị gốc từ import
+        tang_ca_nghi_ban_dau = rec.tang_ca_nghi  # Giá trị gốc từ import
 
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=rec.employee_code, 
@@ -113,68 +136,50 @@ def create_attendance_rows(records, period):
         ).first()
         
         if adjustment:
-            # ✅ SỬA: DÙNG ngay_cong_sau_phep LÀM CƠ SỞ ĐỂ TÍNH
-            adjusted_days = adjustment.adjusted_work_days
-            if adjusted_days > standard_days:
-                adjusted_days = standard_days
-                
-            ngay_cong_quy_dinh = standard_days
-            ngay_cong_thuc_te = adjusted_days
-            
-            # Tính ngày nghỉ sau khi gộp tăng ca từ giá trị đã trừ phép
-            gio_da_dung_de_bu = adjustment.used_overtime_hours
-            ngay_da_bu_tu_tang_ca = gio_da_dung_de_bu / 8
-            ngay_vang_hien_thi = max(0, ngay_vang_sau_phep - ngay_da_bu_tu_tang_ca)
-            
+            # ✅ ĐÃ CÓ ĐIỀU CHỈNH - DÙNG GIÁ TRỊ ĐÃ TÍNH TOÁN
+            ngay_cong_hien_thi = adjustment.adjusted_work_days
+            ngay_vang_hien_thi = adjustment.adjusted_absence_days
             tang_ca_nghi_hien_thi = adjustment.remaining_overtime_hours
-            adjustment_info = adjustment.used_overtime_hours
-            original_days = ngay_cong_sau_phep  # ✅ DÙNG NGÀY CÔNG ĐÃ TĂNG
-            has_adjustment = True
             
-            print(f"DEBUG với phép năm: {rec.employee_code}")
-            print(f"- Ngày công gốc: {rec.ngay_cong}")
-            print(f"- Phép năm: +{ngay_nghi_phep_nam}")
-            print(f"- Ngày công sau phép: {ngay_cong_sau_phep}")
-            print(f"- Ngày nghỉ gốc: {rec.ngay_vang}")
-            print(f"- Ngày nghỉ sau phép: {ngay_vang_sau_phep}")
+            has_adjustment = True
+            adjustment_info = adjustment.used_overtime_hours
             
         else:
-            # ✅ CHƯA ĐIỀU CHỈNH - DÙNG GIÁ TRỊ ĐÃ TÍNH PHÉP
-            ngay_cong_quy_dinh = standard_days
-            ngay_cong_thuc_te = ngay_cong_sau_phep  # ✅ DÙNG NGÀY CÔNG ĐÃ TĂNG
-            ngay_vang_hien_thi = ngay_vang_sau_phep  # ✅ DÙNG NGÀY NGHỈ ĐÃ GIẢM
-            tang_ca_nghi_hien_thi = rec.tang_ca_nghi
-            adjustment_info = 0
-            original_days = ngay_cong_sau_phep  # ✅ DÙNG NGÀY CÔNG ĐÃ TĂNG
+            # ✅ CHƯA ĐIỀU CHỈNH - DÙNG GIÁ TRỊ GỐC (KHÔNG TÍNH TOÁN)
+            ngay_cong_hien_thi = ngay_cong_ban_dau
+            ngay_vang_hien_thi = ngay_vang_ban_dau
+            tang_ca_nghi_hien_thi = tang_ca_nghi_ban_dau
+            
             has_adjustment = False
+            adjustment_info = 0
 
-        has_overtime = rec.tang_ca_nghi > 0
+        has_overtime = tang_ca_nghi_ban_dau > 0
 
         rows.append([
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
-            ngay_cong_quy_dinh,
-            ngay_nghi_phep_nam,
-            ngay_vang_hien_thi,
-            ngay_cong_thuc_te,  # ✅ HIỂN THỊ NGÀY CÔNG ĐÃ TĂNG DO PHÉP
-            tang_ca_nghi_hien_thi,
+            standard_days,  # Số ngày/giờ làm việc quy định trong tháng
+            ngay_nghi_phep_nam_da_dung,  # Số ngày nghỉ phép năm ĐÃ DÙNG
+            ngay_vang_hien_thi,  # Số ngày nghỉ không lương
+            ngay_cong_hien_thi,  # Số ngày/giờ làm việc thực tế
+            tang_ca_nghi_hien_thi,  # Số giờ tăng ca CN còn lại
             rec.le_tet_gio, 
             rec.tang_ca_tuan, 
             rec.ghi_chu or "", 
-            thang_bat_dau_tinh_phep,
-            so_ngay_phep_con_lai,
+            thang_bat_dau_tinh_phep,  # ✅ CỘT NÀY SẼ HIỂN THỊ
+            so_ngay_phep_con_lai,     # ✅ CỘT NÀY SẼ HIỂN THỊ
             rec.to,
             {
                 'has_adjustment': has_adjustment,
                 'has_overtime': has_overtime,
                 'adjustment_info': adjustment_info,
-                'original_days': original_days,  # ✅ NGÀY CÔNG ĐÃ TĂNG
-                'current_days': ngay_cong_sau_phep,  # ✅ NGÀY CÔNG ĐÃ TĂNG
+                'original_days': ngay_cong_ban_dau,
+                'current_days': ngay_cong_hien_thi,
                 'standard_days': standard_days,
-                'ngay_vang_ban_dau': rec.ngay_vang,
-                'ngay_vang_sau_phep': ngay_vang_sau_phep,
-                'ngay_nghi_phep_nam': ngay_nghi_phep_nam,
+                'ngay_vang_ban_dau': ngay_vang_ban_dau,
+                'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,
                 'so_thang_duoc_huong': so_thang_duoc_huong,
-                'employee_id': employee.id
+                'employee_id': employee.id,
+                'tang_ca_nghi_ban_dau': tang_ca_nghi_ban_dau
             }
         ])
         stt += 1

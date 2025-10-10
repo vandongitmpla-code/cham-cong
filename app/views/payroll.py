@@ -251,8 +251,7 @@ def import_payroll(filename):
         ).all()
         holiday_days = {h.date.day for h in holidays}
 
-        # ✅ SỬA 1: XÓA THEO ĐÚNG THỨ TỰ FOREIGN KEY
-        # Xóa work_adjustments trước (con), sau đó payroll_records (cha)
+        # ✅ XÓA DỮ LIỆU CŨ
         WorkAdjustment.query.filter(WorkAdjustment.period == period).delete(synchronize_session=False)
         PayrollRecord.query.filter_by(period=period).delete(synchronize_session=False)
 
@@ -266,28 +265,6 @@ def import_payroll(filename):
                     sunday_count += 1
             standard_days = total_days - sunday_count - (holiday_count * 2)
             return standard_days, sunday_count
-
-        def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio):
-            """
-            CÔNG THỨC MỚI: Gộp toàn bộ tăng ca vào ngày công, KHÔNG BÙ NGÀY NGHỈ
-            """
-            overtime_days = tang_ca_nghi_gio / 8
-            
-            # Gộp toàn bộ tăng ca vào ngày công
-            adjusted_days = ngay_cong_thuc_te + overtime_days
-            
-            # KHÔNG ĐƯỢC VƯỢT QUÁ NGÀY CÔNG CHUẨN
-            if adjusted_days > ngay_cong_chuan:
-                adjusted_days = ngay_cong_chuan
-            
-            # Tính số ngày thực tế được gộp
-            actual_used_days = adjusted_days - ngay_cong_thuc_te
-            
-            # Tính giờ tăng ca còn lại
-            used_hours = actual_used_days * 8
-            remaining_hours = tang_ca_nghi_gio - used_hours
-            
-            return adjusted_days, remaining_hours, used_hours
 
         # --- Hàm xác định trạng thái ---
         def render_status(cell_val):
@@ -349,7 +326,7 @@ def import_payroll(filename):
                 elif status == "v":
                     ngay_vang += 1
 
-            # --- CÔNG THỨC TÍNH NGÀY CÔNG THỰC TẾ ---
+            # --- CÔNG THỨC TÍNH NGÀY CÔNG THỰC TẾ GỐC ---
             ngay_cong_thuc_te = tong_x - x_chu_nhat - (x_le * 2)
             if ngay_cong_thuc_te < 0:
                 ngay_cong_thuc_te = 0
@@ -358,10 +335,10 @@ def import_payroll(filename):
             tang_ca_tuan = 0
             le_tet_gio = x_le * 16
 
-            # ✅ SỬA 3: SỬ DỤNG CÔNG THỨC MỚI ĐỒNG NHẤT VỚI APPLY_ADJUSTMENT
-            ngay_cong_dieu_chinh, tang_ca_nghi_con_lai, used_hours = calculate_adjusted_work_days(
-                ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio
-            )
+            # ✅ QUAN TRỌNG: KHI IMPORT CHỈ LƯU GIÁ TRỊ GỐC, KHÔNG TÍNH ĐIỀU CHỈNH
+            ngay_cong_goc = ngay_cong_thuc_te
+            ngay_vang_goc = ngay_vang
+            tang_ca_nghi_goc = tang_ca_nghi_gio
 
             # --- Ghi chú chi tiết ---
             cn_days, le_days, nghi_days = [], [], []
@@ -391,18 +368,18 @@ def import_payroll(filename):
 
             ghi_chu = " - ".join(parts) if parts else "Làm việc đủ ngày"
 
-            # --- Tạo PayrollRecord ---
+            # --- Tạo PayrollRecord VỚI GIÁ TRỊ GỐC ---
             record = PayrollRecord(
                 employee_id=emp.id,
                 employee_code=emp.code,
                 employee_name=emp.name,
                 period=period,
-                ngay_cong=ngay_cong_dieu_chinh,
-                ngay_vang=ngay_vang,
+                ngay_cong=ngay_cong_goc,      # ✅ GIÁ TRỊ GỐC
+                ngay_vang=ngay_vang_goc,       # ✅ GIÁ TRỊ GỐC  
                 chu_nhat=x_chu_nhat,
                 le_tet=x_le,
                 le_tet_gio=le_tet_gio,
-                tang_ca_nghi=tang_ca_nghi_con_lai,
+                tang_ca_nghi=tang_ca_nghi_goc, # ✅ GIÁ TRỊ GỐC
                 tang_ca_tuan=tang_ca_tuan,
                 standard_work_days=ngay_cong_chuan,
                 
@@ -415,7 +392,8 @@ def import_payroll(filename):
                         'holiday_work_days': le_days,
                         'absence_days': nghi_days,
                         'standard_work_days': ngay_cong_chuan,
-                        'original_work_days': ngay_cong_thuc_te
+                        'original_work_days': ngay_cong_thuc_te,
+                        'original_absence_days': ngay_vang
                     }
                 },
                 to=getattr(emp, "team", ""),
@@ -423,33 +401,12 @@ def import_payroll(filename):
                 loai_hd=getattr(emp, "contract_type", "")
             )
             
-            # LƯU RECORD TRƯỚC ĐỂ CÓ ID
+            # ✅ CHỈ LƯU PayrollRecord, KHÔNG TẠO WorkAdjustment KHI IMPORT
             db.session.add(record)
-            db.session.flush()
-
-            # --- Tạo WorkAdjustment với payroll_record_id đã có ---
-            adjustment = WorkAdjustment(
-                payroll_record_id=record.id,
-                employee_id=emp.id,
-                period=period,
-                employee_code=emp.code,
-                employee_name=emp.name,
-                original_work_days=ngay_cong_thuc_te,
-                original_absence_days=ngay_vang,
-                standard_work_days=ngay_cong_chuan,
-                original_overtime_hours=tang_ca_nghi_gio,
-                adjusted_work_days=ngay_cong_dieu_chinh,
-                adjusted_absence_days=ngay_vang,  # Ngày nghỉ giữ nguyên
-                remaining_overtime_hours=tang_ca_nghi_con_lai,
-                used_overtime_hours=used_hours,
-                adjustment_type="overtime_compensation",
-                adjustment_reason=f"Gộp {used_hours} giờ tăng ca vào ngày công"
-            )
-            db.session.add(adjustment)
 
         # COMMIT CUỐI CÙNG
         db.session.commit()
-        flash("Đã import payroll thành công!", "success")
+        flash("Đã import payroll thành công! Dữ liệu đang ở trạng thái gốc.", "success")
 
     except Exception as e:
         db.session.rollback()
@@ -522,21 +479,20 @@ def apply_adjustment():
             flash("Không tìm thấy bản ghi payroll!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
-        # ✅ TÍNH TOÁN PHÉP NĂM ĐỂ CÓ BIẾN ngay_nghi_phep_nam
+        # ✅ LẤY THÔNG TIN PHÉP NĂM
         paid_leave = PaidLeave.query.filter_by(
             employee_id=emp.id,
             period=period
         ).first()
         
-        ngay_nghi_phep_nam = paid_leave.leave_days_used if paid_leave else 0  # ✅ ĐỊNH NGHĨA BIẾN
-        
-        # Tính toán điều chỉnh
+        ngay_nghi_phep_nam_da_dung = paid_leave.leave_days_used if paid_leave else 0
+
+        # ✅ TÍNH NGÀY CÔNG CHUẨN
         year, month = map(int, period.split('-'))
-        
         holidays = Holiday.query.filter(
             db.extract("year", Holiday.date) == year,
             db.extract("month", Holiday.date) == month
-        ).all()
+        ).count()
         
         total_days = calendar.monthrange(year, month)[1]
         sunday_count = 0
@@ -544,45 +500,20 @@ def apply_adjustment():
             if datetime(year, month, day).weekday() == 6:
                 sunday_count += 1
                 
-        ngay_cong_chuan = total_days - sunday_count - (len(holidays) * 2)
-        
-        # ✅ CÔNG THỨC MỚI: GỘP TĂNG CA VÀ BÙ NGÀY NGHỈ
-        overtime_days = overtime_hours / 8
-        
-        # 1. Gộp toàn bộ tăng ca vào ngày công thực tế
-        adjusted_days = original_days + overtime_days
-        
-        # ✅ THÊM: GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
-        if adjusted_days > ngay_cong_chuan:
-            adjusted_days = ngay_cong_chuan
-        
-        # 2. Dùng tăng ca để bù ngày nghỉ (nếu có)
-        ngay_vang_sau_gop = current_absence
-        gio_tang_ca_con_lai = overtime_hours
-        
-        if current_absence > 0:
-            # Số ngày có thể bù từ tăng ca
-            so_ngay_co_the_bu = min(overtime_days, current_absence)
-            
-            # Giảm ngày nghỉ
-            ngay_vang_sau_gop = current_absence - so_ngay_co_the_bu
-            
-            # Tính giờ tăng ca đã dùng để bù
-            gio_da_dung_de_bu = so_ngay_co_the_bu * 8
-            gio_tang_ca_con_lai = overtime_hours - gio_da_dung_de_bu
+        ngay_cong_chuan = total_days - sunday_count - (holidays * 2)
 
-        # Tính giờ đã sử dụng
-        used_hours = overtime_hours - gio_tang_ca_con_lai
+        # ✅ TÍNH TOÁN ĐIỀU CHỈNH THEO LOGIC MỚI
+        from .attendance_helpers import calculate_adjustment_details
+        
+        result = calculate_adjustment_details(
+            original_days=original_days,
+            standard_days=ngay_cong_chuan,
+            ngay_vang_ban_dau=current_absence,
+            overtime_hours=overtime_hours,
+            ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung
+        )
 
-        print(f"DEBUG CÔNG THỨC MỚI:")
-        print(f"- Ngày công ban đầu: {original_days}")
-        print(f"- Ngày CN đã làm: {overtime_days} ngày ({overtime_hours} giờ)")
-        print(f"- Ngày công sau gộp: {adjusted_days} ngày (ĐÃ GIỚI HẠN)")
-        print(f"- Ngày nghỉ: {current_absence} -> {ngay_vang_sau_gop}")
-        print(f"- Giờ tăng ca: {overtime_hours} -> {gio_tang_ca_con_lai} (đã dùng {used_hours} giờ)")
-        print(f"- Phép năm đã dùng: {ngay_nghi_phep_nam} ngày")  # ✅ THÊM DEBUG
-
-        # Tạo hoặc cập nhật WorkAdjustment
+        # ✅ Tạo hoặc cập nhật WorkAdjustment
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=employee_code,
             period=period
@@ -590,15 +521,13 @@ def apply_adjustment():
         
         if adjustment:
             # Cập nhật adjustment hiện có
-            adjustment.adjusted_work_days = adjusted_days  # ✅ ĐÃ GIỚI HẠN
-            adjustment.ngay_vang_ban_dau = current_absence
-            adjustment.ngay_vang_sau_gop = ngay_vang_sau_gop
-            adjustment.remaining_overtime_hours = gio_tang_ca_con_lai
-            adjustment.used_overtime_hours = used_hours
-            # ✅ SỬA: SỬ DỤNG BIẾN ĐÃ ĐƯỢC ĐỊNH NGHĨA
-            adjustment.adjustment_reason = f"Gộp {overtime_days} ngày CN vào ngày công, bù {used_hours/8} ngày nghỉ"
+            adjustment.adjusted_work_days = result['ngay_cong_cuoi']
+            adjustment.adjusted_absence_days = result['ngay_vang_cuoi']
+            adjustment.remaining_overtime_hours = result['tang_ca_con_lai']
+            adjustment.used_overtime_hours = result['gio_tang_ca_da_dung']
+            adjustment.adjustment_reason = f"Gộp {result['so_ngay_bu_tu_tang_ca']} ngày CN, dùng {result['ngay_nghi_phep_nam_da_dung']} ngày phép năm"
         else:
-            # Tạo adjustment mới với đầy đủ thông tin
+            # Tạo adjustment mới
             adjustment = WorkAdjustment(
                 payroll_record_id=payroll_record.id,  
                 employee_id=emp.id,
@@ -608,22 +537,19 @@ def apply_adjustment():
                 original_work_days=original_days,
                 original_absence_days=current_absence,
                 original_overtime_hours=overtime_hours,
-                adjusted_work_days=adjusted_days,  # ✅ ĐÃ GIỚI HẠN
-                ngay_vang_ban_dau=current_absence,      # ✅ Lưu ngày vắng ban đầu
-                ngay_vang_sau_gop=ngay_vang_sau_gop,    # ✅ Ngày vắng sau gộp
-                remaining_overtime_hours=gio_tang_ca_con_lai,
-                used_overtime_hours=used_hours,
+                adjusted_work_days=result['ngay_cong_cuoi'],
+                adjusted_absence_days=result['ngay_vang_cuoi'],
+                remaining_overtime_hours=result['tang_ca_con_lai'],
+                used_overtime_hours=result['gio_tang_ca_da_dung'],
                 standard_work_days=ngay_cong_chuan,
                 adjustment_type="overtime_compensation",
-                # ✅ SỬA: LOẠI BỎ THAM CHIẾU ĐẾN ngay_nghi_phep_nam CHO ĐƠN GIẢN
-                adjustment_reason=f"Gộp {overtime_days} ngày CN vào ngày công, bù {used_hours/8} ngày nghỉ"
+                adjustment_reason=f"Gộp {result['so_ngay_bu_tu_tang_ca']} ngày CN, dùng {result['ngay_nghi_phep_nam_da_dung']} ngày phép năm"
             )
             db.session.add(adjustment)
         
         db.session.commit()
         
-        # ✅ SỬA: LOẠI BỎ THAM CHIẾU ĐẾN ngay_nghi_phep_nam TRONG FLASH MESSAGE
-        flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Gộp {overtime_days} ngày CN, bù {used_hours/8} ngày nghỉ.", "success")
+        flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result['ngay_cong_cuoi']}", "success")
         
     except Exception as e:
         db.session.rollback()
@@ -649,15 +575,16 @@ def reset_adjustment_payroll():
         ).first()
         
         if adjustment:
-            # ✅ KHÔI PHỤC ngay_cong VỀ GIÁ TRỊ GỐC
+            # ✅ KHÔI PHỤC VỀ GIÁ TRỊ GỐC TỪ PAYROLL RECORD
             payroll_record = PayrollRecord.query.filter_by(
                 employee_code=employee_code,
                 period=period
             ).first()
             
             if payroll_record:
-                payroll_record.ngay_cong = adjustment.original_work_days
-                payroll_record.tang_ca_nghi = adjustment.original_overtime_hours
+                # KHÔNG cần cập nhật payroll_record vì chúng ta dùng adjustment để tính toán
+                # Chỉ cần xóa adjustment là đủ
+                pass
             
             db.session.delete(adjustment)
             db.session.commit()
