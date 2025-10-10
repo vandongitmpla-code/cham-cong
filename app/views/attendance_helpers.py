@@ -47,7 +47,7 @@ def calculate_standard_work_days(year, month):
 
 def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung):
     """
-    Tính toán điều chỉnh theo logic mới
+    Tính toán điều chỉnh theo logic mới - ĐÃ SỬA LỖI
     """
     # Chuyển giờ tăng ca sang ngày
     overtime_days = overtime_hours / 8
@@ -59,7 +59,7 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
     # Tính ngày công tạm thời
     ngay_cong_tam = original_days + ngay_nghi_phep_nam_da_dung + so_ngay_bu_tu_tang_ca
     
-    # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN
+    # GIỚI HẠN KHÔNG VƯỢT QUÁ NGÀY CÔNG CHUẨN - LOGIC ĐÃ SỬA
     ngay_nghi_phep_nam_da_dung_final = ngay_nghi_phep_nam_da_dung
     so_ngay_bu_tu_tang_ca_final = so_ngay_bu_tu_tang_ca
     
@@ -67,7 +67,7 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
         # Tính số ngày thừa
         ngay_thua = ngay_cong_tam - standard_days
         
-        # Giảm số ngày bù từ tăng ca trước
+        # ƯU TIÊN 1: Giảm số ngày bù từ tăng ca trước
         if so_ngay_bu_tu_tang_ca_final >= ngay_thua:
             so_ngay_bu_tu_tang_ca_final -= ngay_thua
             ngay_thua = 0
@@ -75,11 +75,21 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
             ngay_thua -= so_ngay_bu_tu_tang_ca_final
             so_ngay_bu_tu_tang_ca_final = 0
             
-        # Nếu vẫn thừa, giảm phép năm đã dùng
-        if ngay_thua > 0:
+        # ƯU TIÊN 2: Nếu vẫn thừa, giảm phép năm đã dùng
+        if ngay_thua > 0 and ngay_nghi_phep_nam_da_dung_final >= ngay_thua:
             ngay_nghi_phep_nam_da_dung_final -= ngay_thua
+            ngay_thua = 0
+        elif ngay_thua > 0:
+            # Nếu phép năm không đủ để giảm hết ngày thừa
+            ngay_thua -= ngay_nghi_phep_nam_da_dung_final
+            ngay_nghi_phep_nam_da_dung_final = 0
         
-        ngay_cong_cuoi = standard_days
+        # Tính ngày công cuối cùng - QUAN TRỌNG: phải tính lại từ đầu
+        ngay_cong_cuoi = original_days + ngay_nghi_phep_nam_da_dung_final + so_ngay_bu_tu_tang_ca_final
+        
+        # ĐẢM BẢO KHÔNG VƯỢT QUÁ CHUẨN (double check)
+        if ngay_cong_cuoi > standard_days:
+            ngay_cong_cuoi = standard_days
     else:
         ngay_cong_cuoi = ngay_cong_tam
     
