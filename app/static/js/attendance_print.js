@@ -1,3 +1,5 @@
+
+
 // attendance_print.js - JavaScript cho trang attendance_print - CÔNG THỨC MỚI ĐÃ SỬA
 document.addEventListener("DOMContentLoaded", function(){
     // Khởi tạo timesheet data
