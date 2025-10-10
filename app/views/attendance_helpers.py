@@ -99,7 +99,7 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template - LOGIC MỚI
+    Tạo dữ liệu rows cho template - LOGIC ĐƠN GIẢN: HIỂN THỊ GIÁ TRỊ GỐC KHI CHƯA ĐIỀU CHỈNH
     """
     from app.models import WorkAdjustment, PaidLeave
     
@@ -125,10 +125,10 @@ def create_attendance_rows(records, period):
             ngay_nghi_phep_nam_da_dung = 0
             so_ngay_phep_con_lai = so_thang_duoc_huong
 
-        # ✅ LẤY DỮ LIỆU GỐC TỪ PAYROLL RECORD
-        ngay_cong_ban_dau = rec.ngay_cong
-        ngay_vang_ban_dau = rec.ngay_vang
-        tang_ca_nghi_ban_dau = rec.tang_ca_nghi
+        # ✅ QUAN TRỌNG: LẤY GIÁ TRỊ GỐC TỪ PAYROLL RECORD (KHÔNG ĐIỀU CHỈNH)
+        ngay_cong_ban_dau = rec.ngay_cong  # Giá trị gốc từ import
+        ngay_vang_ban_dau = rec.ngay_vang  # Giá trị gốc từ import
+        tang_ca_nghi_ban_dau = rec.tang_ca_nghi  # Giá trị gốc từ import
 
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=rec.employee_code, 
@@ -145,18 +145,10 @@ def create_attendance_rows(records, period):
             adjustment_info = adjustment.used_overtime_hours
             
         else:
-            # ✅ CHƯA ĐIỀU CHỈNH - TÍNH TOÁN THEO LOGIC MỚI
-            result = calculate_adjustment_details(
-                original_days=ngay_cong_ban_dau,
-                standard_days=standard_days,
-                ngay_vang_ban_dau=ngay_vang_ban_dau,
-                overtime_hours=tang_ca_nghi_ban_dau,
-                ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung
-            )
-            
-            ngay_cong_hien_thi = result['ngay_cong_cuoi']
-            ngay_vang_hien_thi = result['ngay_vang_cuoi']
-            tang_ca_nghi_hien_thi = result['tang_ca_con_lai']
+            # ✅ CHƯA ĐIỀU CHỈNH - DÙNG GIÁ TRỊ GỐC (KHÔNG TÍNH TOÁN)
+            ngay_cong_hien_thi = ngay_cong_ban_dau
+            ngay_vang_hien_thi = ngay_vang_ban_dau
+            tang_ca_nghi_hien_thi = tang_ca_nghi_ban_dau
             
             has_adjustment = False
             adjustment_info = 0
@@ -167,14 +159,14 @@ def create_attendance_rows(records, period):
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
             standard_days,  # Số ngày/giờ làm việc quy định trong tháng
             ngay_nghi_phep_nam_da_dung,  # Số ngày nghỉ phép năm ĐÃ DÙNG
-            ngay_vang_hien_thi,  # Số ngày nghỉ không lương SAU ĐIỀU CHỈNH
-            ngay_cong_hien_thi,  # Số ngày/giờ làm việc thực tế SAU ĐIỀU CHỈNH
+            ngay_vang_hien_thi,  # Số ngày nghỉ không lương
+            ngay_cong_hien_thi,  # Số ngày/giờ làm việc thực tế
             tang_ca_nghi_hien_thi,  # Số giờ tăng ca CN còn lại
             rec.le_tet_gio, 
             rec.tang_ca_tuan, 
             rec.ghi_chu or "", 
-            thang_bat_dau_tinh_phep,
-            so_ngay_phep_con_lai,
+            thang_bat_dau_tinh_phep,  # ✅ CỘT NÀY SẼ HIỂN THỊ
+            so_ngay_phep_con_lai,     # ✅ CỘT NÀY SẼ HIỂN THỊ
             rec.to,
             {
                 'has_adjustment': has_adjustment,
