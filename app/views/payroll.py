@@ -268,7 +268,7 @@ def import_payroll(filename):
             return standard_days, sunday_count
 
     def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio, ngay_vang_ban_dau, ngay_nghi_phep_nam_da_dung=0):
-    """
+            """
             CÔNG THỨC MỚI: Tính toán điều chỉnh ngày công
             """
             overtime_days = tang_ca_nghi_gio / 8
