@@ -1,30 +1,61 @@
 // ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP - THÊM VÀO ĐẦU FILE
 // ✅ THÊM DEBUG ĐỂ KIỂM TRA
+// ✅ THÊM DEBUG ĐỂ KIỂM TRA
 console.log('🎯 attendance_print.js loaded - handleConfirmAdjustment defined:', typeof handleConfirmAdjustment);
+
+// ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP - THÊM VÀO ĐẦU FILE
 function handleConfirmAdjustment() {
-    console.log('=== HANDLE CONFIRM ADJUSTMENT CALLED ===');
+    console.log('🎯 === HANDLE CONFIRM ADJUSTMENT CALLED ===');
     
-    const employeeCode = document.getElementById('formEmployeeCode').value;
-    const period = document.getElementById('formPeriod').value;
-    const filename = document.getElementById('formFilename').value;
+    // Kiểm tra xem các form field có tồn tại không
+    const employeeCode = document.getElementById('formEmployeeCode');
+    const period = document.getElementById('formPeriod');
+    const filename = document.getElementById('formFilename');
     
-    console.log('Form values:', {
-        employeeCode: employeeCode,
-        period: period,
-        filename: filename,
+    console.log('🔍 Form elements check:', {
+        employeeCode: employeeCode ? 'EXISTS' : 'MISSING',
+        period: period ? 'EXISTS' : 'MISSING', 
+        filename: filename ? 'EXISTS' : 'MISSING'
+    });
+    
+    if (!employeeCode || !period || !filename) {
+        console.error('❌ Form elements missing!');
+        alert('Lỗi: Không tìm thấy thông tin form. Vui lòng thử lại.');
+        return;
+    }
+    
+    const empCode = employeeCode.value;
+    const periodVal = period.value;
+    const filenameVal = filename.value;
+    
+    console.log('📋 Form values:', {
+        employeeCode: empCode,
+        period: periodVal,
+        filename: filenameVal,
         originalDays: document.getElementById('formOriginalDays').value,
         overtimeHours: document.getElementById('formOvertimeHours').value,
         currentAbsence: document.getElementById('formCurrentAbsence').value
     });
     
+    // Kiểm tra xem có giá trị không
+    if (!empCode || !periodVal) {
+        console.error('❌ Missing required form values!');
+        alert('Lỗi: Thiếu thông tin cần thiết. Vui lòng thử lại.');
+        return;
+    }
+    
     // Đóng modal trước
     const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
     if (modal) {
+        console.log('🔒 Closing modal...');
         modal.hide();
+    } else {
+        console.log('⚠️ Modal instance not found');
     }
     
     // Gọi hàm điều chỉnh
-    applyAdjustment(employeeCode, period, filename);
+    console.log('🚀 Calling applyAdjustment...');
+    applyAdjustment(empCode, periodVal, filenameVal);
 }
 
 // attendance_print.js - JavaScript cho trang attendance_print - CÔNG THỨC MỚI ĐÃ SỬA
