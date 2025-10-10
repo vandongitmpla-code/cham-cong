@@ -450,8 +450,7 @@ def import_payroll(filename):
             db.session.add(record)
             db.session.flush()
 
-            # --- Tạo WorkAdjustment với payroll_record_id đã có ---
-            adjustment = WorkAdjustment(
+           
                 payroll_record_id=record.id,
                 employee_id=emp.id,
                 period=period,
