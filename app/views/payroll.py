@@ -251,8 +251,7 @@ def import_payroll(filename):
         ).all()
         holiday_days = {h.date.day for h in holidays}
 
-        # ✅ SỬA 1: XÓA THEO ĐÚNG THỨ TỰ FOREIGN KEY
-        # Xóa work_adjustments trước (con), sau đó payroll_records (cha)
+        # ✅ XÓA THEO ĐÚNG THỨ TỰ FOREIGN KEY
         WorkAdjustment.query.filter(WorkAdjustment.period == period).delete(synchronize_session=False)
         PayrollRecord.query.filter_by(period=period).delete(synchronize_session=False)
 
@@ -377,9 +376,13 @@ def import_payroll(filename):
             tang_ca_tuan = 0
             le_tet_gio = x_le * 16
 
-            # ✅ SỬA 3: SỬ DỤNG CÔNG THỨC MỚI ĐỒNG NHẤT VỚI APPLY_ADJUSTMENT
-            ngay_cong_dieu_chinh, tang_ca_nghi_con_lai, used_hours = calculate_adjusted_work_days(
-                ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio
+            # ✅ SỬ DỤNG CÔNG THỨC MỚI ĐỒNG NHẤT
+            ngay_cong_dieu_chinh, ngay_vang_cuoi, tang_ca_nghi_con_lai, used_hours, so_ngay_bu, phep_da_dung = calculate_adjusted_work_days(
+                ngay_cong_thuc_te=ngay_cong_thuc_te,
+                ngay_cong_chuan=ngay_cong_chuan,
+                tang_ca_nghi_gio=tang_ca_nghi_gio,
+                ngay_vang_ban_dau=ngay_vang,
+                ngay_nghi_phep_nam_da_dung=0  # Khi import chưa có phép năm
             )
 
             # --- Ghi chú chi tiết ---
@@ -417,7 +420,7 @@ def import_payroll(filename):
                 employee_name=emp.name,
                 period=period,
                 ngay_cong=ngay_cong_dieu_chinh,
-                ngay_vang=ngay_vang,
+                ngay_vang=ngay_vang_cuoi,  # ✅ DÙNG NGÀY VẮNG ĐÃ ĐIỀU CHỈNH
                 chu_nhat=x_chu_nhat,
                 le_tet=x_le,
                 le_tet_gio=le_tet_gio,
@@ -434,7 +437,8 @@ def import_payroll(filename):
                         'holiday_work_days': le_days,
                         'absence_days': nghi_days,
                         'standard_work_days': ngay_cong_chuan,
-                        'original_work_days': ngay_cong_thuc_te
+                        'original_work_days': ngay_cong_thuc_te,
+                        'original_absence_days': ngay_vang
                     }
                 },
                 to=getattr(emp, "team", ""),
@@ -458,11 +462,11 @@ def import_payroll(filename):
                 standard_work_days=ngay_cong_chuan,
                 original_overtime_hours=tang_ca_nghi_gio,
                 adjusted_work_days=ngay_cong_dieu_chinh,
-                adjusted_absence_days=ngay_vang,  # Ngày nghỉ giữ nguyên
+                adjusted_absence_days=ngay_vang_cuoi,  # ✅ DÙNG NGÀY VẮNG ĐÃ ĐIỀU CHỈNH
                 remaining_overtime_hours=tang_ca_nghi_con_lai,
                 used_overtime_hours=used_hours,
                 adjustment_type="overtime_compensation",
-                adjustment_reason=f"Gộp {used_hours} giờ tăng ca vào ngày công"
+                adjustment_reason=f"Gộp {so_ngay_bu} ngày CN ({used_hours} giờ) vào ngày công"
             )
             db.session.add(adjustment)
 
