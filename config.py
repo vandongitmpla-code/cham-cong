@@ -12,3 +12,4 @@ class Config:
         "postgresql+psycopg2://admin:Dong1994@localhost:5432/chamcong"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
