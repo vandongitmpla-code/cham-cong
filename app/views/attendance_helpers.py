@@ -191,6 +191,7 @@ def create_attendance_rows(records, period):
         stt += 1
     
     return rows
+
 def calculate_leave_info(employee, period):
     """
     Tính toán thông tin phép năm từ start_month đến period hiện tại
