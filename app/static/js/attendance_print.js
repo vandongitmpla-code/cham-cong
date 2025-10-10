@@ -395,3 +395,71 @@ function debugLog(message, data = null) {
     }
 }
 
+// ✅ HÀM GỌI API ĐIỀU CHỈNH VỚI XÁC NHẬN PHÉP NĂM
+function applyAdjustment(employeeCode, period, filename) {
+    // Lấy dữ liệu từ form
+    const formData = new FormData(document.getElementById(`adjust-form-${employeeCode}`));
+    
+    // Gọi API lần đầu (không dùng extra leave)
+    fetch('/apply_adjustment', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.redirected) {
+            // Nếu redirect (thành công hoặc lỗi thông thường)
+            window.location.href = response.url;
+            return;
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.need_extra_leave_confirmation && data.remaining_absence > 0) {
+            // Hiển thị popup xác nhận thứ hai
+            showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
+        } else {
+            // Không cần xác nhận thêm → reload trang
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error applying adjustment:', error);
+        location.reload(); // Fallback: reload trang
+    });
+}
+
+// ✅ HÀM HIỂN THỊ XÁC NHẬN THÊM PHÉP NĂM
+function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbsence, availableLeave) {
+    const message = availableLeave >= remainingAbsence 
+        ? `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn có muốn dùng thêm phép năm để bù luôn không?`
+        : `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn không còn đủ phép năm (chỉ còn ${availableLeave} ngày).`;
+    
+    const canUseExtraLeave = availableLeave >= remainingAbsence;
+    
+    if (canUseExtraLeave && confirm(message)) {
+        // Gọi API lần thứ hai với use_extra_leave=true
+        const formData = new FormData();
+        formData.append('employee_code', employeeCode);
+        formData.append('period', period);
+        formData.append('filename', filename);
+        formData.append('use_extra_leave', 'true');
+        formData.append('original_days', document.getElementById('formOriginalDays').value);
+        formData.append('overtime_hours', document.getElementById('formOvertimeHours').value);
+        formData.append('current_absence', document.getElementById('formCurrentAbsence').value);
+        
+        fetch('/apply_adjustment', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                location.reload();
+            }
+        });
+    } else {
+        // Người dùng chọn không hoặc không đủ phép năm → giữ nguyên kết quả ban đầu
+        location.reload();
+    }
+}
