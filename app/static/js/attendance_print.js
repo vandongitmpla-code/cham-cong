@@ -403,8 +403,10 @@ function debugLog(message, data = null) {
 
 // ✅ HÀM GỌI API ĐIỀU CHỈNH VỚI XÁC NHẬN PHÉP NĂM
 function applyAdjustment(employeeCode, period, filename) {
+    console.log('Starting adjustment process for:', employeeCode, period, filename);
+    
     // Lấy dữ liệu từ form
-    const formData = new FormData(document.getElementById(`adjust-form-${employeeCode}`));
+    const formData = new FormData(document.getElementById('adjustmentForm'));
     
     // Gọi API lần đầu (không dùng extra leave)
     fetch('/apply_adjustment', {
@@ -420,6 +422,7 @@ function applyAdjustment(employeeCode, period, filename) {
         return response.json();
     })
     .then(data => {
+        console.log('API response:', data);
         if (data && data.need_extra_leave_confirmation && data.remaining_absence > 0) {
             // Hiển thị popup xác nhận thứ hai
             showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
@@ -453,6 +456,8 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
         formData.append('overtime_hours', document.getElementById('formOvertimeHours').value);
         formData.append('current_absence', document.getElementById('formCurrentAbsence').value);
         
+        console.log('Calling API with extra leave...');
+        
         fetch('/apply_adjustment', {
             method: 'POST',
             body: formData
@@ -466,6 +471,27 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
         });
     } else {
         // Người dùng chọn không hoặc không đủ phép năm → giữ nguyên kết quả ban đầu
+        console.log('User declined extra leave or not enough leave available');
         location.reload();
     }
 }
+
+// ✅ SỬA LẠI: Xử lý click xác nhận trong modal
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
+        const employeeCode = document.getElementById('formEmployeeCode').value;
+        const period = document.getElementById('formPeriod').value;
+        const filename = document.getElementById('formFilename').value;
+        
+        console.log('Confirm adjustment clicked:', {employeeCode, period, filename});
+        
+        // Đóng modal trước
+        const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
+        if (modal) {
+            modal.hide();
+        }
+        
+        // Gọi hàm điều chỉnh
+        applyAdjustment(employeeCode, period, filename);
+    });
+});
