@@ -570,3 +570,4 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('confirmAdjustment button not found!');
     }
 });
+
