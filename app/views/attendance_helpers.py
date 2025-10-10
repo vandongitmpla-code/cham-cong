@@ -104,7 +104,6 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
                 ngay_cong_cuoi = standard_days
         else:
             # Không đủ phép năm → không thể bù hết
-            # Có thể trả về thông báo lỗi ở đây
             pass
     
     # 8. Tính toán kết quả cuối
@@ -119,11 +118,10 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
         'ngay_nghi_phep_nam_da_dung': ngay_phep_su_dung,
         'gio_tang_ca_da_dung': ngay_tang_ca_su_dung * 8,
         'phep_nam_con_lai': phep_nam_con_lai,
-        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and not use_extra_leave,  # Flag để frontend biết cần hỏi thêm
-        'ngay_vang_con_lai': ngay_vang_cuoi,  # Thêm để frontend hiển thị
-        'phep_nam_kha_dung': phep_nam_con_lai  # Thêm để frontend kiểm tra
+        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and not use_extra_leave,
+        'ngay_vang_con_lai': ngay_vang_cuoi,
+        'phep_nam_kha_dung': phep_nam_con_lai
     }
-
 
 def create_attendance_rows(records, period):
     """
@@ -154,9 +152,9 @@ def create_attendance_rows(records, period):
             so_ngay_phep_con_lai = so_thang_duoc_huong
 
         # ✅ QUAN TRỌNG: LẤY GIÁ TRỊ GỐC TỪ PAYROLL RECORD (KHÔNG ĐIỀU CHỈNH)
-        ngay_cong_ban_dau = rec.ngay_cong  # Giá trị gốc từ import
-        ngay_vang_ban_dau = rec.ngay_vang  # Giá trị gốc từ import
-        tang_ca_nghi_ban_dau = rec.tang_ca_nghi  # Giá trị gốc từ import
+        ngay_cong_ban_dau = rec.ngay_cong
+        ngay_vang_ban_dau = rec.ngay_vang
+        tang_ca_nghi_ban_dau = rec.tang_ca_nghi
 
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=rec.employee_code, 
@@ -185,16 +183,16 @@ def create_attendance_rows(records, period):
 
         rows.append([
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
-            standard_days,  # Số ngày/giờ làm việc quy định trong tháng
-            ngay_nghi_phep_nam_da_dung,  # Số ngày nghỉ phép năm ĐÃ DÙNG
-            ngay_vang_hien_thi,  # Số ngày nghỉ không lương
-            ngay_cong_hien_thi,  # Số ngày/giờ làm việc thực tế
-            tang_ca_nghi_hien_thi,  # Số giờ tăng ca CN còn lại
+            standard_days,
+            ngay_nghi_phep_nam_da_dung,
+            ngay_vang_hien_thi,
+            ngay_cong_hien_thi,
+            tang_ca_nghi_hien_thi,
             rec.le_tet_gio, 
             rec.tang_ca_tuan, 
             rec.ghi_chu or "", 
-            thang_bat_dau_tinh_phep,  # ✅ CỘT NÀY SẼ HIỂN THỊ
-            so_ngay_phep_con_lai,     # ✅ CỘT NÀY SẼ HIỂN THỊ
+            thang_bat_dau_tinh_phep,
+            so_ngay_phep_con_lai,
             rec.to,
             {
                 'has_adjustment': has_adjustment,
@@ -247,12 +245,11 @@ def calculate_leave_info(employee, period):
         # Format months: "6,7,8,9,10"
         months_str = ",".join(map(str, months))
         
-        return months_str, total_months, total_months  # months_str, total_months, remaining_days
+        return months_str, total_months, total_months
     
     except Exception as e:
         print(f"Error calculating leave info: {e}")
         return "", 0, 0
-    
     
 def get_attendance_columns():
     """
@@ -283,4 +280,3 @@ def get_company_info(period):
         "address": "KCN phường 8, phường Lý Văn Lâm, Tỉnh Cà Mau, Việt Nam",
         "title": f"BẢNG CHẤM CÔNG VÀ HIỆU SUẤT {period}"
     }
-
