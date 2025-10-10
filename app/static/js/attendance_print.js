@@ -1,5 +1,6 @@
 // ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP - THÊM VÀO ĐẦU FILE
-
+// ✅ THÊM DEBUG ĐỂ KIỂM TRA
+console.log('🎯 attendance_print.js loaded - handleConfirmAdjustment defined:', typeof handleConfirmAdjustment);
 function handleConfirmAdjustment() {
     console.log('=== HANDLE CONFIRM ADJUSTMENT CALLED ===');
     
