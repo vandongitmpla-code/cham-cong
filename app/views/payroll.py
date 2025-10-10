@@ -9,7 +9,7 @@ from . import bp
 from app.models import Holiday
 from app.models import Employee, PayrollRecord, WorkAdjustment, PaidLeave
 from .attendance_helpers import calculate_leave_info
-
+ả
 def _parse_holidays_for_month(holidays_config, ref_date):
     """
     holidays_config: list có thể chứa int (day-of-month) hoặc 'YYYY-MM-DD' strings hoặc digit-strings.
