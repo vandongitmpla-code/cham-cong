@@ -1,4 +1,5 @@
 // ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP - THÊM VÀO ĐẦU FILE
+
 function handleConfirmAdjustment() {
     console.log('=== HANDLE CONFIRM ADJUSTMENT CALLED ===');
     
