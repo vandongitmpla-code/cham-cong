@@ -273,7 +273,13 @@ document.addEventListener("DOMContentLoaded", function(){
     // Xác nhận áp dụng điều chỉnh
     document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
         console.log('Confirming adjustment...');
-        document.getElementById('adjustmentForm').submit();
+        document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
+    const employeeCode = document.getElementById('formEmployeeCode').value;
+    const period = document.getElementById('formPeriod').value;
+    const filename = document.getElementById('formFilename').value; // Cần thêm field này vào form
+    
+    applyAdjustment(employeeCode, period, filename);
+});
     });
 
     // Xác nhận reset điều chỉnh
