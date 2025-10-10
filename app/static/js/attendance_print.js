@@ -437,8 +437,70 @@ function applyAdjustment(employeeCode, period, filename) {
     });
 }
 
+// ✅ HÀM GỌI API ĐIỀU CHỈNH VỚI XÁC NHẬN PHÉP NĂM
+function applyAdjustment(employeeCode, period, filename) {
+    console.log('=== STARTING ADJUSTMENT PROCESS ===');
+    console.log('Employee:', employeeCode, 'Period:', period, 'Filename:', filename);
+    
+    // Lấy dữ liệu từ form
+    const formData = new FormData(document.getElementById('adjustmentForm'));
+    
+    console.log('Form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
+    // Gọi API lần đầu (không dùng extra leave)
+    fetch('/apply_adjustment', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('Response status:', response.status, 'Redirected:', response.redirected);
+        
+        // Kiểm tra content type để xác định có phải JSON không
+        const contentType = response.headers.get('content-type');
+        console.log('Content-Type:', contentType);
+        
+        if (response.redirected) {
+            console.log('Response redirected to:', response.url);
+            window.location.href = response.url;
+            return null;
+        }
+        
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        } else {
+            console.log('Not JSON response, reloading page');
+            location.reload();
+            return null;
+        }
+    })
+    .then(data => {
+        if (!data) return; // Đã xử lý redirect hoặc reload
+        
+        console.log('API JSON Response:', data);
+        
+        if (data.need_extra_leave_confirmation && data.remaining_absence > 0) {
+            console.log('Need extra leave confirmation:', data.remaining_absence, 'days remaining');
+            // Hiển thị popup xác nhận thứ hai
+            showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
+        } else {
+            console.log('No extra leave needed, reloading page');
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error applying adjustment:', error);
+        alert('Có lỗi xảy ra khi áp dụng điều chỉnh. Vui lòng thử lại.');
+        location.reload();
+    });
+}
+
 // ✅ HÀM HIỂN THỊ XÁC NHẬN THÊM PHÉP NĂM
 function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbsence, availableLeave) {
+    console.log('Showing extra leave confirmation:', {remainingAbsence, availableLeave});
+    
     const message = availableLeave >= remainingAbsence 
         ? `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn có muốn dùng thêm phép năm để bù luôn không?`
         : `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn không còn đủ phép năm (chỉ còn ${availableLeave} ngày).`;
@@ -446,6 +508,7 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
     const canUseExtraLeave = availableLeave >= remainingAbsence;
     
     if (canUseExtraLeave && confirm(message)) {
+        console.log('User confirmed extra leave usage');
         // Gọi API lần thứ hai với use_extra_leave=true
         const formData = new FormData();
         formData.append('employee_code', employeeCode);
@@ -463,14 +526,18 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
             body: formData
         })
         .then(response => {
+            console.log('Extra leave response - Redirected:', response.redirected);
             if (response.redirected) {
                 window.location.href = response.url;
             } else {
                 location.reload();
             }
+        })
+        .catch(error => {
+            console.error('Error in extra leave call:', error);
+            location.reload();
         });
     } else {
-        // Người dùng chọn không hoặc không đủ phép năm → giữ nguyên kết quả ban đầu
         console.log('User declined extra leave or not enough leave available');
         location.reload();
     }
@@ -478,20 +545,28 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
 
 // ✅ SỬA LẠI: Xử lý click xác nhận trong modal
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
-        const employeeCode = document.getElementById('formEmployeeCode').value;
-        const period = document.getElementById('formPeriod').value;
-        const filename = document.getElementById('formFilename').value;
-        
-        console.log('Confirm adjustment clicked:', {employeeCode, period, filename});
-        
-        // Đóng modal trước
-        const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
-        if (modal) {
-            modal.hide();
-        }
-        
-        // Gọi hàm điều chỉnh
-        applyAdjustment(employeeCode, period, filename);
-    });
+    const confirmBtn = document.getElementById('confirmAdjustment');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            const employeeCode = document.getElementById('formEmployeeCode').value;
+            const period = document.getElementById('formPeriod').value;
+            const filename = document.getElementById('formFilename').value;
+            
+            console.log('=== MODAL CONFIRM CLICKED ===');
+            console.log('Employee Code:', employeeCode);
+            console.log('Period:', period);
+            console.log('Filename:', filename);
+            
+            // Đóng modal trước
+            const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Gọi hàm điều chỉnh
+            applyAdjustment(employeeCode, period, filename);
+        });
+    } else {
+        console.error('confirmAdjustment button not found!');
+    }
 });
