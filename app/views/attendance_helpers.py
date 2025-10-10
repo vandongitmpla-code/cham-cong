@@ -99,9 +99,8 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template - SỬA LOGIC PHÉP NĂM: TĂNG NGÀY CÔNG
+    Tạo dữ liệu rows cho template - LOGIC MỚI
     """
-    from datetime import datetime
     from app.models import WorkAdjustment, PaidLeave
     
     rows = []
@@ -120,15 +119,16 @@ def create_attendance_rows(records, period):
         ).first()
         
         if paid_leave:
-            ngay_nghi_phep_nam = paid_leave.leave_days_used
+            ngay_nghi_phep_nam_da_dung = paid_leave.leave_days_used
             so_ngay_phep_con_lai = paid_leave.remaining_leave_days
         else:
-            ngay_nghi_phep_nam = 0
+            ngay_nghi_phep_nam_da_dung = 0
             so_ngay_phep_con_lai = so_thang_duoc_huong
 
-        # ✅ QUAN TRỌNG: TÍNH NGÀY CÔNG & NGÀY NGHỈ SAU KHI ÁP DỤNG PHÉP NĂM
-        ngay_cong_sau_phep = rec.ngay_cong + ngay_nghi_phep_nam  # ✅ TĂNG NGÀY CÔNG
-        ngay_vang_sau_phep = max(0, rec.ngay_vang - ngay_nghi_phep_nam)  # GIẢM NGÀY NGHỈ
+        # ✅ LẤY DỮ LIỆU GỐC TỪ PAYROLL RECORD
+        ngay_cong_ban_dau = rec.ngay_cong
+        ngay_vang_ban_dau = rec.ngay_vang
+        tang_ca_nghi_ban_dau = rec.tang_ca_nghi
 
         adjustment = WorkAdjustment.query.filter_by(
             employee_code=rec.employee_code, 
@@ -136,50 +136,40 @@ def create_attendance_rows(records, period):
         ).first()
         
         if adjustment:
-            # ✅ SỬA: DÙNG ngay_cong_sau_phep LÀM CƠ SỞ ĐỂ TÍNH
-            adjusted_days = adjustment.adjusted_work_days
-            if adjusted_days > standard_days:
-                adjusted_days = standard_days
-                
-            ngay_cong_quy_dinh = standard_days
-            ngay_cong_thuc_te = adjusted_days
-            
-            # Tính ngày nghỉ sau khi gộp tăng ca từ giá trị đã trừ phép
-            gio_da_dung_de_bu = adjustment.used_overtime_hours
-            ngay_da_bu_tu_tang_ca = gio_da_dung_de_bu / 8
-            ngay_vang_hien_thi = max(0, ngay_vang_sau_phep - ngay_da_bu_tu_tang_ca)
-            
+            # ✅ ĐÃ CÓ ĐIỀU CHỈNH - DÙNG GIÁ TRỊ ĐÃ TÍNH TOÁN
+            ngay_cong_hien_thi = adjustment.adjusted_work_days
+            ngay_vang_hien_thi = adjustment.adjusted_absence_days
             tang_ca_nghi_hien_thi = adjustment.remaining_overtime_hours
-            adjustment_info = adjustment.used_overtime_hours
-            original_days = ngay_cong_sau_phep  # ✅ DÙNG NGÀY CÔNG ĐÃ TĂNG
-            has_adjustment = True
             
-            print(f"DEBUG với phép năm: {rec.employee_code}")
-            print(f"- Ngày công gốc: {rec.ngay_cong}")
-            print(f"- Phép năm: +{ngay_nghi_phep_nam}")
-            print(f"- Ngày công sau phép: {ngay_cong_sau_phep}")
-            print(f"- Ngày nghỉ gốc: {rec.ngay_vang}")
-            print(f"- Ngày nghỉ sau phép: {ngay_vang_sau_phep}")
+            has_adjustment = True
+            adjustment_info = adjustment.used_overtime_hours
             
         else:
-            # ✅ CHƯA ĐIỀU CHỈNH - DÙNG GIÁ TRỊ ĐÃ TÍNH PHÉP
-            ngay_cong_quy_dinh = standard_days
-            ngay_cong_thuc_te = ngay_cong_sau_phep  # ✅ DÙNG NGÀY CÔNG ĐÃ TĂNG
-            ngay_vang_hien_thi = ngay_vang_sau_phep  # ✅ DÙNG NGÀY NGHỈ ĐÃ GIẢM
-            tang_ca_nghi_hien_thi = rec.tang_ca_nghi
-            adjustment_info = 0
-            original_days = ngay_cong_sau_phep  # ✅ DÙNG NGÀY CÔNG ĐÃ TĂNG
+            # ✅ CHƯA ĐIỀU CHỈNH - TÍNH TOÁN THEO LOGIC MỚI
+            result = calculate_adjustment_details(
+                original_days=ngay_cong_ban_dau,
+                standard_days=standard_days,
+                ngay_vang_ban_dau=ngay_vang_ban_dau,
+                overtime_hours=tang_ca_nghi_ban_dau,
+                ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung
+            )
+            
+            ngay_cong_hien_thi = result['ngay_cong_cuoi']
+            ngay_vang_hien_thi = result['ngay_vang_cuoi']
+            tang_ca_nghi_hien_thi = result['tang_ca_con_lai']
+            
             has_adjustment = False
+            adjustment_info = 0
 
-        has_overtime = rec.tang_ca_nghi > 0
+        has_overtime = tang_ca_nghi_ban_dau > 0
 
         rows.append([
             stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
-            ngay_cong_quy_dinh,
-            ngay_nghi_phep_nam,
-            ngay_vang_hien_thi,
-            ngay_cong_thuc_te,  # ✅ HIỂN THỊ NGÀY CÔNG ĐÃ TĂNG DO PHÉP
-            tang_ca_nghi_hien_thi,
+            standard_days,  # Số ngày/giờ làm việc quy định trong tháng
+            ngay_nghi_phep_nam_da_dung,  # Số ngày nghỉ phép năm ĐÃ DÙNG
+            ngay_vang_hien_thi,  # Số ngày nghỉ không lương SAU ĐIỀU CHỈNH
+            ngay_cong_hien_thi,  # Số ngày/giờ làm việc thực tế SAU ĐIỀU CHỈNH
+            tang_ca_nghi_hien_thi,  # Số giờ tăng ca CN còn lại
             rec.le_tet_gio, 
             rec.tang_ca_tuan, 
             rec.ghi_chu or "", 
@@ -190,14 +180,14 @@ def create_attendance_rows(records, period):
                 'has_adjustment': has_adjustment,
                 'has_overtime': has_overtime,
                 'adjustment_info': adjustment_info,
-                'original_days': original_days,  # ✅ NGÀY CÔNG ĐÃ TĂNG
-                'current_days': ngay_cong_sau_phep,  # ✅ NGÀY CÔNG ĐÃ TĂNG
+                'original_days': ngay_cong_ban_dau,
+                'current_days': ngay_cong_hien_thi,
                 'standard_days': standard_days,
-                'ngay_vang_ban_dau': rec.ngay_vang,
-                'ngay_vang_sau_phep': ngay_vang_sau_phep,
-                'ngay_nghi_phep_nam': ngay_nghi_phep_nam,
+                'ngay_vang_ban_dau': ngay_vang_ban_dau,
+                'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,
                 'so_thang_duoc_huong': so_thang_duoc_huong,
-                'employee_id': employee.id
+                'employee_id': employee.id,
+                'tang_ca_nghi_ban_dau': tang_ca_nghi_ban_dau
             }
         ])
         stt += 1
