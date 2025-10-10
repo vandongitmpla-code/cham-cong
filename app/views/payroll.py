@@ -465,7 +465,9 @@ def apply_adjustment():
         overtime_hours = float(request.form.get("overtime_hours"))
         current_absence = float(request.form.get("current_absence", 0))
         filename = request.form.get("filename") or request.args.get("filename")
-        use_extra_leave = request.form.get("use_extra_leave") == "true"  # Tham số mới
+        use_extra_leave = request.form.get("use_extra_leave") == "true"
+        
+        print(f"DEBUG: apply_adjustment called - employee_code: {employee_code}, use_extra_leave: {use_extra_leave}")
         
         emp = Employee.query.filter_by(code=employee_code).first()
         if not emp:
@@ -504,7 +506,7 @@ def apply_adjustment():
                 
         ngay_cong_chuan = total_days - sunday_count - (holidays * 2)
 
-        # ✅ TÍNH TOÁN ĐIỀU CHỈNH THEO LOGIC MỚI (CÓ THÊM use_extra_leave)
+        # ✅ TÍNH TOÁN ĐIỀU CHỈNH
         from .attendance_helpers import calculate_adjustment_details
         
         result = calculate_adjustment_details(
@@ -513,18 +515,21 @@ def apply_adjustment():
             ngay_vang_ban_dau=current_absence,
             overtime_hours=overtime_hours,
             ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
-            use_extra_leave=use_extra_leave  # Thêm tham số này
+            use_extra_leave=use_extra_leave
         )
 
-        # ✅ Nếu cần xác nhận thêm phép năm, trả về JSON thay vì tạo adjustment
+        print(f"DEBUG: Calculation result - can_xac_nhan_them_phep: {result.get('can_xac_nhan_them_phep')}, ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}")
+
+        # ✅ Nếu cần xác nhận thêm phép năm, trả về JSON
         if result.get('can_xac_nhan_them_phep') and not use_extra_leave:
-            return {
+            print(f"DEBUG: Returning JSON confirmation - remaining_absence: {result['ngay_vang_con_lai']}, available_leave: {result['phep_nam_kha_dung']}")
+            return jsonify({
                 'need_extra_leave_confirmation': True,
                 'remaining_absence': result['ngay_vang_con_lai'],
                 'available_leave': result['phep_nam_kha_dung'],
                 'employee_code': employee_code,
                 'period': period
-            }
+            })
 
         # ✅ Tạo hoặc cập nhật WorkAdjustment
         adjustment = WorkAdjustment.query.filter_by(
@@ -533,14 +538,12 @@ def apply_adjustment():
         ).first()
         
         if adjustment:
-            # Cập nhật adjustment hiện có
             adjustment.adjusted_work_days = result['ngay_cong_cuoi']
             adjustment.adjusted_absence_days = result['ngay_vang_cuoi']
             adjustment.remaining_overtime_hours = result['tang_ca_con_lai']
             adjustment.used_overtime_hours = result['gio_tang_ca_da_dung']
             adjustment.adjustment_reason = f"Gộp {result['so_ngay_bu_tu_tang_ca']} ngày CN, dùng {result['ngay_nghi_phep_nam_da_dung']} ngày phép năm"
         else:
-            # Tạo adjustment mới
             adjustment = WorkAdjustment(
                 payroll_record_id=payroll_record.id,  
                 employee_id=emp.id,
@@ -566,6 +569,7 @@ def apply_adjustment():
         
     except Exception as e:
         db.session.rollback()
+        print(f"ERROR in apply_adjustment: {e}")
         flash(f"Lỗi khi áp dụng điều chỉnh: {e}", "danger")
     
     if filename:
