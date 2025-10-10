@@ -450,7 +450,7 @@ def import_payroll(filename):
             db.session.add(record)
             db.session.flush()
 
-            
+            record = PayrollRecord(
                 payroll_record_id=record.id,
                 employee_id=emp.id,
                 period=period,
