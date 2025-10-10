@@ -467,7 +467,7 @@ def import_payroll(filename):
                 adjustment_type="overtime_compensation",
                 adjustment_reason=f"Gộp {so_ngay_bu} ngày CN ({used_hours} giờ) vào ngày công"
             )
-            db.session.add(adjustment)
+           
 
         # COMMIT CUỐI CÙNG
         db.session.commit()
