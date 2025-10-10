@@ -395,3 +395,48 @@ function debugLog(message, data = null) {
     }
 }
 
+function applyAdjustment(employeeCode, period, filename) {
+    // Lấy dữ liệu từ form
+    const formData = new FormData(document.getElementById(`adjust-form-${employeeCode}`));
+    
+    // Gọi API lần đầu (không dùng extra leave)
+    fetch('/apply_adjustment', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.need_extra_leave_confirmation && data.remaining_absence > 0) {
+            // Hiển thị popup xác nhận thứ hai
+            showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
+        } else {
+            // Không cần xác nhận thêm → reload trang
+            location.reload();
+        }
+    });
+}
+
+function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbsence, availableLeave) {
+    const message = availableLeave >= remainingAbsence 
+        ? `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn có muốn dùng thêm phép năm để bù luôn không?`
+        : `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn không còn đủ phép năm (chỉ còn ${availableLeave} ngày).`;
+    
+    const canUseExtraLeave = availableLeave >= remainingAbsence;
+    
+    if (canUseExtraLeave && confirm(message)) {
+        // Gọi API lần thứ hai với use_extra_leave=true
+        const formData = new FormData();
+        formData.append('employee_code', employeeCode);
+        formData.append('period', period);
+        formData.append('filename', filename);
+        formData.append('use_extra_leave', 'true');
+        
+        fetch('/apply_adjustment', {
+            method: 'POST',
+            body: formData
+        }).then(() => location.reload());
+    } else {
+        // Người dùng chọn không hoặc không đủ phép năm → giữ nguyên kết quả ban đầu
+        location.reload();
+    }
+}
