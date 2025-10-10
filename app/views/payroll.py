@@ -464,7 +464,6 @@ def apply_adjustment():
         overtime_hours = float(request.form.get("overtime_hours"))
         current_absence = float(request.form.get("current_absence", 0))
         filename = request.form.get("filename") or request.args.get("filename")
-        
         emp = Employee.query.filter_by(code=employee_code).first()
         if not emp:
             flash("Không tìm thấy nhân viên!", "danger")
