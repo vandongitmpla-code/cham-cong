@@ -1,13 +1,10 @@
-// ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP - THÊM VÀO ĐẦU FILE
-// ✅ THÊM DEBUG ĐỂ KIỂM TRA
 // ✅ THÊM DEBUG ĐỂ KIỂM TRA
 console.log('🎯 attendance_print.js loaded - handleConfirmAdjustment defined:', typeof handleConfirmAdjustment);
 
-// ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP - THÊM VÀO ĐẦU FILE
+// ✅ HÀM XỬ LÝ CLICK TRỰC TIẾP
 function handleConfirmAdjustment() {
     console.log('🎯 === HANDLE CONFIRM ADJUSTMENT CALLED ===');
     
-    // Kiểm tra xem các form field có tồn tại không
     const employeeCode = document.getElementById('formEmployeeCode');
     const period = document.getElementById('formPeriod');
     const filename = document.getElementById('formFilename');
@@ -37,14 +34,12 @@ function handleConfirmAdjustment() {
         currentAbsence: document.getElementById('formCurrentAbsence').value
     });
     
-    // Kiểm tra xem có giá trị không
     if (!empCode || !periodVal) {
         console.error('❌ Missing required form values!');
         alert('Lỗi: Thiếu thông tin cần thiết. Vui lòng thử lại.');
         return;
     }
     
-    // Đóng modal trước
     const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
     if (modal) {
         console.log('🔒 Closing modal...');
@@ -53,7 +48,6 @@ function handleConfirmAdjustment() {
         console.log('⚠️ Modal instance not found');
     }
     
-    // Gọi hàm điều chỉnh
     console.log('🚀 Calling applyAdjustment...');
     applyAdjustment(empCode, periodVal, filenameVal);
 }
@@ -83,14 +77,11 @@ document.addEventListener("DOMContentLoaded", function(){
     function calculateAdjustedWorkDays(originalDays, standardDays, overtimeHours, currentAbsence, ngayNghiPhepNamDaDung = 0) {
         const overtimeDays = overtimeHours / 8;
         
-        // BƯỚC 1: Tính số ngày có thể bù từ tăng ca
         const ngayVangConLaiSauPhep = Math.max(0, currentAbsence - ngayNghiPhepNamDaDung);
         const soNgayBuTuTangCa = Math.min(overtimeDays, ngayVangConLaiSauPhep);
         
-        // BƯỚC 2: Tính ngày công tạm thời
         const ngayCongTam = originalDays + ngayNghiPhepNamDaDung + soNgayBuTuTangCa;
         
-        // BƯỚC 3: Giới hạn không vượt quá chuẩn
         let ngayNghiPhepNamDaDungFinal = ngayNghiPhepNamDaDung;
         let soNgayBuTuTangCaFinal = soNgayBuTuTangCa;
         let ngayCongCuoi = ngayCongTam;
@@ -98,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function(){
         if (ngayCongTam > standardDays) {
             let ngayThua = ngayCongTam - standardDays;
             
-            // Giảm số ngày bù từ tăng ca trước
             if (soNgayBuTuTangCaFinal >= ngayThua) {
                 soNgayBuTuTangCaFinal -= ngayThua;
                 ngayThua = 0;
@@ -107,7 +97,6 @@ document.addEventListener("DOMContentLoaded", function(){
                 soNgayBuTuTangCaFinal = 0;
             }
             
-            // Nếu vẫn thừa, giảm phép năm đã dùng
             if (ngayThua > 0) {
                 ngayNghiPhepNamDaDungFinal -= ngayThua;
             }
@@ -115,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function(){
             ngayCongCuoi = standardDays;
         }
         
-        // Tính kết quả cuối
         const ngayVangCuoi = Math.max(0, currentAbsence - ngayNghiPhepNamDaDungFinal - soNgayBuTuTangCaFinal);
         const tangCaConLai = overtimeHours - (soNgayBuTuTangCaFinal * 8);
         
@@ -210,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function(){
                 ngayNghiPhepNamDaDung
             });
             
-            // ✅ KIỂM TRA: NẾU ĐÃ ĐẠT CHUẨN THÌ KHÔNG CHO GỘP
             if (originalDays >= standardDays) {
                 if (typeof notificationSystem !== 'undefined') {
                     notificationSystem.warning(
@@ -224,7 +211,6 @@ document.addEventListener("DOMContentLoaded", function(){
                 return;
             }
             
-            // ✅ TÍNH TOÁN THEO CÔNG THỨC MỚI
             const result = calculateAdjustedWorkDays(
                 originalDays, 
                 standardDays, 
@@ -242,7 +228,6 @@ document.addEventListener("DOMContentLoaded", function(){
             console.log(`- Giờ tăng ca: ${overtimeHours} -> ${result.tangCaConLai.toFixed(1)} giờ (đã dùng ${result.gioTangCaDaDung.toFixed(1)} giờ)`);
             console.log(`- Phép năm đã dùng: ${result.ngayNghiPhepNamDaDung} ngày`);
 
-            // Hiển thị modal
             document.getElementById('modalEmployeeName').textContent = employeeName;
             document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
             document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + (overtimeHours/8).toFixed(1) + ' ngày)';
@@ -252,14 +237,12 @@ document.addEventListener("DOMContentLoaded", function(){
             document.getElementById('modalRemainingHours').textContent = result.tangCaConLai.toFixed(1) + ' giờ';
             document.getElementById('modalPhepNamUsed').textContent = result.ngayNghiPhepNamDaDung + ' ngày';
             
-            // Điền form
             document.getElementById('formEmployeeCode').value = employeeCode;
             document.getElementById('formPeriod').value = period;
             document.getElementById('formOriginalDays').value = originalDays;
             document.getElementById('formOvertimeHours').value = overtimeHours;
             document.getElementById('formCurrentAbsence').value = currentAbsence;
             
-            // Hiển thị modal
             const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
             modal.show();
         }
@@ -277,13 +260,11 @@ document.addEventListener("DOMContentLoaded", function(){
             
             console.log('Leave add clicked:', {employeeId, employeeName, period, maxLeave, currentLeave, currentAbsence});
 
-            // Hiển thị modal thêm phép năm
             document.getElementById('leaveEmployeeName').textContent = employeeName;
             document.getElementById('leaveDaysInput').value = currentLeave;
             document.getElementById('leaveDaysInput').max = maxLeave;
             document.getElementById('maxLeaveDays').textContent = maxLeave;
             
-            // Điền form
             document.getElementById('formEmployeeId').value = employeeId;
             document.getElementById('formLeavePeriod').value = period;
             
@@ -301,7 +282,6 @@ document.addEventListener("DOMContentLoaded", function(){
             
             console.log('Leave reset clicked:', {employeeId, employeeName, period});
             
-            // Hiển thị modal xác nhận reset phép năm
             document.getElementById('resetLeaveEmployeeName').textContent = employeeName;
             document.getElementById('resetLeaveEmployeeId').value = employeeId;
             document.getElementById('resetLeavePeriod').value = period;
@@ -320,7 +300,6 @@ document.addEventListener("DOMContentLoaded", function(){
             
             console.log('Reset clicked:', {employeeCode, employeeName, period});
             
-            // Hiển thị modal xác nhận reset
             document.getElementById('resetEmployeeName').textContent = employeeName;
             document.getElementById('resetEmployeeCode').value = employeeCode;
             document.getElementById('resetPeriod').value = period;
@@ -328,18 +307,6 @@ document.addEventListener("DOMContentLoaded", function(){
             const resetModal = new bootstrap.Modal(document.getElementById('resetModal'));
             resetModal.show();
         }
-    });
-
-    // Xác nhận áp dụng điều chỉnh
-    document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
-        console.log('Confirming adjustment...');
-        document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
-        const employeeCode = document.getElementById('formEmployeeCode').value;
-        const period = document.getElementById('formPeriod').value;
-        const filename = document.getElementById('formFilename').value; // Cần thêm field này vào form
-        
-        applyAdjustment(employeeCode, period, filename);
-    });
     });
 
     // Xác nhận reset điều chỉnh
@@ -436,9 +403,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     function showDetailModal(empData) {
-        // Logic hiển thị modal chi tiết
         console.log('Showing detail modal:', empData);
-        // ... phần code chi tiết modal của bạn
     }
 
     // Xử lý đóng modal chi tiết (nếu có)
@@ -450,54 +415,61 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 });
 
-// Hàm tiện ích debug
-function debugLog(message, data = null) {
-    if (console && console.log) {
-        if (data) {
-            console.log(`[Attendance Print] ${message}:`, data);
-        } else {
-            console.log(`[Attendance Print] ${message}`);
-        }
-    }
-}
-
 // ✅ HÀM GỌI API ĐIỀU CHỈNH VỚI XÁC NHẬN PHÉP NĂM
 function applyAdjustment(employeeCode, period, filename) {
-    console.log('Starting adjustment process for:', employeeCode, period, filename);
+    console.log('=== STARTING ADJUSTMENT PROCESS ===');
+    console.log('Employee:', employeeCode, 'Period:', period, 'Filename:', filename);
     
-    // Lấy dữ liệu từ form
     const formData = new FormData(document.getElementById('adjustmentForm'));
     
-    // Gọi API lần đầu (không dùng extra leave)
+    console.log('Form data:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
     fetch('/apply_adjustment', {
         method: 'POST',
         body: formData
     })
     .then(response => {
+        console.log('Response status:', response.status, 'Redirected:', response.redirected);
+        
+        const contentType = response.headers.get('content-type');
+        console.log('Content-Type:', contentType);
+        
         if (response.redirected) {
-            // Nếu redirect (thành công hoặc lỗi thông thường)
+            console.log('Response redirected to:', response.url);
             window.location.href = response.url;
-            return;
+            return null;
         }
-        return response.json();
+        
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        } else {
+            console.log('Not JSON response, reloading page');
+            location.reload();
+            return null;
+        }
     })
     .then(data => {
-        console.log('API response:', data);
-        if (data && data.need_extra_leave_confirmation && data.remaining_absence > 0) {
-            // Hiển thị popup xác nhận thứ hai
+        if (!data) return;
+        
+        console.log('API JSON Response:', data);
+        
+        if (data.need_extra_leave_confirmation && data.remaining_absence > 0) {
+            console.log('Need extra leave confirmation:', data.remaining_absence, 'days remaining');
             showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
         } else {
-            // Không cần xác nhận thêm → reload trang
+            console.log('No extra leave needed, reloading page');
             location.reload();
         }
     })
     .catch(error => {
         console.error('Error applying adjustment:', error);
-        location.reload(); // Fallback: reload trang
+        alert('Có lỗi xảy ra khi áp dụng điều chỉnh. Vui lòng thử lại.');
+        location.reload();
     });
 }
-
-
 
 // ✅ HÀM HIỂN THỊ XÁC NHẬN THÊM PHÉP NĂM
 function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbsence, availableLeave) {
@@ -511,7 +483,6 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
     
     if (canUseExtraLeave && confirm(message)) {
         console.log('User confirmed extra leave usage');
-        // Gọi API lần thứ hai với use_extra_leave=true
         const formData = new FormData();
         formData.append('employee_code', employeeCode);
         formData.append('period', period);
@@ -542,36 +513,5 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
     } else {
         console.log('User declined extra leave or not enough leave available');
         location.reload();
-    }
-}
-
-
-
-// ✅ THÊM CÁC HÀM BỊ THIẾU
-function showAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
-    }
-}
-
-function showLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
     }
 }
