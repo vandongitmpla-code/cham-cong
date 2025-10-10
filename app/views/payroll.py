@@ -267,7 +267,7 @@ def import_payroll(filename):
             standard_days = total_days - sunday_count - (holiday_count * 2)
             return standard_days, sunday_count
 
-def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio, ngay_vang_ban_dau, ngay_nghi_phep_nam_da_dung=0):
+    def calculate_adjusted_work_days(ngay_cong_thuc_te, ngay_cong_chuan, tang_ca_nghi_gio, ngay_vang_ban_dau, ngay_nghi_phep_nam_da_dung=0):
     """
     CÔNG THỨC MỚI: Tính toán điều chỉnh ngày công
     """
