@@ -274,12 +274,12 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
         console.log('Confirming adjustment...');
         document.getElementById('confirmAdjustment')?.addEventListener('click', function() {
-            const employeeCode = document.getElementById('formEmployeeCode').value;
-            const period = document.getElementById('formPeriod').value;
-            const filename = document.getElementById('formFilename').value; // Cần thêm field này vào form
-            
-            applyAdjustment(employeeCode, period, filename);
-        });
+        const employeeCode = document.getElementById('formEmployeeCode').value;
+        const period = document.getElementById('formPeriod').value;
+        const filename = document.getElementById('formFilename').value; // Cần thêm field này vào form
+        
+        applyAdjustment(employeeCode, period, filename);
+    });
     });
 
     // Xác nhận reset điều chỉnh
