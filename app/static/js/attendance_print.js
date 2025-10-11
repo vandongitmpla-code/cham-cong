@@ -487,4 +487,10 @@ document.addEventListener('click', function(e) {
     }
 });
 
+<!-- ✅ ĐẶT CUỐI TEMPLATE ĐỂ ĐẢM BẢO HTML ĐÃ LOAD -->
+<script src="{{ url_for('static', filename='js/attendance_print.js') }}"></script>
 
+<!-- Xuất weekdays + day_count cho JS -->
+<script id="timesheet-data" type="application/json">
+{{ {"weekdays": weekdays|default({}), "day_count": day_count|default(31)} | tojson | safe }}
+</script>
