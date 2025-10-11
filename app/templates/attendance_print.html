@@ -98,25 +98,7 @@
             </td>
 
             {% elif colname == "Số ngày nghỉ phép năm" %}
-            <td class="position-relative leave-cell" 
-                style="min-width: 120px; cursor: pointer;"
-                onmouseenter="showLeaveButtons(this)" 
-                onmouseleave="hideLeaveButtons(this)"
-                data-bs-toggle="tooltip" 
-                data-bs-placement="top"
-                data-bs-html="true"
-                data-bs-title="
-                    <div class='text-start small'>
-                        <strong>Chi tiết phép năm:</strong><br>
-                        - Đã dùng <strong class='text-primary'>{{ row[6] }}</strong> ngày phép năm<br>
-                        - Đã gộp <strong class='text-success'>{{ (row[-1].tang_ca_nghi_ban_dau / 8) | round(1) }}</strong> ngày CN<br>
-                        - Phép năm còn lại: <strong class='text-info'>{{ row[14] }}</strong> ngày
-                        {% if row[-1].has_adjustment %}
-                        <br><em class='text-muted'>(Đã điều chỉnh)</em>
-                        {% endif %}
-                    </div>
-                          <span class="leave-days">{{ cell }}</span>
-                          
+'''            
               <div class="leave-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
 
                 <!-- ✅ NÚT "+" - LUÔN HIỆN KHI CÓ QUYỀN SỬ DỤNG PHÉP -->
