@@ -170,15 +170,15 @@
             </td>
 
           {% elif colname == "Số ngày phép còn tồn" %}
-  {% with 
-      cell=cell,
-      metadata=row[-1],
-      employee_name=row[2],
-      period=period,
-      filename=filename
-  %}
-    {% include "_remaining_leave_cell.html" %}
-  {% endwith %}
+          {% with 
+              cell=cell,
+              metadata=row[-1],
+              employee_name=row[2],
+              period=period,
+              filename=filename
+          %}
+            {% include "_remaining_leave_cell.html" %}
+          {% endwith %}
 
           {% elif colname in ["Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)", 
                              "Số giờ làm việc tăng ca (ngày lễ)",
