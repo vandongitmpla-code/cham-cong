@@ -363,6 +363,8 @@
     box-shadow: var(--shadow-sm);
     position: relative;
     overflow: hidden;
+    align-items: center;
+    justify-content: center;
 }
 
 .stat-card-modern::before {
