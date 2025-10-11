@@ -122,3 +122,15 @@
     }
 }
 
+/* Tooltip custom */
+.tooltip {
+    --bs-tooltip-bg: #2c3e50;
+    --bs-tooltip-color: white;
+}
+
+.tooltip .tooltip-inner {
+    max-width: 300px;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
