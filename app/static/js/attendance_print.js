@@ -227,6 +227,8 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     })();
 
+    
+
     // ✅ HÀM TÍNH TOÁN ĐIỀU CHỈNH MỚI (ĐỒNG BỘ VỚI BACKEND)
     function calculateAdjustedWorkDays(originalDays, standardDays, overtimeHours, currentAbsence, ngayNghiPhepNamDaDung = 0) {
         const overtimeDays = overtimeHours / 8;
