@@ -146,14 +146,14 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
         'phep_nam_con_lai': phep_nam_con_lai,
         'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and (phep_nam_con_lai > 0) and not use_extra_leave,
         'ngay_vang_con_lai': ngay_vang_cuoi,
-        'phep_nam_kha_dung': phep_nam_con_lai
+        'phep_nam_kha_dung': phep_nam_con_lai  # ✅ DÙNG phep_nam_con_lai
     }
     
     print(f"🎯 FINAL RESULT:")
     print(f"  - ngay_cong_cuoi: {final_result['ngay_cong_cuoi']}")
     print(f"  - ngay_vang_cuoi: {final_result['ngay_vang_cuoi']}")
-    print(f"  - phep_nam_kha_dung: {final_result['phep_nam_kha_dung']}")
-    print(f"  - can_xac_nhan_them_phep: {final_result['can_xac_nhan_them_phep']}")
+    print(f"  - phep_nam_kha_dung: {final_result['phep_nam_kha_dung']}")  # ✅ SẼ LÀ 3.0
+    print(f"  - can_xac_nhan_them_phep: {final_result['can_xac_nhan_them_phep']}")  # ✅ SẼ LÀ True
     
     return final_result
 
