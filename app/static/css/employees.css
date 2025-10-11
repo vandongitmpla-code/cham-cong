@@ -324,14 +324,18 @@
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
     color: white;
     border: none;
-    border-radius: var(--radius-lg);
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 16px;
+    padding: 1.25rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.75rem;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+    margin: 2rem auto 0 auto;
 }
 
 /* Stats grid cân đối */
