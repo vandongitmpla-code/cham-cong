@@ -199,29 +199,11 @@
 }
 
 /* ====== DATE DISPLAY ====== */
-.date-display-compact {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
 .date-item-compact {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    white-space: nowrap;
-}
-
-.date-label-compact {
-    font-size: 0.7rem;
-    color: var(--text-tertiary);
-    min-width: 40px;
-}
-
-.date-value-compact {
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: var(--text-primary);
 }
 
 /* ====== FORM ELEMENTS ====== */
