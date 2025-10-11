@@ -499,7 +499,7 @@ def apply_adjustment():
             phep_nam_kha_dung = paid_leave.remaining_leave_days  # ✅ DÙNG GIÁ TRỊ TỪ DATABASE
         else:
             ngay_nghi_phep_nam_da_dung = 0
-            # Nếu chưa có paid_leave record, tính từ tháng bắt đầu
+            # ✅ TÍNH TOÁN PHÉP NĂM TỪ THÁNG BẮT ĐẦU
             thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_duoc_huong = calculate_leave_info(emp, period)
             phep_nam_kha_dung = so_ngay_phep_duoc_huong
 
