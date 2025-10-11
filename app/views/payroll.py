@@ -720,18 +720,23 @@ def reset_paid_leave():
             flash("Không tìm thấy nhân viên!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename))
         
-        # ✅ TÌM VÀ XÓA PAID_LEAVE RECORD
-        paid_leave = PaidLeave.query.filter_by(
+        # ✅ SỬA: RESET TRONG PAYROLL_RECORDS THAY VÌ PAID_LEAVES
+        payroll_record = PayrollRecord.query.filter_by(
             employee_id=employee_id,
             period=period
         ).first()
         
-        if paid_leave:
-            db.session.delete(paid_leave)
+        if payroll_record:
+            # Reset về 0
+            payroll_record.ngay_nghi_phep_nam = 0
+            
+            # ✅ GIỮ NGUYÊN ngay_phep_con_lai (phép năm còn tồn)
+            # payroll_record.ngay_phep_con_lai = ... (giữ nguyên)
+            
             db.session.commit()
             flash(f"Đã reset ngày phép năm về 0 cho {employee.name}!", "success")
         else:
-            flash("Không tìm thấy dữ liệu phép năm để reset!", "warning")
+            flash("Không tìm thấy dữ liệu payroll để reset!", "warning")
             
     except Exception as e:
         db.session.rollback()
