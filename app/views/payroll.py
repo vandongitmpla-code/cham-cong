@@ -471,6 +471,8 @@ def apply_adjustment():
         
         emp = Employee.query.filter_by(code=employee_code).first()
         if not emp:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'error': 'Không tìm thấy nhân viên!'}), 400
             flash("Không tìm thấy nhân viên!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
@@ -480,6 +482,8 @@ def apply_adjustment():
         ).first()
         
         if not payroll_record:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'error': 'Không tìm thấy bản ghi payroll!'}), 400
             flash("Không tìm thấy bản ghi payroll!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
@@ -518,12 +522,20 @@ def apply_adjustment():
             use_extra_leave=use_extra_leave
         )
 
-        print(f"DEBUG: Calculation result - can_xac_nhan_them_phep: {result.get('can_xac_nhan_them_phep')}, ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}")
+        print(f"DEBUG: Calculation result - ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}, phep_nam_kha_dung: {result.get('phep_nam_kha_dung')}")
 
-        # ✅ THÊM: KIỂM TRA NẾU LÀ AJAX REQUEST VÀ CẦN XÁC NHẬN PHÉP
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        # ✅ KIỂM TRA CÓ CẦN XÁC NHẬN THÊM PHÉP NĂM KHÔNG
+        can_xac_nhan_them_phep = (
+            result.get('ngay_vang_con_lai', 0) > 0 and 
+            result.get('phep_nam_kha_dung', 0) > 0 and
+            not use_extra_leave
+        )
         
-        if result.get('can_xac_nhan_them_phep') and not use_extra_leave and is_ajax:
+        print(f"DEBUG: Check extra leave - need_confirmation: {can_xac_nhan_them_phep}")
+        
+        # ✅ NẾU LÀ AJAX VÀ CẦN XÁC NHẬN THÊM PHÉP
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if can_xac_nhan_them_phep and is_ajax:
             print(f"DEBUG: Returning JSON confirmation - remaining_absence: {result['ngay_vang_con_lai']}, available_leave: {result['phep_nam_kha_dung']}")
             return jsonify({
                 'need_extra_leave_confirmation': True,
@@ -567,20 +579,20 @@ def apply_adjustment():
         
         db.session.commit()
         
-        # ✅ THÊM: NẾU LÀ AJAX REQUEST, TRẢ VỀ JSON THAY VÌ REDIRECT
+        # ✅ NẾU LÀ AJAX REQUEST, TRẢ VỀ JSON THAY VÌ REDIRECT
         if is_ajax:
             return jsonify({
                 'success': True,
-                'message': f'Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result["ngay_cong_cuoi"]}'
+                'message': f'Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result["ngay_cong_cuoi"]}, Ngày nghỉ: {result["ngay_vang_cuoi"]}'
             })
         
-        flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result['ngay_cong_cuoi']}", "success")
+        flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result['ngay_cong_cuoi']}, Ngày nghỉ: {result['ngay_vang_cuoi']}", "success")
         
     except Exception as e:
         db.session.rollback()
         print(f"ERROR in apply_adjustment: {e}")
         
-        # ✅ THÊM: XỬ LÝ LỖI CHO AJAX
+        # ✅ XỬ LÝ LỖI CHO AJAX
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({
                 'success': False,
@@ -595,7 +607,7 @@ def apply_adjustment():
     else:
         return redirect(url_for("main.index"))
     
-    
+
 @bp.route("/reset_adjustment_payroll", methods=["POST"])
 def reset_adjustment_payroll():
     try:
