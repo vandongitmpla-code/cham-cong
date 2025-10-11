@@ -475,7 +475,7 @@
 /* THÊM VÀO CUỐI FILE CSS */
 .section-wide {
     margin: 0 -2rem;
-    padding: 6rem;
+    padding: rem;
     background: var(--surface);
 }
 
