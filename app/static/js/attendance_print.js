@@ -361,47 +361,36 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    // Xác nhận reset điều chỉnh
-    document.getElementById('confirmReset')?.addEventListener('click', function() {
-        console.log('Confirming reset...');
-        document.getElementById('resetForm').submit();
-    });
+    // ✅ XÁC NHẬN RESET ĐIỀU CHỈNH
+document.getElementById('confirmReset')?.addEventListener('click', function() {
+    console.log('Confirming reset...');
+    document.getElementById('resetForm').submit();
+});
 
-    // ✅ XÁC NHẬN RESET PHÉP NĂM
-    document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
-        console.log('Confirming leave reset...');
-        document.getElementById('resetLeaveForm').submit();
-    });
+// ✅ XÁC NHẬN RESET PHÉP NĂM
+document.getElementById('confirmResetLeave')?.addEventListener('click', function() {
+    console.log('Confirming leave reset...');
+    document.getElementById('resetLeaveForm').submit();
+});
 
-    // Xác nhận thêm phép năm
-    document.getElementById('confirmLeave')?.addEventListener('click', function() {
-        const leaveDays = parseFloat(document.getElementById('leaveDaysInput').value);
-        const maxLeave = parseFloat(document.getElementById('leaveDaysInput').max);
-        
-        if (leaveDays > maxLeave) {
-            if (typeof notificationSystem !== 'undefined') {
-                notificationSystem.warning(
-                    `Số ngày phép không được vượt quá ${maxLeave} ngày!`,
-                    'Số ngày phép không hợp lệ'
-                );
-            } else {
-                alert(`Số ngày phép không được vượt quá ${maxLeave} ngày!`);
-            }
-            return;
-        }
-        
-        if (leaveDays < 0) {
-            if (typeof notificationSystem !== 'undefined') {
-                notificationSystem.warning('Số ngày phép không được âm!', 'Số ngày phép không hợp lệ');
-            } else {
-                alert('Số ngày phép không được âm!');
-            }
-            return;
-        }
-        
-        document.getElementById('formLeaveDays').value = leaveDays;
-        document.getElementById('leaveForm').submit();
-    });
+// ✅ XÁC NHẬN THÊM PHÉP NĂM
+document.getElementById('confirmLeave')?.addEventListener('click', function() {
+    const leaveDays = parseFloat(document.getElementById('leaveDaysInput').value);
+    const maxLeave = parseFloat(document.getElementById('leaveDaysInput').max);
+    
+    if (leaveDays > maxLeave) {
+        alert(`Số ngày phép không được vượt quá ${maxLeave} ngày!`);
+        return;
+    }
+    
+    if (leaveDays < 0) {
+        alert('Số ngày phép không được âm!');
+        return;
+    }
+    
+    document.getElementById('formLeaveDays').value = leaveDays;
+    document.getElementById('leaveForm').submit();
+});
 
     // Xử lý ghi chú động
     document.querySelectorAll(".note-cell").forEach(cell => {
