@@ -164,7 +164,7 @@ class NotificationSystem {
     }
 
     // ====== FLASH MESSAGE SUPPORT ======
-    showFlashMessages() {
+showFlashMessages() {
     // CHỈ hiển thị flash messages thực sự từ Flask, không hiển thị phần giải thích công thức
     const flashMessages = document.querySelectorAll('.alert:not(.alert-info):not(.alert-light)');
     
