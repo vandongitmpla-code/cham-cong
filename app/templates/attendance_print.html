@@ -378,6 +378,7 @@
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
+
 <!-- Xuất weekdays + day_count cho JS -->
 <script id="timesheet-data" type="application/json">
 {{ {"weekdays": weekdays|default({}), "day_count": day_count|default(31)} | tojson | safe }}
