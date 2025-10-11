@@ -1,3 +1,34 @@
+// attendance_print.js - JavaScript cho trang attendance_print
+
+// ✅ CÁC HÀM HIỂN THỊ/ẨN NÚT - GLOBAL
+window.showAdjustmentButtons = function(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+window.hideAdjustmentButtons = function(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
+
+window.showLeaveButtons = function(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+window.hideLeaveButtons = function(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
+
 // ✅ HÀM GLOBAL CHÍNH
 window.handleConfirmAdjustment = function() {
     console.log('🎯 === HANDLE CONFIRM ADJUSTMENT CALLED ===');
@@ -123,48 +154,21 @@ window.showExtraLeaveConfirmation = function(employeeCode, period, filename, rem
     }
 }
 
-// ✅ CÁC HÀM HIỂN THỊ/ẨN NÚT
-function showAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
-    }
-}
-
-function showLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
-    }
-}
-
 // ✅ DEBUG: KIỂM TRA NGAY KHI LOAD
-console.log('🎯 attendance_print.js loaded - handleConfirmAdjustment defined:', typeof window.handleConfirmAdjustment);
-console.log('🎯 attendance_print.js loaded - applyAdjustment defined:', typeof window.applyAdjustment);
+console.log('🎯 attendance_print.js loaded - Global functions defined:', {
+    handleConfirmAdjustment: typeof window.handleConfirmAdjustment,
+    applyAdjustment: typeof window.applyAdjustment,
+    showExtraLeaveConfirmation: typeof window.showExtraLeaveConfirmation,
+    showAdjustmentButtons: typeof window.showAdjustmentButtons,
+    hideAdjustmentButtons: typeof window.hideAdjustmentButtons,
+    showLeaveButtons: typeof window.showLeaveButtons,
+    hideLeaveButtons: typeof window.hideLeaveButtons
+});
 
-// attendance_print.js - JavaScript cho trang attendance_print - CÔNG THỨC MỚI ĐÃ SỬA
+// ✅ MAIN DOM CONTENT LOADED
 document.addEventListener("DOMContentLoaded", function(){
-    // ✅ DEBUG: KIỂM TRA GLOBAL FUNCTIONS
-    console.log('🔍 Global functions check:', {
-        handleConfirmAdjustment: typeof window.handleConfirmAdjustment,
-        applyAdjustment: typeof window.applyAdjustment,
-        showExtraLeaveConfirmation: typeof window.showExtraLeaveConfirmation
-    });
-
+    console.log('🎯 attendance_print.js DOM loaded');
+    
     // Khởi tạo timesheet data
     (function(){
         try {
@@ -232,81 +236,69 @@ document.addEventListener("DOMContentLoaded", function(){
     const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
 
-
-// ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('adjustment-icon')) {
-        const employeeCode = e.target.getAttribute('data-employee-code');
-        const employeeName = e.target.getAttribute('data-employee-name');
-        const period = e.target.getAttribute('data-period');
-        const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
-        const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
-        const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
-        const standardDays = parseFloat(e.target.getAttribute('data-standard-days') || 26);
-        
-        // ✅ SỬA: Lấy ngay_nghi_phep_nam_da_dung từ attribute riêng thay vì JSON
-        const ngayNghiPhepNamDaDung = parseFloat(e.target.getAttribute('data-ngay-nghi-phep-nam') || 0);
-        
-        console.log('Adjustment clicked:', {
-            employeeCode, 
-            employeeName, 
-            period, 
-            originalDays, 
-            overtimeHours, 
-            currentAbsence, 
-            standardDays, 
-            ngayNghiPhepNamDaDung
-        });
-        
-        if (originalDays >= standardDays) {
-            if (typeof notificationSystem !== 'undefined') {
-                notificationSystem.warning(
-                    `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
-                    <strong>Lý do:</strong> Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`,
-                    'Không thể gộp tăng ca'
-                );
-            } else {
-                alert(`Không thể gộp tăng ca cho ${employeeName}! Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`);
+    // ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('adjustment-icon')) {
+            const employeeCode = e.target.getAttribute('data-employee-code');
+            const employeeName = e.target.getAttribute('data-employee-name');
+            const period = e.target.getAttribute('data-period');
+            const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
+            const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
+            const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
+            const standardDays = parseFloat(e.target.getAttribute('data-standard-days') || 26);
+            const ngayNghiPhepNamDaDung = parseFloat(e.target.getAttribute('data-ngay-nghi-phep-nam') || 0);
+            
+            console.log('Adjustment clicked:', {employeeCode, employeeName});
+            
+            if (originalDays >= standardDays) {
+                if (typeof notificationSystem !== 'undefined') {
+                    notificationSystem.warning(
+                        `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
+                        <strong>Lý do:</strong> Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`,
+                        'Không thể gộp tăng ca'
+                    );
+                } else {
+                    alert(`Không thể gộp tăng ca cho ${employeeName}! Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`);
+                }
+                return;
             }
-            return;
-        }
-        
-        const result = calculateAdjustedWorkDays(
-            originalDays, 
-            standardDays, 
-            overtimeHours, 
-            currentAbsence, 
-            ngayNghiPhepNamDaDung
-        );
-        
-        console.log(`DEBUG CÔNG THỨC MỚI:`);
-        console.log(`- Ngày công ban đầu: ${originalDays} ngày`);
-        console.log(`- Phép năm đã dùng: ${ngayNghiPhepNamDaDung} ngày`);
-        console.log(`- Ngày CN đã làm: ${(overtimeHours/8).toFixed(1)} ngày (${overtimeHours} giờ)`);
-        console.log(`- Ngày công sau gộp: ${result.ngayCongCuoi.toFixed(1)} ngày`);
-        console.log(`- Ngày nghỉ: ${currentAbsence} -> ${result.ngayVangCuoi.toFixed(1)} ngày`);
-        console.log(`- Giờ tăng ca: ${overtimeHours} -> ${result.tangCaConLai.toFixed(1)} giờ (đã dùng ${result.gioTangCaDaDung.toFixed(1)} giờ)`);
-        console.log(`- Phép năm đã dùng: ${result.ngayNghiPhepNamDaDung} ngày`);
+            
+            const result = calculateAdjustedWorkDays(
+                originalDays, 
+                standardDays, 
+                overtimeHours, 
+                currentAbsence, 
+                ngayNghiPhepNamDaDung
+            );
+            
+            console.log(`DEBUG CÔNG THỨC MỚI:`);
+            console.log(`- Ngày công ban đầu: ${originalDays} ngày`);
+            console.log(`- Phép năm đã dùng: ${ngayNghiPhepNamDaDung} ngày`);
+            console.log(`- Ngày CN đã làm: ${(overtimeHours/8).toFixed(1)} ngày (${overtimeHours} giờ)`);
+            console.log(`- Ngày công sau gộp: ${result.ngayCongCuoi.toFixed(1)} ngày`);
+            console.log(`- Ngày nghỉ: ${currentAbsence} -> ${result.ngayVangCuoi.toFixed(1)} ngày`);
+            console.log(`- Giờ tăng ca: ${overtimeHours} -> ${result.tangCaConLai.toFixed(1)} giờ (đã dùng ${result.gioTangCaDaDung.toFixed(1)} giờ)`);
+            console.log(`- Phép năm đã dùng: ${result.ngayNghiPhepNamDaDung} ngày`);
 
-        document.getElementById('modalEmployeeName').textContent = employeeName;
-        document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
-        document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + (overtimeHours/8).toFixed(1) + ' ngày)';
-        document.getElementById('modalCurrentAbsence').textContent = currentAbsence + ' ngày';
-        document.getElementById('modalAdjustedDays').textContent = result.ngayCongCuoi.toFixed(1) + ' ngày';
-        document.getElementById('modalNewAbsence').textContent = result.ngayVangCuoi.toFixed(1) + ' ngày';
-        document.getElementById('modalRemainingHours').textContent = result.tangCaConLai.toFixed(1) + ' giờ';
-        document.getElementById('modalPhepNamUsed').textContent = result.ngayNghiPhepNamDaDung + ' ngày';
-        
-        document.getElementById('formEmployeeCode').value = employeeCode;
-        document.getElementById('formPeriod').value = period;
-        document.getElementById('formOriginalDays').value = originalDays;
-        document.getElementById('formOvertimeHours').value = overtimeHours;
-        document.getElementById('formCurrentAbsence').value = currentAbsence;
-        
-        const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
-        modal.show();
-    }
-});
+            document.getElementById('modalEmployeeName').textContent = employeeName;
+            document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
+            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + (overtimeHours/8).toFixed(1) + ' ngày)';
+            document.getElementById('modalCurrentAbsence').textContent = currentAbsence + ' ngày';
+            document.getElementById('modalAdjustedDays').textContent = result.ngayCongCuoi.toFixed(1) + ' ngày';
+            document.getElementById('modalNewAbsence').textContent = result.ngayVangCuoi.toFixed(1) + ' ngày';
+            document.getElementById('modalRemainingHours').textContent = result.tangCaConLai.toFixed(1) + ' giờ';
+            document.getElementById('modalPhepNamUsed').textContent = result.ngayNghiPhepNamDaDung + ' ngày';
+            
+            document.getElementById('formEmployeeCode').value = employeeCode;
+            document.getElementById('formPeriod').value = period;
+            document.getElementById('formOriginalDays').value = originalDays;
+            document.getElementById('formOvertimeHours').value = overtimeHours;
+            document.getElementById('formCurrentAbsence').value = currentAbsence;
+            
+            const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
+            modal.show();
+        }
+    });
 
     // ✅ XỬ LÝ CLICK ICON THÊM PHÉP NĂM (+)
     document.addEventListener('click', function(e) {
@@ -318,7 +310,7 @@ document.addEventListener('click', function(e) {
             const currentLeave = parseFloat(e.target.getAttribute('data-current-leave'));
             const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence'));
             
-            console.log('Leave add clicked:', {employeeId, employeeName, period, maxLeave, currentLeave, currentAbsence});
+            console.log('Leave add clicked:', {employeeName});
 
             document.getElementById('leaveEmployeeName').textContent = employeeName;
             document.getElementById('leaveDaysInput').value = currentLeave;
@@ -340,7 +332,7 @@ document.addEventListener('click', function(e) {
             const employeeName = e.target.getAttribute('data-employee-name');
             const period = e.target.getAttribute('data-period');
             
-            console.log('Leave reset clicked:', {employeeId, employeeName, period});
+            console.log('Leave reset clicked:', {employeeName});
             
             document.getElementById('resetLeaveEmployeeName').textContent = employeeName;
             document.getElementById('resetLeaveEmployeeId').value = employeeId;
@@ -358,7 +350,7 @@ document.addEventListener('click', function(e) {
             const employeeName = e.target.getAttribute('data-employee-name');
             const period = e.target.getAttribute('data-period');
             
-            console.log('Reset clicked:', {employeeCode, employeeName, period});
+            console.log('Reset clicked:', {employeeName});
             
             document.getElementById('resetEmployeeName').textContent = employeeName;
             document.getElementById('resetEmployeeCode').value = employeeCode;
@@ -486,7 +478,3 @@ document.addEventListener('click', function(e) {
         console.log('❌ Confirm button NOT FOUND after DOM loaded!');
     }
 });
-
-
-// remaining_leave.js - JavaScript cho phép năm còn tồn
-<script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
