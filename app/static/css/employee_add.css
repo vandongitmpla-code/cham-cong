@@ -1,5 +1,5 @@
 /* employee_add.css - Styles for add employee page */
-
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 /* ====== ADD FORM CONTAINER ====== */
 .add-form-container {
     background: #ffffff;
