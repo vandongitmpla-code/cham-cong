@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function(){
     })();
 
 // ✅ THÊM: Event listener cho nút confirm adjustment
-    document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
+document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
         console.log('🎯 CONFIRM BUTTON CLICKED - EVENT LISTENER FIRED!');
         e.preventDefault();
         window.handleConfirmAdjustment();
