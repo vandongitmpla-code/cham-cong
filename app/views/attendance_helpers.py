@@ -167,26 +167,15 @@ def create_attendance_rows(records, period):
     stt = 1
 
     for rec in records:
-        # ✅ THÔNG TIN PHÉP NĂM LẤY TRỰC TIẾP TỪ PAYROLL_RECORDS
+        standard_days = rec.standard_work_days
+
+        # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM - LẤY TỪ PAYROLL_RECORDS
+        employee = rec.employee
+        
+        # Lấy thông tin phép năm từ payroll_records
         ngay_nghi_phep_nam_da_dung = rec.ngay_nghi_phep_nam or 0
         so_ngay_phep_con_lai = rec.ngay_phep_con_lai or 0
         thang_bat_dau_tinh_phep = rec.thang_bat_dau_tinh_phep or ""
-
-        # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM
-        employee = rec.employee
-        thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_con_lai = calculate_leave_info(employee, period)
-        
-        paid_leave = PaidLeave.query.filter_by(
-            employee_id=employee.id,
-            period=period
-        ).first()
-        
-        if paid_leave:
-            ngay_nghi_phep_nam_da_dung = paid_leave.leave_days_used
-            so_ngay_phep_con_lai = paid_leave.remaining_leave_days
-        else:
-            ngay_nghi_phep_nam_da_dung = 0
-            so_ngay_phep_con_lai = so_thang_duoc_huong
 
         # ✅ QUAN TRỌNG: LẤY GIÁ TRỊ GỐC TỪ PAYROLL RECORD (KHÔNG ĐIỀU CHỈNH)
         ngay_cong_ban_dau = rec.ngay_cong
@@ -219,18 +208,22 @@ def create_attendance_rows(records, period):
         has_overtime = tang_ca_nghi_ban_dau > 0
 
         rows.append([
-            stt, rec.employee_code, rec.employee_name, rec.phong_ban, rec.loai_hd,
-            standard_days,
-            ngay_nghi_phep_nam_da_dung,
-            ngay_vang_hien_thi,
-            ngay_cong_hien_thi,
-            tang_ca_nghi_hien_thi,
-            rec.le_tet_gio, 
-            rec.tang_ca_tuan, 
-            rec.ghi_chu or "", 
-            thang_bat_dau_tinh_phep,
-            so_ngay_phep_con_lai,
-            rec.to,
+            stt, 
+            rec.employee_code, 
+            rec.employee_name, 
+            rec.phong_ban, 
+            rec.loai_hd,
+            standard_days,                    # Số ngày/giờ làm việc quy định trong tháng
+            ngay_nghi_phep_nam_da_dung,       # Số ngày nghỉ phép năm
+            ngay_vang_hien_thi,               # Số ngày nghỉ không lương
+            ngay_cong_hien_thi,               # Số ngày/giờ làm việc thực tế trong tháng
+            tang_ca_nghi_hien_thi,            # Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)
+            rec.le_tet_gio,                   # Số giờ làm việc tăng ca (ngày lễ)
+            rec.tang_ca_tuan,                 # Số giờ làm việc tăng ca (ngày làm trong tuần)
+            rec.ghi_chu or "",                # Ghi chú
+            thang_bat_dau_tinh_phep,          # Bắt đầu tính phép từ tháng
+            so_ngay_phep_con_lai,             # Số ngày phép còn tồn
+            rec.to,                           # Tổ
             {
                 'has_adjustment': has_adjustment,
                 'has_overtime': has_overtime,
@@ -240,7 +233,7 @@ def create_attendance_rows(records, period):
                 'standard_days': standard_days,
                 'ngay_vang_ban_dau': ngay_vang_ban_dau,
                 'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,
-                'so_thang_duoc_huong': so_thang_duoc_huong,
+                'so_thang_duoc_huong': so_ngay_phep_con_lai,  # Dùng so_ngay_phep_con_lai làm số tháng được hưởng
                 'employee_id': employee.id,
                 'tang_ca_nghi_ban_dau': tang_ca_nghi_ban_dau
             }
@@ -248,7 +241,6 @@ def create_attendance_rows(records, period):
         stt += 1
     
     return rows
-
 
 def calculate_leave_info(employee, period):
     """
