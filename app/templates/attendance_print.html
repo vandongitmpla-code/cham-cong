@@ -16,8 +16,6 @@
 
 <div class="print-container">
 
-
-
   <!-- Thông tin công ty -->
   <table class="table table-borderless w-100 mb-1">
     <tr>
@@ -42,7 +40,7 @@
           {% for col in cols %}
           <th>{{ col }}</th>
           {% endfor %}
-          <th></th> {# Cột để hiển thị icon chi tiết, không có chữ #}
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -77,7 +75,8 @@
                   data-overtime-hours="{{ row[-1].tang_ca_nghi_ban_dau }}"
                   data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
                   data-standard-days="{{ row[-1].standard_days or 26 }}"
-                  data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}">  <!-- ✅ THÊM THUỘC TÍNH NÀY -->
+                  data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}"
+                  data-filename="{{ filename }}">
                 </i>
                 {% endif %}
                 
@@ -99,7 +98,6 @@
             </td>
 
             {% elif colname == "Số ngày nghỉ phép năm" %}
-            <!-- ✅ CỘT PHÉP NĂM VỚI ICON "+" VÀ "-" -->
             <td class="position-relative leave-cell" 
                 style="min-width: 120px; cursor: pointer;"
                 onmouseenter="showLeaveButtons(this)" 
@@ -152,13 +150,11 @@
             </td>
 
             {% elif colname == "Bắt đầu tính phép từ tháng" %}
-              <!-- ✅ CỘT THÁNG BẮT ĐẦU TÍNH PHÉP -->
               <td class="text-info fw-bold">
                 {{ cell }}
               </td>
 
             {% elif colname == "Số ngày phép còn tồn" %}
-              <!-- ✅ CỘT SỐ NGÀY PHÉP CÒN LẠI -->
               <td class="text-success fw-bold">
                 {{ cell }}
               </td>
@@ -166,7 +162,6 @@
             {% elif colname in ["Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)", 
                                "Số giờ làm việc tăng ca (ngày lễ)",
                                "Số giờ làm việc tăng ca (ngày làm trong tuần)"] %}
-              <!-- Các cột giờ tăng ca - hiển thị nổi bật -->
               <td class="fw-bold text-primary">
                 {{ cell }}
               </td>
@@ -193,7 +188,6 @@
             {% endif %}
           {% endfor %}
 
-          {# Cột icon chi tiết #}
           <td>
             <i class="bi bi-eye text-info btn-detail"
               style="cursor:pointer;"
@@ -277,10 +271,12 @@
           </small>
         </div>
       </div>
-      <div class="modal-footer">
+      <!-- TRONG MODAL ADJUSTMENT - ĐẢM BẢO CÓ ONCLICK -->
+    <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
-        <button type="button" class="btn btn-primary" id="confirmAdjustment">Có, áp dụng</button>
-      </div>
+        <button type="button" class="btn btn-primary" 
+        onclick="handleConfirmAdjustment()">Có, áp dụng</button>
+    </div>
     </div>
   </div>
 </div>
@@ -372,7 +368,7 @@
   <input type="hidden" name="original_days" id="formOriginalDays">
   <input type="hidden" name="overtime_hours" id="formOvertimeHours">
   <input type="hidden" name="current_absence" id="formCurrentAbsence">
-  <input type="hidden" name="filename" value="{{ filename }}">
+  <input type="hidden" name="filename" id="formFilename" value="{{ filename }}">
 </form>
 
 <!-- ✅ Form reset -->

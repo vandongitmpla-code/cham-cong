@@ -1,6 +1,4 @@
 // static/js/notification-system.js
-// Hệ thống thông báo tái sử dụng cho toàn bộ ứng dụng
-
 class NotificationSystem {
     constructor() {
         this.container = null;
