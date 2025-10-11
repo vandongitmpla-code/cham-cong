@@ -123,9 +123,9 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
 
 def create_attendance_rows(records, period):
     """
-    Tạo dữ liệu rows cho template - LOGIC ĐƠN GIẢN: HIỂN THỊ GIÁ TRỊ GỐC KHI CHƯA ĐIỀU CHỈNH
+    Tạo dữ liệu rows cho template - ĐẢM BẢO TRUYỀN ĐÚNG PHÉP NĂM ĐÃ DÙNG
     """
-    from app.models import WorkAdjustment, PaidLeave
+    from app.models import WorkAdjustment
     
     rows = []
     stt = 1
@@ -133,11 +133,8 @@ def create_attendance_rows(records, period):
     for rec in records:
         standard_days = rec.standard_work_days
 
-        # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM - LẤY TỪ PAYROLL_RECORDS
-        employee = rec.employee
-        
-        # Lấy thông tin phép năm từ payroll_records
-        ngay_nghi_phep_nam_da_dung = rec.ngay_nghi_phep_nam or 0
+        # ✅ LẤY THÔNG TIN PHÉP NĂM TỪ PAYROLL_RECORDS
+        ngay_nghi_phep_nam_da_dung = rec.ngay_nghi_phep_nam or 0  # PHÉP NĂM ĐÃ "+"
         so_ngay_phep_con_lai = rec.ngay_phep_con_lai or 0
         thang_bat_dau_tinh_phep = rec.thang_bat_dau_tinh_phep or ""
 
