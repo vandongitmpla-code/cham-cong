@@ -370,7 +370,7 @@ def import_payroll(filename):
             ghi_chu = " - ".join(parts) if parts else "Làm việc đủ ngày"
 
             # --- Tạo PayrollRecord VỚI GIÁ TRỊ GỐC ---
-            # ✅ TẠO PAYROLLRECORD VỚI PHÉP NĂM
+         
             record = PayrollRecord(
                 employee_id=emp.id,
                 employee_code=emp.code,
