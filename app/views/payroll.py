@@ -520,8 +520,10 @@ def apply_adjustment():
 
         print(f"DEBUG: Calculation result - can_xac_nhan_them_phep: {result.get('can_xac_nhan_them_phep')}, ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}")
 
-        # ✅ Nếu cần xác nhận thêm phép năm, trả về JSON
-        if result.get('can_xac_nhan_them_phep') and not use_extra_leave:
+        # ✅ THÊM: KIỂM TRA NẾU LÀ AJAX REQUEST VÀ CẦN XÁC NHẬN PHÉP
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        
+        if result.get('can_xac_nhan_them_phep') and not use_extra_leave and is_ajax:
             print(f"DEBUG: Returning JSON confirmation - remaining_absence: {result['ngay_vang_con_lai']}, available_leave: {result['phep_nam_kha_dung']}")
             return jsonify({
                 'need_extra_leave_confirmation': True,
@@ -565,19 +567,33 @@ def apply_adjustment():
         
         db.session.commit()
         
+        # ✅ THÊM: NẾU LÀ AJAX REQUEST, TRẢ VỀ JSON THAY VÌ REDIRECT
+        if is_ajax:
+            return jsonify({
+                'success': True,
+                'message': f'Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result["ngay_cong_cuoi"]}'
+            })
+        
         flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result['ngay_cong_cuoi']}", "success")
         
     except Exception as e:
         db.session.rollback()
         print(f"ERROR in apply_adjustment: {e}")
+        
+        # ✅ THÊM: XỬ LÝ LỖI CHO AJAX
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({
+                'success': False,
+                'error': f"Lỗi khi áp dụng điều chỉnh: {e}"
+            }), 500
+        
         flash(f"Lỗi khi áp dụng điều chỉnh: {e}", "danger")
     
-    if filename:
+    # ✅ CHỈ REDIRECT NẾU KHÔNG PHẢI AJAX
+    if filename and not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return redirect(url_for("main.attendance_print", filename=filename))
     else:
         return redirect(url_for("main.index"))
-
-
 @bp.route("/reset_adjustment_payroll", methods=["POST"])
 def reset_adjustment_payroll():
     try:
