@@ -294,7 +294,7 @@ def import_payroll(filename):
         ngay_cong_chuan, so_chu_nhat = calculate_standard_work_days(year, month, len(holiday_days))
 
         # --- Xử lý từng nhân viên ---
-        for _, row in df.iterrows():
+         for _, row in df.iterrows():
             emp_code = str(row.get("Mã", "")).strip()
             emp = Employee.query.filter(
                 (Employee.code == emp_code) | (Employee.att_code == emp_code)
