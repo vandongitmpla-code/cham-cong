@@ -471,11 +471,3 @@
     z-index: 1000;
 }
 
-.section-card {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
-    margin-bottom: 2rem;
-}
