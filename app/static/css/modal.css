@@ -1,66 +1,319 @@
-/* ====== Modal chung ====== */
+/* ====== MODAL FLAT MODERN DESIGN ====== */
 .modal {
-  display: none; /* ẩn mặc định */
+  display: none;
   position: fixed;
   z-index: 1100;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6); /* Màu nền tối hiện đại */
   overflow: auto;
-  padding-top: 40px;
+  padding: 20px;
+  backdrop-filter: blur(4px); /* Hiệu ứng blur nền */
 }
 
 .modal-content {
-  background: #fff;
-  margin: auto;
-  padding: 20px;
-  border-radius: 12px;
+  background: #ffffff;
+  margin: 40px auto;
+  border-radius: 16px;
   width: 95%;
   max-width: 1100px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
-  animation: fadeIn 0.3s ease-in-out;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.1); /* Shadow tinh tế */
+  animation: modalSlideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+}
+
+/* ====== MODAL HEADER - Phân biệt rõ với nội dung ====== */
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient hiện đại */
+  padding: 24px 32px;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+  letter-spacing: -0.025em;
+}
+
+.modal-subtitle {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin-top: 4px;
+  font-weight: 400;
 }
 
 .modal-close {
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: #333;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
 }
 
 .modal-close:hover {
-  color: #e74c3c;
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
-/* Bảng trong modal */
+.modal-close-icon {
+  font-size: 20px;
+  color: white;
+  font-weight: 300;
+}
+
+/* ====== MODAL BODY - Nội dung chính ====== */
+.modal-body {
+  padding: 32px;
+  background: #ffffff;
+}
+
+/* ====== CARD INFORMATION - Hiển thị thông tin ====== */
+.info-card {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-left: 4px solid #3b82f6;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.info-value.highlight {
+  color: #059669;
+  font-weight: 700;
+}
+
+/* ====== BẢNG TRONG MODAL ====== */
 .modal-table-container {
-  max-width: 100%;
-  overflow-x: auto;
-  margin-top: 15px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin-top: 20px;
 }
 
 .modal-table {
-  min-width: 1000px;
+  width: 100%;
   border-collapse: collapse;
+  min-width: 1000px;
 }
 
-.modal-table th,
+.modal-table thead {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+}
+
+.modal-table th {
+  padding: 16px 20px;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-table th:last-child {
+  border-right: none;
+}
+
 .modal-table td {
-  padding: 8px 12px;
-  border: 1px solid #dee2e6;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f5f9;
   text-align: center;
   white-space: nowrap;
+  color: #475569;
+  font-weight: 500;
 }
 
-.modal-table thead th {
-  background: #f97316; /* cam */
-  color: #fff;
+.modal-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.modal-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.modal-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ====== MODAL FOOTER - Nút hành động ====== */
+.modal-footer {
+  padding: 24px 32px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
-/* Hiệu ứng */
+.modal-btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.modal-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.modal-btn-secondary {
+  background: #64748b;
+  color: white;
+}
+
+.modal-btn-secondary:hover {
+  background: #475569;
+  transform: translateY(-1px);
+}
+
+.modal-btn-outline {
+  background: transparent;
+  border: 2px solid #cbd5e1;
+  color: #64748b;
+}
+
+.modal-btn-outline:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+/* ====== ANIMATIONS ====== */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes fadeIn {
-  from {opacity: 0; transform: translateY(-20px);}
-  to   {opacity: 1; transform: translateY(0);}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+  }
+  
+  .modal-content {
+    margin: 20px auto;
+    width: 98%;
+  }
+  
+  .modal-header {
+    padding: 20px 24px;
+  }
+  
+  .modal-body {
+    padding: 24px 20px;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .modal-footer {
+    padding: 20px 24px;
+    flex-direction: column;
+  }
+  
+  .modal-btn {
+    width: 100%;
+  }
+}
+
+/* ====== UTILITY CLASSES ====== */
+.text-success { color: #059669; }
+.text-warning { color: #d97706; }
+.text-danger { color: #dc2626; }
+.text-info { color: #2563eb; }
+
+.bg-success { background-color: #d1fae5; }
+.bg-warning { background-color: #fef3c7; }
+.bg-danger { background-color: #fee2e2; }
+.bg-info { background-color: #dbeafe; }
+
+/* ====== SCROLLBAR CUSTOM ====== */
+.modal-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.modal-table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.modal-table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.modal-table-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
