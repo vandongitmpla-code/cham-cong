@@ -59,40 +59,40 @@
 <tbody>
     {% for emp in employees %}
     <tr>
-        <!-- Nhân viên - Tên và mã -->
+        <!-- Cột 1: Nhân viên - Tên và mã -->
         <td>
-            <div style="display: flex; align-items: center; gap: 0.75rem; white-space: nowrap;">
-                <div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.9rem;">
+            <div class="employee-card-compact">
+                <div class="employee-avatar-compact">
                     {{ emp.name[0] if emp.name }}
                 </div>
-                <div style="display: flex; flex-direction: column; min-width: 0;">
-                    <div style="font-weight: 600; color: #0f172a; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ emp.name }}</div>
-                    <div style="font-size: 0.75rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">#{{ emp.code }}</div>
+                <div class="employee-info-compact">
+                    <div class="employee-name-compact truncate">{{ emp.name }}</div>
+                    <div class="employee-code-compact truncate">#{{ emp.code }}</div>
                 </div>
             </div>
         </td>
 
-        <!-- Thông tin - Tổ và Phòng ban -->
+        <!-- Cột 2: Thông tin - Tổ và phòng ban -->
         <td>
-            <div style="display: flex; flex-direction: column; white-space: nowrap; overflow: hidden;">
-                <div style="font-weight: 600; color: #0f172a; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis;">{{ emp.team or '--' }}</div>
-                <div style="font-size: 0.75rem; color: #64748b; overflow: hidden; text-overflow: ellipsis;">{{ emp.department or '--' }}</div>
+            <div class="department-info-compact">
+                <div class="team-name-compact truncate">{{ emp.team or '--' }}</div>
+                <div class="department-name-compact truncate">{{ emp.department or '--' }}</div>
             </div>
         </td>
 
-        <!-- Hợp đồng - Loại hợp đồng -->
+        <!-- Cột 3: Hợp đồng - Loại hợp đồng -->
         <td>
-            <span style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; background: rgba(59, 130, 246, 0.1); color: #1e40af; border: 1px solid rgba(59, 130, 246, 0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
+            <span class="badge-compact badge-contract-compact truncate">
                 {{ emp.contract_type or '--' }}
             </span>
         </td>
 
-        <!-- Thời gian - Ngày bắt đầu làm và BH -->
+        <!-- Cột 4: Thời gian - Ngày làm và bảo hiểm -->
         <td>
-            <div style="display: flex; flex-direction: column; gap: 0.25rem; white-space: nowrap;">
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 0.7rem; color: #64748b; min-width: 40px;">Làm:</span>
-                    <span style="font-weight: 600; font-size: 0.8rem;">
+            <div class="date-display-compact">
+                <div class="date-item-compact">
+                    <span class="date-label-compact">Làm:</span>
+                    <span class="date-value-compact">
                         {% if emp.start_month %}
                             {{ emp.start_month[5:7] }}/{{ emp.start_month[:4] }}
                         {% else %}
@@ -100,9 +100,9 @@
                         {% endif %}
                     </span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 0.7rem; color: #64748b; min-width: 40px;">BH:</span>
-                    <span style="font-weight: 600; font-size: 0.8rem;">
+                <div class="date-item-compact">
+                    <span class="date-label-compact">BH:</span>
+                    <span class="date-value-compact">
                         {% if emp.insurance_start_month %}
                             {{ emp.insurance_start_month[5:7] }}/{{ emp.insurance_start_month[:4] }}
                         {% else %}
@@ -113,35 +113,34 @@
             </div>
         </td>
 
-        <!-- Chấm công - Mã chấm công -->
+        <!-- Cột 5: Chấm công - Mã chấm công -->
         <td>
-            <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" style="display: flex; gap: 0.375rem; align-items: center; white-space: nowrap;">
+            <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" class="input-group-compact">
                 <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
-                       style="border: 1.5px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 0.8rem; width: 80px; height: 32px; white-space: nowrap;"
-                       placeholder="Mã">
-                <button type="submit" style="background: #10b981; color: white; border: none; border-radius: 6px; padding: 6px 8px; cursor: pointer; height: 32px; width: 32px; display: flex; align-items: center; justify-content: center;">
+                       class="input-compact" placeholder="Mã">
+                <button type="submit" class="btn-attendance-compact">
                     <i class="bi bi-check-lg"></i>
                 </button>
             </form>
         </td>
 
-        <!-- Trạng thái - Trạng thái làm việc -->
+        <!-- Cột 6: Trạng thái - Trạng thái làm việc -->
         <td>
-            <span style="display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; background: rgba(16, 185, 129, 0.1); color: #065f46; border: 1px solid rgba(16, 185, 129, 0.2); white-space: nowrap;">
-                <i class="bi bi-circle-fill" style="font-size: 0.5rem; margin-right: 4px;"></i>
+            <span class="badge-compact badge-active-compact">
+                <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i>
                 Đang làm
             </span>
         </td>
 
-        <!-- Thao tác - Nút Sửa/Xóa -->
+        <!-- Cột 7: Thao tác - Nút sửa/xóa -->
         <td>
-            <div style="display: flex; gap: 0.375rem; align-items: center; white-space: nowrap;">
-                <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" style="padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: rgba(251, 191, 36, 0.1); color: #92400e; border: 1px solid rgba(251, 191, 36, 0.2); text-decoration: none; display: inline-flex; align-items: center; gap: 0.375rem; white-space: nowrap;">
+            <div class="actions-compact">
+                <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="btn-compact btn-edit-compact">
                     <i class="bi bi-pencil"></i>
                     Sửa
                 </a>
                 <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display: inline;">
-                    <button type="submit" style="padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; background: rgba(239, 68, 68, 0.1); color: #991b1b; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem; white-space: nowrap;"
+                    <button type="submit" class="btn-compact btn-delete-compact" 
                             onclick="return confirm('Xóa {{ emp.name }}?')">
                         <i class="bi bi-trash"></i>
                         Xóa
