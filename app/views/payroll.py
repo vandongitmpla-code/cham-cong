@@ -482,10 +482,14 @@ def apply_adjustment():
         ).first()
         
         if not payroll_record:
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return jsonify({'success': False, 'error': 'Không tìm thấy bản ghi payroll!'}), 400
             flash("Không tìm thấy bản ghi payroll!", "danger")
-            return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
+            return redirect(url_for("main.attendance_print", filename=filename))
+
+        # Số phép năm có thể dùng = ngay_phep_con_lai từ payroll_records
+        phep_nam_kha_dung = payroll_record.ngay_phep_con_lai or 0
+        ngay_nghi_phep_nam_da_dung = 0  # Chưa dùng gì khi mới bắt đầu
+
+        print(f"DEBUG PHÉP NĂM từ payroll_records: có_thể_dùng={phep_nam_kha_dung}")
         
         # ✅ LẤY THÔNG TIN PHÉP NĂM
         paid_leave = PaidLeave.query.filter_by(
