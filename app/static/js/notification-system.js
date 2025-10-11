@@ -183,7 +183,7 @@ class NotificationSystem {
             alert.remove(); // Xóa flash message gốc
         }
     });
-}
+
 
 // ====== GLOBAL INSTANCE & HELPERS ======
 window.notificationSystem = new NotificationSystem();
