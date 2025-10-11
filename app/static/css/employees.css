@@ -173,22 +173,23 @@
 }
 
 /* ====== BADGES ====== */
+/* Badge cân đối */
 .badge-compact {
     display: inline-flex;
     align-items: center;
-    padding: 4px 8px;
+    justify-content: center;
+    padding: 0.5rem 1rem;
     border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .badge-active-compact {
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(16, 185, 129, 0.15);
     color: #065f46;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-contract-compact {
