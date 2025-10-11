@@ -151,9 +151,8 @@
 .department-info-compact {
     display: flex;
     flex-direction: column;
-    gap: 0.125rem;
-    white-space: nowrap;
-    overflow: hidden;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .team-name-compact {
