@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     // ✅ XÁC NHẬN RESET ĐIỀU CHỈNH
-document.getElementById('confirmReset')?.addEventListener('click', function() {
+    document.getElementById('confirmReset')?.addEventListener('click', function() {
             console.log('Confirming reset...');
             document.getElementById('resetForm').submit();
         });
