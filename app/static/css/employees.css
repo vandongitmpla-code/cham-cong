@@ -65,7 +65,7 @@
 }
 
 /* Độ rộng cột */
-.modern-table th:nth-child(1) { width: 50px; }
+.modern-table th:nth-child(1) { width: 650px; }
 .modern-table th:nth-child(2) { width: 150px; }
 .modern-table th:nth-child(3) { width: 120px; }
 .modern-table th:nth-child(4) { width: 140px; }
