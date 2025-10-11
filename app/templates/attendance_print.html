@@ -2,12 +2,6 @@
 
 {% block title %}Bảng chấm công in ký{% endblock %}
 
-{% block extra_js %}
-<!-- ✅ LOAD JAVASCRIPT TRƯỚC KHI HTML ĐƯỢC PARSE -->
-<script src="{{ url_for('static', filename='js/attendance_print.js') }}"></script>
-<script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
-{% endblock %}
-
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_print.css') }}">
 {% endblock %}
@@ -408,7 +402,9 @@
 </form>
 
 
-
+<!-- ✅ THAY ĐỔI: Đặt script TRƯỚC khi sử dụng trong HTML -->
+<script src="{{ url_for('static', filename='js/attendance_print.js') }}"></script>
+<script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
 
 <!-- Xuất weekdays + day_count cho JS -->
 <script id="timesheet-data" type="application/json">
