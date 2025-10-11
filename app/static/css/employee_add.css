@@ -1,5 +1,13 @@
 /* employee_add.css - Styles for add employee page */
+/* Thêm vào đầu file employee_edit.css */
+.edit-form-container {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+.form-control-edit {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
 /* ====== ADD FORM CONTAINER ====== */
 .add-form-container {
     background: #ffffff;
