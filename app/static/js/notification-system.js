@@ -1,4 +1,5 @@
-// static/js/notification-system.js
+// notifications.js - Hệ thống quản lý thông báo
+
 class NotificationSystem {
     constructor() {
         this.container = null;
@@ -6,182 +7,111 @@ class NotificationSystem {
     }
 
     init() {
-        this.createContainer();
-        this.injectStyles();
+        // Tạo container nếu chưa có
+        if (!document.querySelector('.notification-container')) {
+            this.createContainer();
+        }
+        this.container = document.querySelector('.notification-container');
     }
 
     createContainer() {
-        // Tạo container nếu chưa có
-        if (!document.getElementById('notification-container')) {
-            const container = document.createElement('div');
-            container.id = 'notification-container';
-            document.body.appendChild(container);
-        }
-        this.container = document.getElementById('notification-container');
+        const container = document.createElement('div');
+        container.className = 'notification-container';
+        document.body.appendChild(container);
     }
 
-    injectStyles() {
-        // Đảm bảo CSS đã được load, nếu chưa thì inject inline styles cơ bản
-        if (!document.querySelector('link[href*="notification-system.css"]')) {
-            const basicStyles = `
-                #notification-container {
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 9999;
-                    max-width: 400px;
-                }
-                .notification {
-                    background: white;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                    padding: 16px;
-                    margin-bottom: 10px;
-                    transform: translateX(400px);
-                    opacity: 0;
-                    transition: all 0.3s ease;
-                }
-                .notification.show {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            `;
-            const style = document.createElement('style');
-            style.textContent = basicStyles;
-            document.head.appendChild(style);
-        }
-    }
-
-    show(options = {}) {
+    show(message, type = 'success', options = {}) {
         const {
-            type = 'info', // success, error, warning, info
-            title = '',
-            message = '',
-            duration = 5000, // milliseconds (0 = không tự đóng)
-            position = 'top-right' // top-right, top-left, bottom-right, bottom-left
+            autoDismiss = true,
+            dismissTime = 5000,
+            icon = true,
+            position = 'top-right'
         } = options;
 
-        const notification = this.createNotification(type, title, message, duration);
-        this.setContainerPosition(position);
-        this.container.appendChild(notification);
+        const alertId = 'alert-' + Date.now();
+        const iconClass = this.getIconClass(type);
+        const iconHtml = icon ? `<i class="bi ${iconClass} custom-alert-icon"></i>` : '';
 
-        // Hiệu ứng xuất hiện
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10);
-
-        // Tự động đóng nếu có duration
-        if (duration > 0) {
-            this.autoClose(notification, duration);
-        }
-
-        return notification;
-    }
-
-    createNotification(type, title, message, duration) {
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        
-        const icons = {
-            success: 'bi-check-circle-fill',
-            error: 'bi-x-circle-fill',
-            warning: 'bi-exclamation-triangle-fill',
-            info: 'bi-info-circle-fill'
-        };
-
-        const closeButton = duration === 0 ? `
-            <button class="notification-close" onclick="notificationSystem.close(this.parentElement)">
-                <i class="bi bi-x"></i>
-            </button>
-        ` : '';
-
-        notification.innerHTML = `
-            <div class="notification-content">
-                <div class="notification-icon">
-                    <i class="bi ${icons[type]}"></i>
+        const alertHtml = `
+            <div id="${alertId}" class="custom-alert custom-alert-${type} alert-dismissible fade show ${autoDismiss ? 'auto-dismiss' : ''}" role="alert">
+                <div class="custom-alert-content">
+                    ${iconHtml}
+                    <div class="custom-alert-message">${message}</div>
                 </div>
-                <div class="notification-text">
-                    ${title ? `<div class="notification-title">${title}</div>` : ''}
-                    <div class="notification-message">${message}</div>
-                </div>
-                ${closeButton}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="notificationSystem.remove('${alertId}')"></button>
             </div>
-            ${duration > 0 ? `<div class="notification-progress"><div class="notification-progress-bar"></div></div>` : ''}
         `;
 
-        return notification;
-    }
+        this.container.insertAdjacentHTML('afterbegin', alertHtml);
 
-    setContainerPosition(position) {
-        const positions = {
-            'top-right': 'top: 20px; right: 20px; left: auto; bottom: auto;',
-            'top-left': 'top: 20px; left: 20px; right: auto; bottom: auto;',
-            'bottom-right': 'bottom: 20px; right: 20px; top: auto; left: auto;',
-            'bottom-left': 'bottom: 20px; left: 20px; top: auto; right: auto;'
-        };
-        
-        this.container.style.cssText = `
-            position: fixed;
-            z-index: 9999;
-            max-width: 400px;
-            ${positions[position] || positions['top-right']}
-        `;
-    }
-
-    autoClose(notification, duration) {
-        const progressBar = notification.querySelector('.notification-progress-bar');
-        if (progressBar) {
-            progressBar.style.transition = `transform ${duration}ms linear`;
+        // Tự động ẩn
+        if (autoDismiss) {
             setTimeout(() => {
-                progressBar.style.transform = 'scaleX(0)';
-            }, 10);
+                this.remove(alertId);
+            }, dismissTime);
         }
 
-        setTimeout(() => {
-            this.close(notification);
-        }, duration);
+        return alertId;
     }
 
-    close(notification) {
-        notification.classList.remove('show');
-        notification.classList.add('hide');
-        
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.parentElement.removeChild(notification);
-            }
-        }, 300);
+    remove(alertId) {
+        const alert = document.getElementById(alertId);
+        if (alert) {
+            alert.classList.add('fade-out');
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 300);
+        }
     }
 
-    closeAll() {
-        const notifications = this.container.querySelectorAll('.notification');
-        notifications.forEach(notification => {
-            this.close(notification);
+    clearAll() {
+        const alerts = this.container.querySelectorAll('.custom-alert');
+        alerts.forEach(alert => {
+            alert.classList.add('fade-out');
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 300);
         });
     }
 
-    // Phương thức tiện ích
-    success(message, title = 'Thành công', duration = 5000) {
-        return this.show({ type: 'success', title, message, duration });
+    getIconClass(type) {
+        const icons = {
+            'success': 'bi-check-circle-fill',
+            'error': 'bi-exclamation-triangle-fill',
+            'warning': 'bi-exclamation-triangle-fill',
+            'info': 'bi-info-circle-fill',
+            'primary': 'bi-bell-fill'
+        };
+        return icons[type] || 'bi-info-circle-fill';
     }
 
-    error(message, title = 'Lỗi', duration = 5000) {
-        return this.show({ type: 'error', title, message, duration });
+    // Phương thức tiện ích nhanh
+    success(message, options = {}) {
+        return this.show(message, 'success', options);
     }
 
-    warning(message, title = 'Cảnh báo', duration = 5000) {
-        return this.show({ type: 'warning', title, message, duration });
+    error(message, options = {}) {
+        return this.show(message, 'error', options);
     }
 
-    info(message, title = 'Thông tin', duration = 5000) {
-        return this.show({ type: 'info', title, message, duration });
+    warning(message, options = {}) {
+        return this.show(message, 'warning', options);
+    }
+
+    info(message, options = {}) {
+        return this.show(message, 'info', options);
     }
 }
 
-// Khởi tạo instance toàn cục
-const notificationSystem = new NotificationSystem();
+// Khởi tạo global instance
+window.notificationSystem = new NotificationSystem();
 
-// Export cho module system
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = notificationSystem;
-}
+// Helper functions để sử dụng trực tiếp
+window.showSuccess = (message, options) => notificationSystem.success(message, options);
+window.showError = (message, options) => notificationSystem.error(message, options);
+window.showWarning = (message, options) => notificationSystem.warning(message, options);
+window.showInfo = (message, options) => notificationSystem.info(message, options);
