@@ -514,52 +514,52 @@ def apply_adjustment():
         from .attendance_helpers import calculate_adjustment_details
         
        @bp.route("/apply_adjustment", methods=["POST"])
-def apply_adjustment(): 
-    try:
-        # ... code hiện tại ...
-        
-        result = calculate_adjustment_details(
-            original_days=original_days,
-            standard_days=ngay_cong_chuan,
-            ngay_vang_ban_dau=current_absence,
-            overtime_hours=overtime_hours,
-            ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
-            use_extra_leave=use_extra_leave
-        )
+    def apply_adjustment(): 
+        try:
+            # ... code hiện tại ...
+            
+            result = calculate_adjustment_details(
+                original_days=original_days,
+                standard_days=ngay_cong_chuan,
+                ngay_vang_ban_dau=current_absence,
+                overtime_hours=overtime_hours,
+                ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
+                use_extra_leave=use_extra_leave
+            )
 
-        # ✅ THÊM DEBUG CHI TIẾT
-        print(f"🔍 DEBUG ADJUSTMENT DETAILS:")
-        print(f"  - original_days: {original_days}")
-        print(f"  - standard_days: {ngay_cong_chuan}")
-        print(f"  - current_absence: {current_absence}")
-        print(f"  - overtime_hours: {overtime_hours}")
-        print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")
-        print(f"  - use_extra_leave: {use_extra_leave}")
-        print(f"  - RESULT - ngay_cong_cuoi: {result['ngay_cong_cuoi']}")
-        print(f"  - RESULT - ngay_vang_cuoi: {result['ngay_vang_cuoi']}")
-        print(f"  - RESULT - phep_nam_kha_dung: {result['phep_nam_kha_dung']}")
-        print(f"  - RESULT - can_xac_nhan_them_phep: {result['can_xac_nhan_them_phep']}")
+            # ✅ THÊM DEBUG CHI TIẾT
+            print(f"🔍 DEBUG ADJUSTMENT DETAILS:")
+            print(f"  - original_days: {original_days}")
+            print(f"  - standard_days: {ngay_cong_chuan}")
+            print(f"  - current_absence: {current_absence}")
+            print(f"  - overtime_hours: {overtime_hours}")
+            print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")
+            print(f"  - use_extra_leave: {use_extra_leave}")
+            print(f"  - RESULT - ngay_cong_cuoi: {result['ngay_cong_cuoi']}")
+            print(f"  - RESULT - ngay_vang_cuoi: {result['ngay_vang_cuoi']}")
+            print(f"  - RESULT - phep_nam_kha_dung: {result['phep_nam_kha_dung']}")
+            print(f"  - RESULT - can_xac_nhan_them_phep: {result['can_xac_nhan_them_phep']}")
 
-        # ✅ KIỂM TRA CÓ CẦN XÁC NHẬN THÊM PHÉP NĂM KHÔNG
-        can_xac_nhan_them_phep = (
-            result.get('ngay_vang_cuoi', 0) > 0 and 
-            result.get('phep_nam_kha_dung', 0) > 0 and
-            not use_extra_leave
-        )
-        
-        print(f"🔍 FINAL CHECK - need_confirmation: {can_xac_nhan_them_phep}")
-        
-        # ✅ NẾU LÀ AJAX VÀ CẦN XÁC NHẬN THÊM PHÉP
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        if can_xac_nhan_them_phep and is_ajax:
-            print(f"🚨 SENDING CONFIRMATION - remaining_absence: {result['ngay_vang_cuoi']}, available_leave: {result['phep_nam_kha_dung']}")
-            return jsonify({
-                'need_extra_leave_confirmation': True,
-                'remaining_absence': result['ngay_vang_cuoi'],
-                'available_leave': result['phep_nam_kha_dung'],
-                'employee_code': employee_code,
-                'period': period
-            })
+            # ✅ KIỂM TRA CÓ CẦN XÁC NHẬN THÊM PHÉP NĂM KHÔNG
+            can_xac_nhan_them_phep = (
+                result.get('ngay_vang_cuoi', 0) > 0 and 
+                result.get('phep_nam_kha_dung', 0) > 0 and
+                not use_extra_leave
+            )
+            
+            print(f"🔍 FINAL CHECK - need_confirmation: {can_xac_nhan_them_phep}")
+            
+            # ✅ NẾU LÀ AJAX VÀ CẦN XÁC NHẬN THÊM PHÉP
+            is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+            if can_xac_nhan_them_phep and is_ajax:
+                print(f"🚨 SENDING CONFIRMATION - remaining_absence: {result['ngay_vang_cuoi']}, available_leave: {result['phep_nam_kha_dung']}")
+                return jsonify({
+                    'need_extra_leave_confirmation': True,
+                    'remaining_absence': result['ngay_vang_cuoi'],
+                    'available_leave': result['phep_nam_kha_dung'],
+                    'employee_code': employee_code,
+                    'period': period
+                })
 
         # ... tiếp tục ...
 
