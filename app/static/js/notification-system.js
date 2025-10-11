@@ -200,7 +200,7 @@ window.clearNotifications = () => notificationSystem.clearAll();
 // Auto-initialize khi DOM ready
 document.addEventListener('DOMContentLoaded', function() {
     // Hiển thị flash messages nếu có
-    //notificationSystem.showFlashMessages();
+    notificationSystem.showFlashMessages();
     
     // Global error handler
     window.addEventListener('error', function(e) {
