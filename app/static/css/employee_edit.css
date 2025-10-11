@@ -1,12 +1,14 @@
 /* employee_edit.css - Styles for employee edit page */
 /* Thêm vào đầu file employee_edit.css */
-.edit-form-container {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+.edit-form-container,
+.edit-form-header,
+.edit-form-section {
+    font-family: 'Inter', sans-serif;
 }
 
-.form-control-edit {
+.form-control-edit,
+.form-label-edit {
     font-family: 'Inter', sans-serif;
-    font-weight: 400;
 }
 /* ====== EDIT FORM CONTAINER ====== */
 .edit-form-container {
