@@ -166,7 +166,7 @@ class NotificationSystem {
     // ====== FLASH MESSAGE SUPPORT ======
     showFlashMessages() {
         // Tự động hiển thị flash messages từ Flask
-        const flashMessages = document.querySelectorAll('.alert.flash-message');
+        const flashMessages = document.querySelectorAll('.alert');
         flashMessages.forEach(alert => {
             const type = this.detectFlashType(alert);
             const message = alert.textContent.trim();
