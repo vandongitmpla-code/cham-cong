@@ -1,14 +1,14 @@
 // static/js/remaining_leave.js
 
-// ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM CÒN TỒN
-function showRemainingLeaveButtons(cell) {
+// ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM CÒN TỒN - GLOBAL
+window.showRemainingLeaveButtons = function(cell) {
     const buttons = cell.querySelector('.remaining-leave-buttons');
     if (buttons) {
         buttons.style.display = 'block';
     }
 }
 
-function hideRemainingLeaveButtons(cell) {
+window.hideRemainingLeaveButtons = function(cell) {
     const buttons = cell.querySelector('.remaining-leave-buttons');
     if (buttons) {
         buttons.style.display = 'none';
@@ -16,7 +16,7 @@ function hideRemainingLeaveButtons(cell) {
 }
 
 // ✅ XỬ LÝ CLICK ICON THÊM PHÉP NĂM CÒN TỒN (+)
-function handleRemainingLeaveAdd(e) {
+window.handleRemainingLeaveAdd = function(e) {
     const employeeId = e.target.getAttribute('data-employee-id');
     const employeeName = e.target.getAttribute('data-employee-name');
     const period = e.target.getAttribute('data-period');
@@ -51,7 +51,7 @@ function handleRemainingLeaveAdd(e) {
 }
 
 // ✅ XỬ LÝ CLICK ICON RESET PHÉP NĂM CÒN TỒN (-)
-function handleRemainingLeaveReset(e) {
+window.handleRemainingLeaveReset = function(e) {
     const employeeId = e.target.getAttribute('data-employee-id');
     const employeeName = e.target.getAttribute('data-employee-name');
     const period = e.target.getAttribute('data-period');
@@ -81,21 +81,17 @@ function handleRemainingLeaveReset(e) {
     }
 }
 
-// ✅ KHỞI TẠO EVENT LISTENERS
-document.addEventListener('DOMContentLoaded', function() {
-    // Xử lý click icon thêm phép năm còn tồn
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remaining-leave-add-icon')) {
-            handleRemainingLeaveAdd(e);
-        }
-    });
-    
-    // Xử lý click icon reset phép năm còn tồn
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remaining-leave-reset-icon')) {
-            handleRemainingLeaveReset(e);
-        }
-    });
-    
-    console.log('✅ remaining_leave.js loaded successfully');
+// ✅ EVENT LISTENERS - KHÔNG DÙNG DOMContentLoaded
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remaining-leave-add-icon')) {
+        window.handleRemainingLeaveAdd(e);
+    }
 });
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remaining-leave-reset-icon')) {
+        window.handleRemainingLeaveReset(e);
+    }
+});
+
+console.log('✅ remaining_leave.js loaded successfully');
