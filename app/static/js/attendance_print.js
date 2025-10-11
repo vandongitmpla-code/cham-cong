@@ -491,3 +491,26 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
     }
 }
 
+// ✅ DEBUG: KIỂM TRA NÚT CONFIRM
+console.log('🔍 Checking confirm button...');
+const confirmBtn = document.getElementById('confirmAdjustmentBtn');
+console.log('Confirm button found:', confirmBtn);
+
+if (confirmBtn) {
+    console.log('✅ Confirm button exists, checking onclick...');
+    console.log('onclick attribute:', confirmBtn.getAttribute('onclick'));
+} else {
+    console.log('❌ Confirm button NOT FOUND!');
+}
+
+// ✅ THÊM EVENT LISTENER DỰ PHÒNG
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('confirmAdjustmentBtn');
+    if (btn) {
+        btn.addEventListener('click', function(e) {
+            console.log('🎯 EVENT LISTENER FIRED!');
+            e.preventDefault();
+            handleConfirmAdjustment();
+        });
+    }
+});
