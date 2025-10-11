@@ -48,7 +48,7 @@ def calculate_standard_work_days(year, month):
 def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung, phep_nam_kha_dung, use_extra_leave=False):
 
     """
-    Tính toán điều chỉnh theo logic mới - CÓ THÊM XÁC NHẬN PHÉP NĂM
+    Tính toán điều chỉnh - NHẬN THÊM THAM SỐ phep_nam_kha_dung
     """
     print(f"🧮 CALCULATION INPUT:")
     print(f"  - original_days: {original_days}")
@@ -56,6 +56,7 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
     print(f"  - ngay_vang_ban_dau: {ngay_vang_ban_dau}")
     print(f"  - overtime_hours: {overtime_hours} ({overtime_hours/8} ngày)")
     print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")
+    print(f"  - phep_nam_kha_dung: {phep_nam_kha_dung}")  # ✅ THÊM
     print(f"  - use_extra_leave: {use_extra_leave}")
     
     # Chuyển giờ tăng ca sang ngày
