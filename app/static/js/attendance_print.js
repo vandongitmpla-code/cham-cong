@@ -487,4 +487,5 @@ document.addEventListener('click', function(e) {
     }
 });
 
-
+<!-- ✅ IMPORT JAVASCRIPT CHO PHÉP NĂM CÒN TỒN -->
+<script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
