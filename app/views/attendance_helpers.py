@@ -167,7 +167,10 @@ def create_attendance_rows(records, period):
     stt = 1
 
     for rec in records:
-        standard_days = rec.standard_work_days
+        # ✅ THÔNG TIN PHÉP NĂM LẤY TRỰC TIẾP TỪ PAYROLL_RECORDS
+        ngay_nghi_phep_nam_da_dung = rec.ngay_nghi_phep_nam or 0
+        so_ngay_phep_con_lai = rec.ngay_phep_con_lai or 0
+        thang_bat_dau_tinh_phep = rec.thang_bat_dau_tinh_phep or ""
 
         # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM
         employee = rec.employee
