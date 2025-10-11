@@ -613,7 +613,11 @@ def apply_adjustment():
             })
         
         flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result['ngay_cong_cuoi']}, Ngày nghỉ: {result['ngay_vang_cuoi']}", "success")
-    
+    # ✅ SAU KHI TÍNH TOÁN, CẬP NHẬT LẠI PAYROLL_RECORD
+        payroll_record.ngay_phep_con_lai = result['phep_nam_kha_dung']  # Phép năm còn lại mới
+        payroll_record.ngay_nghi_phep_nam = result['ngay_nghi_phep_nam_da_dung']  # Phép năm đã dùng
+
+        db.session.commit()
         
     except Exception as e:
         db.session.rollback()
