@@ -165,25 +165,25 @@ class NotificationSystem {
 
     // ====== FLASH MESSAGE SUPPORT ======
     showFlashMessages() {
-    // CHỈ hiển thị flash messages thực sự từ Flask, không hiển thị phần giải thích công thức
-    const flashMessages = document.querySelectorAll('.alert:not(.alert-info):not(.alert-light)');
-    
-    flashMessages.forEach(alert => {
-        // Kiểm tra không phải là phần giải thích công thức
-        const isFormulaExplanation = alert.closest('.print-container') || 
-                                   alert.textContent.includes('công thức') ||
-                                   alert.textContent.includes('Ngày công thực tế') ||
-                                   alert.textContent.includes('Ngày nghỉ cuối') ||
-                                   alert.textContent.includes('Giới hạn');
+        // CHỈ hiển thị flash messages thực sự từ Flask, không hiển thị phần giải thích công thức
+        const flashMessages = document.querySelectorAll('.alert:not(.alert-info):not(.alert-light)');
         
-        if (!isFormulaExplanation) {
-            const type = this.detectFlashType(alert);
-            const message = alert.textContent.trim();
-            this.show(message, type);
-            alert.remove(); // Xóa flash message gốc
-        }
-    });
-}
+        flashMessages.forEach(alert => {
+            // Kiểm tra không phải là phần giải thích công thức
+            const isFormulaExplanation = alert.closest('.print-container') || 
+                                    alert.textContent.includes('công thức') ||
+                                    alert.textContent.includes('Ngày công thực tế') ||
+                                    alert.textContent.includes('Ngày nghỉ cuối') ||
+                                    alert.textContent.includes('Giới hạn');
+            
+            if (!isFormulaExplanation) {
+                const type = this.detectFlashType(alert);
+                const message = alert.textContent.trim();
+                this.show(message, type);
+                alert.remove(); // Xóa flash message gốc
+            }
+        });
+    }
 
 // ====== GLOBAL INSTANCE & HELPERS ======
 window.notificationSystem = new NotificationSystem();
