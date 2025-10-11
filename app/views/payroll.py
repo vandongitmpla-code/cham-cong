@@ -518,15 +518,16 @@ def apply_adjustment():
         # ✅ TÍNH TOÁN ĐIỀU CHỈNH
         from .attendance_helpers import calculate_adjustment_details
         
-       result = calculate_adjustment_details(
+        result = calculate_adjustment_details(
             original_days=original_days,
             standard_days=ngay_cong_chuan,
             ngay_vang_ban_dau=current_absence,
             overtime_hours=overtime_hours,
-            ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,  # ✅ TRUYỀN PHÉP NĂM ĐÃ "+"
+            ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
             phep_nam_kha_dung=phep_nam_kha_dung,
             use_extra_leave=use_extra_leave
         )
+
         print(f"DEBUG: Calculation result - ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}, phep_nam_kha_dung: {result.get('phep_nam_kha_dung')}")
 
         # ✅ KIỂM TRA CÓ CẦN XÁC NHẬN THÊM PHÉP NĂM KHÔNG
