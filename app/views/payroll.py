@@ -617,7 +617,45 @@ def apply_adjustment():
     else:
         return redirect(url_for("main.index"))
 
+@bp.route("/update_paid_leave", methods=["POST"])
+def update_paid_leave():
+    """
+    Cập nhật phép năm vào payroll_records
+    """
+    try:
+        employee_id = request.form.get("employee_id")
+        period = request.form.get("period")
+        leave_days = float(request.form.get("leave_days", 0))
+        filename = request.form.get("filename")
+        
+        employee = Employee.query.get(employee_id)
+        if not employee:
+            flash("Không tìm thấy nhân viên!", "danger")
+            return redirect(url_for("main.attendance_print", filename=filename))
+        
+        # ✅ TÌM PAYROLL_RECORD VÀ CẬP NHẬT
+        payroll_record = PayrollRecord.query.filter_by(
+            employee_id=employee_id,
+            period=period
+        ).first()
+        
+        if payroll_record:
+            # Cập nhật phép năm đã dùng
+            payroll_record.ngay_nghi_phep_nam = leave_days
+            
+            # ✅ GIỮ NGUYÊN ngay_phep_con_lai (phép năm còn tồn)
+            # payroll_record.ngay_phep_con_lai vẫn giữ nguyên
+            
+            db.session.commit()
+            flash(f"Đã cập nhật {leave_days} ngày phép năm cho {employee.name}!", "success")
+        else:
+            flash("Không tìm thấy bản ghi payroll!", "danger")
+            
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Lỗi khi cập nhật phép năm: {e}", "danger")
     
+    return redirect(url_for("main.attendance_print", filename=filename))    
 
 @bp.route("/reset_adjustment_payroll", methods=["POST"])
 def reset_adjustment_payroll():
