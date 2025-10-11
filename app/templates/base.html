@@ -65,7 +65,13 @@
       <a href="{{ url_for('main.index') }}" class="logo text-decoration-none">
         Chấm Công Otanics 24ha
       </a>
-    
+      <nav class="navbar-custom">
+        <ul class="navbar-menu list-unstyled d-flex mb-0">
+          <li><a href="{{ url_for('main.index') }}">Upload</a></li>
+          <li><a href="{{ url_for('main.employees') }}">Nhân viên</a></li>
+          <!-- có thể thêm menu Payroll, Timesheet nếu muốn -->
+        </ul>
+      </nav>
       <!-- Hamburger cho mobile -->
       <div class="hamburger d-lg-none">
         <span></span>
