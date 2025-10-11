@@ -257,142 +257,110 @@
   </div>
 </div>
 
-<!-- ✅ CẬP NHẬT: Modal xác nhận gộp tăng ca với design mới -->
+<!-- ✅ CẬP NHẬT: Modal xác nhận gộp tăng ca với thông tin đầy đủ -->
 <div class="modal fade" id="adjustmentModal" tabindex="-1">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Gộp ngày tăng ca</h3>
-      <div class="modal-subtitle">Điều chỉnh ngày công cho nhân viên</div>
-      <button type="button" class="modal-close" data-bs-dismiss="modal">
-        <span class="modal-close-icon">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p>Bạn có muốn gộp giờ tăng ca chủ nhật vào ngày công cho <strong id="modalEmployeeName"></strong>?</p>
-      
-      <div class="info-card">
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="info-label">Ngày công hiện tại</span>
-            <span class="info-value" id="modalCurrentDays"></span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Ngày nghỉ hiện tại</span>
-            <span class="info-value" id="modalCurrentAbsence"></span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Phép năm đã dùng</span>
-            <span class="info-value" id="modalPhepNamUsed"></span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Giờ tăng ca có thể gộp</span>
-            <span class="info-value" id="modalOvertimeHours"></span>
-          </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Gộp ngày tăng ca</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có muốn gộp giờ tăng ca chủ nhật vào ngày công cho <strong id="modalEmployeeName"></strong>?</p>
+        
+        <div class="adjustment-details">
+          <table class="table table-sm">
+            <tr>
+              <td><strong>Ngày công hiện tại:</strong></td>
+              <td id="modalCurrentDays"></td>
+            </tr>
+            <tr>
+              <td><strong>Ngày nghỉ hiện tại:</strong></td>
+              <td id="modalCurrentAbsence"></td>
+            </tr>
+            <tr>
+              <td><strong>Phép năm đã dùng:</strong></td>
+              <td id="modalPhepNamUsed"></td>
+            </tr>
+            <tr>
+              <td><strong>Giờ tăng ca có thể gộp:</strong></td>
+              <td id="modalOvertimeHours"></td>
+            </tr>
+            <tr class="table-success">
+              <td><strong>Ngày công sau gộp:</strong></td>
+              <td id="modalAdjustedDays" class="text-success fw-bold"></td>
+            </tr>
+            <tr class="table-info">
+              <td><strong>Ngày nghỉ sau gộp:</strong></td>
+              <td id="modalNewAbsence" class="text-info fw-bold"></td>
+            </tr>
+            <tr class="table-warning">
+              <td><strong>Giờ tăng ca còn lại:</strong></td>
+              <td id="modalRemainingHours" class="text-warning fw-bold"></td>
+            </tr>
+          </table>
         </div>
         
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="info-label">Ngày công sau gộp</span>
-            <span class="info-value highlight" id="modalAdjustedDays"></span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Ngày nghỉ sau gộp</span>
-            <span class="info-value text-info" id="modalNewAbsence"></span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Giờ tăng ca còn lại</span>
-            <span class="info-value text-warning" id="modalRemainingHours"></span>
-          </div>
+        <div class="alert alert-info mt-3">
+          <small>
+            <strong>Công thức:</strong> Ngày công cuối = Ngày công ban đầu + Phép năm + Tăng ca bù<br>
+            <strong>Giới hạn:</strong> Không vượt quá ngày công chuẩn ({{ rows[0][-1].standard_days if rows else 26 }} ngày)
+          </small>
         </div>
       </div>
-      
-      <div class="alert alert-info mt-3">
-        <small>
-          <strong>Công thức:</strong> Ngày công cuối = Ngày công ban đầu + Phép năm + Tăng ca bù<br>
-          <strong>Giới hạn:</strong> Không vượt quá ngày công chuẩn ({{ rows[0][-1].standard_days if rows else 26 }} ngày)
-        </small>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-primary" id="confirmAdjustmentBtn" 
+        onclick="window.handleConfirmAdjustment()"> Có, áp dụng
+        </button>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="modal-btn modal-btn-outline" data-bs-dismiss="modal">Không</button>
-      <button type="button" class="modal-btn modal-btn-primary" id="confirmAdjustmentBtn" 
-      onclick="window.handleConfirmAdjustment()">Có, áp dụng</button>
     </div>
   </div>
 </div>
 
-<!-- ✅ CẬP NHẬT: Modal xác nhận reset với design mới -->
+<!-- ✅ BỔ SUNG: Modal xác nhận reset -->
 <div class="modal fade" id="resetModal" tabindex="-1">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Khôi phục dữ liệu gốc</h3>
-      <div class="modal-subtitle">Reset điều chỉnh về trạng thái ban đầu</div>
-      <button type="button" class="modal-close" data-bs-dismiss="modal">
-        <span class="modal-close-icon">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p>Bạn có muốn khôi phục dữ liệu gốc cho <strong id="resetEmployeeName"></strong>?</p>
-      <p class="text-muted">Dữ liệu điều chỉnh sẽ bị xóa và khôi phục về trạng thái ban đầu.</p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="modal-btn modal-btn-outline" data-bs-dismiss="modal">Không</button>
-      <button type="button" class="modal-btn modal-btn-danger" id="confirmReset">Có, khôi phục</button>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Khôi phục dữ liệu gốc</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có muốn khôi phục dữ liệu gốc cho <strong id="resetEmployeeName"></strong>?</p>
+        <p class="text-muted">Dữ liệu điều chỉnh sẽ bị xóa và khôi phục về trạng thái ban đầu.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+        <button type="button" class="btn btn-danger" id="confirmReset">Có, khôi phục</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ✅ CẬP NHẬT: Modal thêm phép năm với design mới -->
+<!-- Modal thêm phép năm -->
 <div class="modal fade" id="leaveModal" tabindex="-1">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Thêm ngày phép năm</h3>
-      <div class="modal-subtitle">Điều chỉnh số ngày phép sử dụng</div>
-      <button type="button" class="modal-close" data-bs-dismiss="modal">
-        <span class="modal-close-icon">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="info-card">
-        <div class="info-item">
-          <span class="info-label">Nhân viên</span>
-          <span class="info-value" id="leaveEmployeeName"></span>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm ngày phép năm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Nhân viên: <strong id="leaveEmployeeName"></strong></p>
+                <div class="mb-3">
+                    <label class="form-label">Số ngày phép năm sử dụng:</label>
+                    <input type="number" class="form-control" id="leaveDaysInput" 
+                           step="0.5" min="0" max="0">
+                    <div class="form-text">Số ngày tối đa có thể sử dụng: <span id="maxLeaveDays">0</span> ngày</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmLeave">Xong</button>
+            </div>
         </div>
-      </div>
-      
-      <div class="mb-4">
-        <label class="info-label">Số ngày phép năm sử dụng</label>
-        <input type="number" class="form-control modern-input" id="leaveDaysInput" 
-               step="0.5" min="0" max="0">
-        <div class="form-text">Số ngày tối đa có thể sử dụng: <span id="maxLeaveDays">0</span> ngày</div>
-      </div>
     </div>
-    <div class="modal-footer">
-      <button type="button" class="modal-btn modal-btn-outline" data-bs-dismiss="modal">Hủy</button>
-      <button type="button" class="modal-btn modal-btn-primary" id="confirmLeave">Xong</button>
-    </div>
-  </div>
-</div>
-
-<!-- ✅ CẬP NHẬT: Modal reset phép năm với design mới -->
-<div class="modal fade" id="resetLeaveModal" tabindex="-1">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Reset ngày phép năm</h3>
-      <div class="modal-subtitle">Khôi phục số ngày phép về 0</div>
-      <button type="button" class="modal-close" data-bs-dismiss="modal">
-        <span class="modal-close-icon">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p>Bạn có muốn reset ngày phép năm về 0 cho <strong id="resetLeaveEmployeeName"></strong>?</p>
-      <p class="text-muted">Tất cả ngày phép năm đã sử dụng sẽ được khôi phục về 0.</p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="modal-btn modal-btn-outline" data-bs-dismiss="modal">Không</button>
-      <button type="button" class="modal-btn modal-btn-danger" id="confirmResetLeave">Có, reset</button>
-    </div>
-  </div>
 </div>
 
 <!-- ✅ THÊM: Modal điều chỉnh phép năm còn tồn -->
