@@ -75,16 +75,15 @@
 .modern-table th:nth-child(6) { width: 120px; }
 .modern-table th:nth-child(7) { width: 150px; }
 
+/* Căn giữa và padding đều cho các cột */
 .modern-table td {
-    padding: 0.875rem 1rem;
-    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
     color: var(--text-primary);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     vertical-align: middle;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    height: 60px;
+    text-align: center;
+    height: 70px;
 }
 
 .modern-table tbody tr {
