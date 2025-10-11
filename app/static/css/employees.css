@@ -1,104 +1,210 @@
-/* employees.css - Bảng hiện đại dễ theo dõi */
+/* employees.css - Giao diện hiện đại cho quản lý nhân viên */
 
-/* ====== MODERN TABLE STYLES ====== */
-.employees-table-container {
+/* ====== EMPLOYEE CARDS LAYOUT ====== */
+.employees-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.employee-card {
     background: #ffffff;
     border-radius: 16px;
-    overflow: hidden;
+    padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.employees-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 0;
-}
-
-.employees-table thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.employees-table th {
-    padding: 1rem 1.25rem;
-    text-align: left;
-    color: white;
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.employees-table th:first-child {
-    border-top-left-radius: 16px;
-}
-
-.employees-table th:last-child {
-    border-top-right-radius: 16px;
-}
-
-.employees-table td {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid #f3f4f6;
-    color: #374151;
-    font-size: 0.95rem;
-    vertical-align: middle;
-}
-
-.employees-table tbody tr {
-    transition: all 0.2s ease;
-    background: white;
-}
-
-.employees-table tbody tr:hover {
-    background: #f8fafc;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.employees-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* ====== TABLE CELL STYLES ====== */
-.employee-avatar-small {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+.employee-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.employee-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* ====== EMPLOYEE CARD HEADER ====== */
+.employee-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.employee-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-weight: bold;
-    font-size: 1rem;
-    margin-right: 0.75rem;
+    font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
-.employee-info-cell {
-    display: flex;
-    align-items: center;
-}
-
-.employee-main-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.employee-name {
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 0.25rem;
+.employee-basic-info {
+    flex: 1;
+    margin-left: 1rem;
 }
 
 .employee-code {
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     color: #6b7280;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
 }
 
-/* ====== STATUS BADGES ====== */
-.status-badge {
+.employee-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+/* ====== EMPLOYEE DETAILS ====== */
+.employee-details {
+    margin-bottom: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.detail-icon {
+    width: 16px;
+    margin-right: 0.5rem;
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 80px;
+    margin-right: 0.5rem;
+}
+
+.detail-value {
+    color: #6b7280;
+    flex: 1;
+}
+
+/* ====== ATTENDANCE CODE FORM ====== */
+.att-code-form {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.att-code-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.att-code-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.att-code-input {
+    flex: 1;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+}
+
+.att-code-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.att-code-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.att-code-btn:hover {
+    background: #059669;
+    transform: scale(1.05);
+}
+
+/* ====== EMPLOYEE ACTIONS ====== */
+.employee-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 1;
+    justify-content: center;
+    min-width: 80px;
+}
+
+.action-btn-edit {
+    background: #fbbf24;
+    color: #000;
+}
+
+.action-btn-edit:hover {
+    background: #f59e0b;
+    transform: translateY(-1px);
+}
+
+.action-btn-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.action-btn-delete:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* ====== EMPLOYEE STATUS ====== */
+.employee-status {
     display: inline-flex;
     align-items: center;
     padding: 4px 8px;
@@ -109,128 +215,14 @@
     letter-spacing: 0.05em;
 }
 
-.status-badge-active {
+.status-active {
     background: #d1fae5;
     color: #065f46;
 }
 
-.status-badge-inactive {
+.status-inactive {
     background: #fee2e2;
     color: #991b1b;
-}
-
-/* ====== ACTION BUTTONS IN TABLE ====== */
-.table-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: nowrap;
-}
-
-.table-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    white-space: nowrap;
-}
-
-.table-btn-edit {
-    background: #fbbf24;
-    color: #000;
-}
-
-.table-btn-edit:hover {
-    background: #f59e0b;
-    transform: translateY(-1px);
-}
-
-.table-btn-delete {
-    background: #ef4444;
-    color: white;
-}
-
-.table-btn-delete:hover {
-    background: #dc2626;
-    transform: translateY(-1px);
-}
-
-/* ====== ATTENDANCE CODE FORM IN TABLE ====== */
-.table-att-code {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.table-att-input {
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 0.8rem;
-    width: 100px;
-    transition: all 0.2s ease;
-}
-
-.table-att-input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-.table-att-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.table-att-btn:hover {
-    background: #059669;
-    transform: scale(1.05);
-}
-
-/* ====== TABLE RESPONSIVE ====== */
-@media (max-width: 1200px) {
-    .employees-table-container {
-        overflow-x: auto;
-    }
-    
-    .employees-table {
-        min-width: 1000px;
-    }
-}
-
-@media (max-width: 768px) {
-    .table-actions {
-        flex-direction: column;
-    }
-    
-    .table-btn {
-        font-size: 0.75rem;
-        padding: 4px 8px;
-    }
-    
-    .table-att-code {
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    
-    .table-att-input {
-        width: 80px;
-    }
 }
 
 /* ====== EMPTY STATE ====== */
@@ -238,9 +230,6 @@
     text-align: center;
     padding: 3rem 2rem;
     color: #6b7280;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .employees-empty-icon {
@@ -252,43 +241,36 @@
 .employees-empty-text {
     font-size: 1.125rem;
     margin-bottom: 1rem;
-    color: #374151;
 }
 
-/* ====== STATISTICS CARDS ====== */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #3b82f6;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 500;
+/* ====== RESPONSIVE DESIGN ====== */
+@media (max-width: 768px) {
+    .employees-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .employee-card {
+        padding: 1.25rem;
+    }
+    
+    .employee-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .employee-basic-info {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+    
+    .employee-actions {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        min-width: auto;
+    }
 }
 
 /* ====== FILTERS AND SEARCH ====== */
@@ -301,36 +283,30 @@
     border: 1px solid #e5e7eb;
 }
 
-.filter-row {
+.filter-grid {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
-    align-items: end;
 }
 
-.search-box {
-    position: relative;
+/* ====== LOADING STATES ====== */
+.employees-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
 }
 
-.search-input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-left: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
-.search-input:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.search-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
