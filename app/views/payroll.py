@@ -205,7 +205,6 @@ def payroll(filename):
         return redirect(url_for("main.index"))
 
 
-# Import dữ liệu Payroll
 @bp.route("/import_payroll/<filename>", methods=["POST"])
 def import_payroll(filename):
     upload_folder = os.path.abspath(os.path.join(os.getcwd(), "uploads"))
@@ -302,6 +301,10 @@ def import_payroll(filename):
             if not emp:
                 continue
 
+            # ✅ TÍNH TOÁN THÔNG TIN PHÉP NĂM
+            from .attendance_helpers import calculate_leave_info
+            thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_duoc_huong = calculate_leave_info(emp, period)
+
             tong_x = 0
             x_chu_nhat = 0
             x_le = 0
@@ -369,19 +372,18 @@ def import_payroll(filename):
 
             ghi_chu = " - ".join(parts) if parts else "Làm việc đủ ngày"
 
-            # --- Tạo PayrollRecord VỚI GIÁ TRỊ GỐC ---
-            # ✅ TẠO PAYROLLRECORD VỚI PHÉP NĂM
+            # --- Tạo PayrollRecord VỚI GIÁ TRỊ GỐC VÀ PHÉP NĂM ---
             record = PayrollRecord(
                 employee_id=emp.id,
                 employee_code=emp.code,
                 employee_name=emp.name,
                 period=period,
-                ngay_cong=ngay_cong_goc,
-                ngay_vang=ngay_vang_goc,
+                ngay_cong=ngay_cong_goc,      # ✅ GIÁ TRỊ GỐC
+                ngay_vang=ngay_vang_goc,       # ✅ GIÁ TRỊ GỐC  
                 chu_nhat=x_chu_nhat,
                 le_tet=x_le,
                 le_tet_gio=le_tet_gio,
-                tang_ca_nghi=tang_ca_nghi_goc,
+                tang_ca_nghi=tang_ca_nghi_goc, # ✅ GIÁ TRỊ GỐC
                 tang_ca_tuan=tang_ca_tuan,
                 standard_work_days=ngay_cong_chuan,
                 ghi_chu=ghi_chu,
@@ -402,20 +404,22 @@ def import_payroll(filename):
                 loai_hd=getattr(emp, "contract_type", ""),
                 # ✅ THÊM: Lưu thông tin phép năm
                 thang_bat_dau_tinh_phep=thang_bat_dau_tinh_phep,
-                ngay_phep_con_lai=so_ngay_phep_duoc_huong  # Số phép năm ban đầu
+                ngay_phep_con_lai=so_ngay_phep_duoc_huong,  # Số phép năm ban đầu
+                ngay_nghi_phep_nam=0  # Chưa dùng phép năm
             )
             
+            # ✅ CHỈ LƯU PayrollRecord, KHÔNG TẠO WorkAdjustment KHI IMPORT
             db.session.add(record)
 
+        # COMMIT CUỐI CÙNG
         db.session.commit()
-        flash("Đã import payroll thành công! Bao gồm cả thông tin phép năm.", "success")
+        flash("Đã import payroll thành công! Dữ liệu đang ở trạng thái gốc.", "success")
 
     except Exception as e:
         db.session.rollback()
         flash(f"Lỗi khi import payroll: {e}", "danger")
 
     return redirect(url_for("main.payroll", filename=filename))
-
 
 # Thêm ngày lễ
 @bp.route("/add_holiday", methods=["POST"])
