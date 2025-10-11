@@ -233,84 +233,80 @@ document.addEventListener("DOMContentLoaded", function(){
     tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
 
     // ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('adjustment-icon')) {
-            const employeeCode = e.target.getAttribute('data-employee-code');
-            const employeeName = e.target.getAttribute('data-employee-name');
-            const period = e.target.getAttribute('data-period');
-            const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
-            const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
-            const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
-            const standardDays = parseFloat(e.target.getAttribute('data-standard-days') || 26);
-            const ngayNghiPhepNamDaDung = parseFloat(e.target.getAttribute('data-ngay-nghi-phep-nam') || 0);
-            
-            console.log('Adjustment clicked:', {
-                employeeCode, 
-                employeeName, 
-                period, 
-                originalDays, 
-                overtimeHours, 
-                currentAbsence, 
-                standardDays, 
-                ngayNghiPhepNamDaDung
-            });
-            
-            if (originalDays >= standardDays) {
-                if (typeof notificationSystem !== 'undefined') {
-                    notificationSystem.warning(
-                        `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
-                        <strong>Lý do:</strong> Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`,
-                        'Không thể gộp tăng ca'
-                    );
-                } else {
-                    alert(`Không thể gộp tăng ca cho ${employeeName}! Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`);
-                }
-                return;
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('adjustment-icon')) {
+        const employeeCode = e.target.getAttribute('data-employee-code');
+        const employeeName = e.target.getAttribute('data-employee-name');
+        const period = e.target.getAttribute('data-period');
+        const originalDays = parseFloat(e.target.getAttribute('data-original-days'));
+        const overtimeHours = parseFloat(e.target.getAttribute('data-overtime-hours'));
+        const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
+        const standardDays = parseFloat(e.target.getAttribute('data-standard-days') || 26);
+        
+        // ✅ SỬA: Lấy ngay_nghi_phep_nam_da_dung từ metadata thay vì attribute
+        const metadata = JSON.parse(e.target.getAttribute('data-metadata') || '{}');
+        const ngayNghiPhepNamDaDung = parseFloat(metadata.ngay_nghi_phep_nam_da_dung || 0);
+        
+        console.log('Adjustment clicked:', {
+            employeeCode, 
+            employeeName, 
+            period, 
+            originalDays, 
+            overtimeHours, 
+            currentAbsence, 
+            standardDays, 
+            ngayNghiPhepNamDaDung
+        });
+        
+        if (originalDays >= standardDays) {
+            if (typeof notificationSystem !== 'undefined') {
+                notificationSystem.warning(
+                    `Không thể gộp tăng ca cho <strong>${employeeName}</strong>!<br>
+                    <strong>Lý do:</strong> Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`,
+                    'Không thể gộp tăng ca'
+                );
+            } else {
+                alert(`Không thể gộp tăng ca cho ${employeeName}! Số ngày làm việc thực tế (${originalDays} ngày) đã đạt ngày công quy định (${standardDays} ngày).`);
             }
-            
-            const result = calculateAdjustedWorkDays(
-                originalDays, 
-                standardDays, 
-                overtimeHours, 
-                currentAbsence, 
-                ngayNghiPhepNamDaDung
-            );
-            
-            console.log(`DEBUG CÔNG THỨC MỚI:`);
-            console.log(`- Ngày công ban đầu: ${originalDays} ngày`);
-            console.log(`- Phép năm đã dùng: ${ngayNghiPhepNamDaDung} ngày`);
-            console.log(`- Ngày CN đã làm: ${(overtimeHours/8).toFixed(1)} ngày (${overtimeHours} giờ)`);
-            console.log(`- Ngày công sau gộp: ${result.ngayCongCuoi.toFixed(1)} ngày`);
-            console.log(`- Ngày nghỉ: ${currentAbsence} -> ${result.ngayVangCuoi.toFixed(1)} ngày`);
-            console.log(`- Giờ tăng ca: ${overtimeHours} -> ${result.tangCaConLai.toFixed(1)} giờ (đã dùng ${result.gioTangCaDaDung.toFixed(1)} giờ)`);
-            console.log(`- Phép năm đã dùng: ${result.ngayNghiPhepNamDaDung} ngày`);
-
-            document.getElementById('modalEmployeeName').textContent = employeeName;
-            document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
-            document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + (overtimeHours/8).toFixed(1) + ' ngày)';
-            document.getElementById('modalCurrentAbsence').textContent = currentAbsence + ' ngày';
-            document.getElementById('modalAdjustedDays').textContent = result.ngayCongCuoi.toFixed(1) + ' ngày';
-            document.getElementById('modalNewAbsence').textContent = result.ngayVangCuoi.toFixed(1) + ' ngày';
-            document.getElementById('modalRemainingHours').textContent = result.tangCaConLai.toFixed(1) + ' giờ';
-            document.getElementById('modalPhepNamUsed').textContent = result.ngayNghiPhepNamDaDung + ' ngày';
-            
-            document.getElementById('formEmployeeCode').value = employeeCode;
-            document.getElementById('formPeriod').value = period;
-            document.getElementById('formOriginalDays').value = originalDays;
-            document.getElementById('formOvertimeHours').value = overtimeHours;
-            document.getElementById('formCurrentAbsence').value = currentAbsence;
-            
-            const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
-            modal.show();
-            
-            // ✅ THÊM: Event listener cho nút confirm adjustment (sau khi modal được show)
-            document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
-                console.log('🎯 CONFIRM BUTTON CLICKED - EVENT LISTENER FIRED!');
-                e.preventDefault();
-                window.handleConfirmAdjustment();
-            });
+            return;
         }
-    });
+        
+        const result = calculateAdjustedWorkDays(
+            originalDays, 
+            standardDays, 
+            overtimeHours, 
+            currentAbsence, 
+            ngayNghiPhepNamDaDung
+        );
+        
+        console.log(`DEBUG CÔNG THỨC MỚI:`);
+        console.log(`- Ngày công ban đầu: ${originalDays} ngày`);
+        console.log(`- Phép năm đã dùng: ${ngayNghiPhepNamDaDung} ngày`);
+        console.log(`- Ngày CN đã làm: ${(overtimeHours/8).toFixed(1)} ngày (${overtimeHours} giờ)`);
+        console.log(`- Ngày công sau gộp: ${result.ngayCongCuoi.toFixed(1)} ngày`);
+        console.log(`- Ngày nghỉ: ${currentAbsence} -> ${result.ngayVangCuoi.toFixed(1)} ngày`);
+        console.log(`- Giờ tăng ca: ${overtimeHours} -> ${result.tangCaConLai.toFixed(1)} giờ (đã dùng ${result.gioTangCaDaDung.toFixed(1)} giờ)`);
+        console.log(`- Phép năm đã dùng: ${result.ngayNghiPhepNamDaDung} ngày`);
+
+        document.getElementById('modalEmployeeName').textContent = employeeName;
+        document.getElementById('modalCurrentDays').textContent = originalDays + ' ngày';
+        document.getElementById('modalOvertimeHours').textContent = overtimeHours + ' giờ (' + (overtimeHours/8).toFixed(1) + ' ngày)';
+        document.getElementById('modalCurrentAbsence').textContent = currentAbsence + ' ngày';
+        document.getElementById('modalAdjustedDays').textContent = result.ngayCongCuoi.toFixed(1) + ' ngày';
+        document.getElementById('modalNewAbsence').textContent = result.ngayVangCuoi.toFixed(1) + ' ngày';
+        document.getElementById('modalRemainingHours').textContent = result.tangCaConLai.toFixed(1) + ' giờ';
+        document.getElementById('modalPhepNamUsed').textContent = result.ngayNghiPhepNamDaDung + ' ngày';
+        
+        document.getElementById('formEmployeeCode').value = employeeCode;
+        document.getElementById('formPeriod').value = period;
+        document.getElementById('formOriginalDays').value = originalDays;
+        document.getElementById('formOvertimeHours').value = overtimeHours;
+        document.getElementById('formCurrentAbsence').value = currentAbsence;
+        
+        const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
+        modal.show();
+    }
+});
 
     // ✅ XỬ LÝ CLICK ICON THÊM PHÉP NĂM (+)
     document.addEventListener('click', function(e) {
