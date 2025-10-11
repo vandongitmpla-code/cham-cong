@@ -345,6 +345,13 @@ document.addEventListener("DOMContentLoaded", function(){
             
             const modal = new bootstrap.Modal(document.getElementById('adjustmentModal'));
             modal.show();
+            
+            // ✅ THÊM: Event listener cho nút confirm adjustment (sau khi modal được show)
+            document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
+                console.log('🎯 CONFIRM BUTTON CLICKED - EVENT LISTENER FIRED!');
+                e.preventDefault();
+                window.handleConfirmAdjustment();
+            });
         }
     });
 
