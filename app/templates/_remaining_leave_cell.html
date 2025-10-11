@@ -1,0 +1,37 @@
+<!-- templates/partials/_remaining_leave_cell.html -->
+<td class="position-relative remaining-leave-cell" 
+    style="min-width: 120px; cursor: pointer;"
+    onmouseenter="showRemainingLeaveButtons(this)" 
+    onmouseleave="hideRemainingLeaveButtons(this)">
+  
+  <span class="remaining-leave-days">{{ cell }}</span>
+  
+  <div class="remaining-leave-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
+    
+    <!-- ✅ NÚT "+" - LUÔN HIỆN -->
+    <i class="bi bi-plus-circle-fill text-success me-1 remaining-leave-add-icon"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Điều chỉnh phép năm còn tồn"
+      style="cursor:pointer; font-size: 16px;"
+      data-employee-id="{{ metadata.employee_id }}"
+      data-employee-name="{{ employee_name }}"
+      data-period="{{ period }}"
+      data-current-remaining="{{ cell }}"
+      data-filename="{{ filename }}">
+    </i>
+    
+    <!-- ✅ NÚT "-" - LUÔN HIỆN -->
+    <i class="bi bi-dash-circle-fill text-danger remaining-leave-reset-icon"
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      title="Reset về giá trị mặc định"
+      style="cursor:pointer; font-size: 16px;"
+      data-employee-id="{{ metadata.employee_id }}"
+      data-employee-name="{{ employee_name }}"
+      data-period="{{ period }}"
+      data-filename="{{ filename }}">
+    </i>
+    
+  </div>
+</td>
