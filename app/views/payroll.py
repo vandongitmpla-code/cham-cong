@@ -482,38 +482,23 @@ def apply_adjustment():
             flash("Không tìm thấy nhân viên!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
+        # ✅ LẤY THÔNG TIN PHÉP NĂM TỪ PAYROLL_RECORDS (DUY NHẤT)
         payroll_record = PayrollRecord.query.filter_by(
             employee_code=employee_code, 
             period=period
         ).first()
         
         if not payroll_record:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'error': 'Không tìm thấy bản ghi payroll!'}), 400
             flash("Không tìm thấy bản ghi payroll!", "danger")
-            return redirect(url_for("main.attendance_print", filename=filename))
+            return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
 
-        # Số phép năm có thể dùng = ngay_phep_con_lai từ payroll_records
+        # ✅ CHỈ DÙNG DỮ LIỆU TỪ PAYROLL_RECORDS
+        ngay_nghi_phep_nam_da_dung = payroll_record.ngay_nghi_phep_nam or 0
         phep_nam_kha_dung = payroll_record.ngay_phep_con_lai or 0
-        ngay_nghi_phep_nam_da_dung = 0  # Chưa dùng gì khi mới bắt đầu
 
-        print(f"DEBUG PHÉP NĂM từ payroll_records: có_thể_dùng={phep_nam_kha_dung}")
-        
-        # ✅ LẤY THÔNG TIN PHÉP NĂM
-        paid_leave = PaidLeave.query.filter_by(
-            employee_id=emp.id,
-            period=period
-        ).first()
-
-        # ✅ SỬA: Dùng remaining_leave_days từ database thay vì tính toán
-        if paid_leave:
-            ngay_nghi_phep_nam_da_dung = paid_leave.leave_days_used
-            phep_nam_kha_dung = paid_leave.remaining_leave_days  # ✅ DÙNG GIÁ TRỊ TỪ DATABASE
-        else:
-            ngay_nghi_phep_nam_da_dung = 0
-            # ✅ TÍNH TOÁN PHÉP NĂM TỪ THÁNG BẮT ĐẦU
-            thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_duoc_huong = calculate_leave_info(emp, period)
-            phep_nam_kha_dung = so_ngay_phep_duoc_huong
-
-        print(f"DEBUG PHÉP NĂM: đã_dùng={ngay_nghi_phep_nam_da_dung}, còn_lại={phep_nam_kha_dung}")
+        print(f"DEBUG PHÉP NĂM từ payroll_records: đã_dùng={ngay_nghi_phep_nam_da_dung}, còn_lại={phep_nam_kha_dung}")
 
         # ✅ TÍNH NGÀY CÔNG CHUẨN
         year, month = map(int, period.split('-'))
@@ -534,26 +519,15 @@ def apply_adjustment():
         from .attendance_helpers import calculate_adjustment_details
         
         result = calculate_adjustment_details(
-        original_days=original_days,
-        standard_days=ngay_cong_chuan,
-        ngay_vang_ban_dau=current_absence,
-        overtime_hours=overtime_hours,
-        ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
-        phep_nam_kha_dung=phep_nam_kha_dung,  # ✅ THÊM THAM SỐ NÀY
-        use_extra_leave=use_extra_leave
-    )
-         # ✅ THÊM DEBUG CHI TIẾT
-        print(f"🔍 DEBUG ADJUSTMENT DETAILS:")
-        print(f"  - original_days: {original_days}")
-        print(f"  - standard_days: {ngay_cong_chuan}")
-        print(f"  - current_absence: {current_absence}")
-        print(f"  - overtime_hours: {overtime_hours}")
-        print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")
-        print(f"  - use_extra_leave: {use_extra_leave}")
-        print(f"  - RESULT - ngay_cong_cuoi: {result['ngay_cong_cuoi']}")
-        print(f"  - RESULT - ngay_vang_cuoi: {result['ngay_vang_cuoi']}")
-        print(f"  - RESULT - phep_nam_kha_dung: {result['phep_nam_kha_dung']}")
-        print(f"  - RESULT - can_xac_nhan_them_phep: {result['can_xac_nhan_them_phep']}")
+            original_days=original_days,
+            standard_days=ngay_cong_chuan,
+            ngay_vang_ban_dau=current_absence,
+            overtime_hours=overtime_hours,
+            ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
+            phep_nam_kha_dung=phep_nam_kha_dung,
+            use_extra_leave=use_extra_leave
+        )
+
         print(f"DEBUG: Calculation result - ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}, phep_nam_kha_dung: {result.get('phep_nam_kha_dung')}")
 
         # ✅ KIỂM TRA CÓ CẦN XÁC NHẬN THÊM PHÉP NĂM KHÔNG
@@ -568,10 +542,10 @@ def apply_adjustment():
         # ✅ NẾU LÀ AJAX VÀ CẦN XÁC NHẬN THÊM PHÉP
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if can_xac_nhan_them_phep and is_ajax:
-            print(f"🚨 SENDING CONFIRMATION - remaining_absence: {result['ngay_vang_cuoi']}, available_leave: {result['phep_nam_kha_dung']}")
+            print(f"DEBUG: Returning JSON confirmation - remaining_absence: {result['ngay_vang_con_lai']}, available_leave: {result['phep_nam_kha_dung']}")
             return jsonify({
                 'need_extra_leave_confirmation': True,
-                'remaining_absence': result['ngay_vang_cuoi'],
+                'remaining_absence': result['ngay_vang_con_lai'],
                 'available_leave': result['phep_nam_kha_dung'],
                 'employee_code': employee_code,
                 'period': period
@@ -609,6 +583,10 @@ def apply_adjustment():
             )
             db.session.add(adjustment)
         
+        # ✅ CẬP NHẬT LẠI PAYROLL_RECORD VỚI THÔNG TIN PHÉP NĂM MỚI
+        payroll_record.ngay_nghi_phep_nam = result['ngay_nghi_phep_nam_da_dung']
+        payroll_record.ngay_phep_con_lai = result['phep_nam_kha_dung']
+        
         db.session.commit()
         
         # ✅ NẾU LÀ AJAX REQUEST, TRẢ VỀ JSON THAY VÌ REDIRECT
@@ -619,11 +597,6 @@ def apply_adjustment():
             })
         
         flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result['ngay_cong_cuoi']}, Ngày nghỉ: {result['ngay_vang_cuoi']}", "success")
-    # ✅ SAU KHI TÍNH TOÁN, CẬP NHẬT LẠI PAYROLL_RECORD
-        payroll_record.ngay_phep_con_lai = result['phep_nam_kha_dung']  # Phép năm còn lại mới
-        payroll_record.ngay_nghi_phep_nam = result['ngay_nghi_phep_nam_da_dung']  # Phép năm đã dùng
-
-        db.session.commit()
         
     except Exception as e:
         db.session.rollback()
