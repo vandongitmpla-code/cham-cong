@@ -614,6 +614,7 @@ def apply_adjustment():
         
         flash(f"Đã áp dụng điều chỉnh cho {emp.name}! Ngày công: {result['ngay_cong_cuoi']}, Ngày nghỉ: {result['ngay_vang_cuoi']}", "success")
         
+        
     except Exception as e:
         db.session.rollback()
         print(f"ERROR in apply_adjustment: {e}")
