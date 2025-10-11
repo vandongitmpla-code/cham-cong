@@ -357,7 +357,7 @@
 
 .stat-card-modern {
     background: var(--surface);
-    padding: 5rem;
+    padding: 2rem;
     border-radius: var(--radius-xl);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
