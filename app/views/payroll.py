@@ -618,41 +618,46 @@ def apply_adjustment():
         return redirect(url_for("main.index"))
     
 
-@bp.route("/reset_paid_leave", methods=["POST"])
-def reset_paid_leave():
+@bp.route("/reset_adjustment_payroll", methods=["POST"])
+def reset_adjustment_payroll():
     try:
-        employee_id = request.form.get("employee_id")
+        employee_code = request.form.get("employee_code")
         period = request.form.get("period")
-        filename = request.form.get("filename")
+        filename = request.form.get("filename") or request.args.get("filename")
         
-        employee = Employee.query.get(employee_id)
-        if not employee:
-            flash("Không tìm thấy nhân viên!", "danger")
-            return redirect(url_for("main.attendance_print", filename=filename))
-        
-        # ✅ SỬA: RESET TRONG PAYROLL_RECORDS THAY VÌ PAID_LEAVES
-        payroll_record = PayrollRecord.query.filter_by(
-            employee_id=employee_id,
+        # Tìm và xóa adjustment
+        adjustment = WorkAdjustment.query.filter_by(
+            employee_code=employee_code,
             period=period
         ).first()
         
-        if payroll_record:
-            # Reset về 0
-            payroll_record.ngay_nghi_phep_nam = 0
+        if adjustment:
+            # ✅ KHÔI PHỤC VỀ GIÁ TRỊ GỐC TỪ PAYROLL RECORD
+            payroll_record = PayrollRecord.query.filter_by(
+                employee_code=employee_code,
+                period=period
+            ).first()
             
-            # ✅ GIỮ NGUYÊN ngay_phep_con_lai (phép năm còn tồn)
-            # payroll_record.ngay_phep_con_lai = ... (giữ nguyên)
+            if payroll_record:
+                # KHÔNG cần cập nhật payroll_record vì chúng ta dùng adjustment để tính toán
+                # Chỉ cần xóa adjustment là đủ
+                pass
             
+            db.session.delete(adjustment)
             db.session.commit()
-            flash(f"Đã reset ngày phép năm về 0 cho {employee.name}!", "success")
+            
+            flash(f"✅ Đã khôi phục dữ liệu gốc cho {adjustment.employee_name}", "success")
         else:
-            flash("Không tìm thấy dữ liệu payroll để reset!", "warning")
+            flash("⚠️ Không tìm thấy điều chỉnh để khôi phục", "warning")
             
     except Exception as e:
         db.session.rollback()
-        flash(f"Lỗi khi reset phép năm: {e}", "danger")
+        flash(f"❌ Lỗi khi khôi phục: {e}", "danger")
     
-    return redirect(url_for("main.attendance_print", filename=filename))
+    if filename:
+        return redirect(url_for("main.attendance_print", filename=filename))
+    else:
+        return redirect(url_for("main.index"))
     
 @bp.route("/add_paid_leave", methods=["POST"])
 def add_paid_leave():
