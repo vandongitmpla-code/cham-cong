@@ -54,7 +54,7 @@ class Holiday(db.Model):
     def __repr__(self):
         return f"<Holiday {self.date} - {self.name}>"
 #----------------------------------------------bảng công tính lương---------------------------------------------------------------
-class PayrollRecord(db.Model):
+cclass PayrollRecord(db.Model):
     __tablename__ = "payroll_records"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -77,7 +77,7 @@ class PayrollRecord(db.Model):
     phong_ban = db.Column(db.String(100))
     loai_hd = db.Column(db.String(50))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-    ngay_nghi_phep_nam = db.Column(db.Float, default=0)  # Số ngày nghỉ phép năm
+    ngay_nghi_phep_nam = db.Column(db.Float, default=0)  # Số ngày nghỉ phép năm ĐÃ DÙNG
     ngay_phep_con_lai = db.Column(db.Float, default=0)   # Số ngày phép còn tồn
     thang_bat_dau_tinh_phep = db.Column(db.String(50), default="")  # "6,7,8,9,10"
     
