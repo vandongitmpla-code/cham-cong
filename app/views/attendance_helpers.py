@@ -174,17 +174,17 @@ def create_attendance_rows(records, period):
             rec.employee_name, 
             rec.phong_ban, 
             rec.loai_hd,
-            standard_days,                    # Số ngày/giờ làm việc quy định trong tháng
-            ngay_nghi_phep_nam_da_dung,       # Số ngày nghỉ phép năm
-            ngay_vang_hien_thi,               # Số ngày nghỉ không lương
-            ngay_cong_hien_thi,               # Số ngày/giờ làm việc thực tế trong tháng
-            tang_ca_nghi_hien_thi,            # Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)
-            rec.le_tet_gio,                   # Số giờ làm việc tăng ca (ngày lễ)
-            rec.tang_ca_tuan,                 # Số giờ làm việc tăng ca (ngày làm trong tuần)
-            rec.ghi_chu or "",                # Ghi chú
-            thang_bat_dau_tinh_phep,          # Bắt đầu tính phép từ tháng
-            so_ngay_phep_con_lai,             # Số ngày phép còn tồn
-            rec.to,                           # Tổ
+            standard_days,
+            ngay_nghi_phep_nam_da_dung,  # ✅ HIỂN THỊ PHÉP NĂM ĐÃ "+"
+            ngay_vang_hien_thi,
+            ngay_cong_hien_thi,
+            tang_ca_nghi_hien_thi,
+            rec.le_tet_gio, 
+            rec.tang_ca_tuan, 
+            rec.ghi_chu or "", 
+            thang_bat_dau_tinh_phep,
+            so_ngay_phep_con_lai,
+            rec.to,
             {
                 'has_adjustment': has_adjustment,
                 'has_overtime': has_overtime,
@@ -193,9 +193,9 @@ def create_attendance_rows(records, period):
                 'current_days': ngay_cong_hien_thi,
                 'standard_days': standard_days,
                 'ngay_vang_ban_dau': ngay_vang_ban_dau,
-                'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,  # ✅ QUAN TRỌNG: Truyền giá trị này
+                'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,  # ✅ TRUYỀN ĐÚNG
                 'so_thang_duoc_huong': so_ngay_phep_con_lai,
-                'employee_id': employee.id,
+                'employee_id': rec.employee_id,
                 'tang_ca_nghi_ban_dau': tang_ca_nghi_ban_dau
             }
         ])
