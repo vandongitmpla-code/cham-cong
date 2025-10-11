@@ -495,7 +495,7 @@ def apply_adjustment():
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
 
         # ✅ CHỈ DÙNG DỮ LIỆU TỪ PAYROLL_RECORDS
-        ngay_nghi_phep_nam_da_dung = payroll_record.ngay_nghi_phep_nam or 0
+         ngay_nghi_phep_nam_da_dung = payroll_record.ngay_nghi_phep_nam or 0
         phep_nam_kha_dung = payroll_record.ngay_phep_con_lai or 0
 
         print(f"DEBUG PHÉP NĂM từ payroll_records: đã_dùng={ngay_nghi_phep_nam_da_dung}, còn_lại={phep_nam_kha_dung}")
