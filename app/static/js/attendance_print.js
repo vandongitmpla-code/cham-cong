@@ -1,16 +1,10 @@
-// ✅ ĐẶT CÁC HÀM GLOBAL Ở ĐẦU FILE - TRƯỚC KHI ĐƯỢC GỌI
+// ✅ HÀM GLOBAL CHÍNH
 window.handleConfirmAdjustment = function() {
     console.log('🎯 === HANDLE CONFIRM ADJUSTMENT CALLED ===');
     
     const employeeCode = document.getElementById('formEmployeeCode');
     const period = document.getElementById('formPeriod');
     const filename = document.getElementById('formFilename');
-    
-    console.log('🔍 Form elements check:', {
-        employeeCode: employeeCode ? 'EXISTS' : 'MISSING',
-        period: period ? 'EXISTS' : 'MISSING', 
-        filename: filename ? 'EXISTS' : 'MISSING'
-    });
     
     if (!employeeCode || !period || !filename) {
         console.error('❌ Form elements missing!');
@@ -22,28 +16,15 @@ window.handleConfirmAdjustment = function() {
     const periodVal = period.value;
     const filenameVal = filename.value;
     
-    console.log('📋 Form values:', {
-        employeeCode: empCode,
-        period: periodVal,
-        filename: filenameVal,
-        originalDays: document.getElementById('formOriginalDays')?.value,
-        overtimeHours: document.getElementById('formOvertimeHours')?.value,
-        currentAbsence: document.getElementById('formCurrentAbsence')?.value
-    });
-    
     if (!empCode || !periodVal) {
         console.error('❌ Missing required form values!');
         alert('Lỗi: Thiếu thông tin cần thiết. Vui lòng thử lại.');
         return;
     }
     
+    // Đóng modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('adjustmentModal'));
-    if (modal) {
-        console.log('🔒 Closing modal...');
-        modal.hide();
-    } else {
-        console.log('⚠️ Modal instance not found');
-    }
+    if (modal) modal.hide();
     
     console.log('🚀 Calling applyAdjustment...');
     window.applyAdjustment(empCode, periodVal, filenameVal);
@@ -51,7 +32,6 @@ window.handleConfirmAdjustment = function() {
 
 window.applyAdjustment = function(employeeCode, period, filename) {
     console.log('=== STARTING ADJUSTMENT PROCESS ===');
-    console.log('Employee:', employeeCode, 'Period:', period, 'Filename:', filename);
     
     const form = document.getElementById('adjustmentForm');
     if (!form) {
@@ -62,36 +42,23 @@ window.applyAdjustment = function(employeeCode, period, filename) {
     
     const formData = new FormData(form);
     
-    console.log('Form data:');
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
-    
-    // ✅ THÊM: Header để xác định đây là AJAX request
-    const headers = new Headers();
-    headers.append('X-Requested-With', 'XMLHttpRequest');
-    
     fetch('/apply_adjustment', {
         method: 'POST',
         body: formData,
-        headers: headers
+        headers: {'X-Requested-With': 'XMLHttpRequest'}
     })
     .then(response => {
-        console.log('Response status:', response.status, 'Redirected:', response.redirected);
-        
-        const contentType = response.headers.get('content-type');
-        console.log('Content-Type:', contentType);
+        console.log('Response status:', response.status);
         
         if (response.redirected) {
-            console.log('Response redirected to:', response.url);
             window.location.href = response.url;
             return null;
         }
         
+        const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
             return response.json();
         } else {
-            console.log('Not JSON response, reloading page');
             location.reload();
             return null;
         }
@@ -102,7 +69,7 @@ window.applyAdjustment = function(employeeCode, period, filename) {
         console.log('API JSON Response:', data);
         
         if (data.need_extra_leave_confirmation && data.remaining_absence > 0) {
-            console.log('Need extra leave confirmation:', data.remaining_absence, 'days remaining');
+            console.log('Need extra leave confirmation');
             window.showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
         } else {
             console.log('No extra leave needed, reloading page');
@@ -120,13 +87,10 @@ window.applyAdjustment = function(employeeCode, period, filename) {
 window.showExtraLeaveConfirmation = function(employeeCode, period, filename, remainingAbsence, availableLeave) {
     console.log('Showing extra leave confirmation:', {remainingAbsence, availableLeave});
     
-    const message = availableLeave >= remainingAbsence 
-        ? `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn có muốn dùng thêm phép năm để bù luôn không?`
-        : `Vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn không còn đủ phép năm (chỉ còn ${availableLeave} ngày).`;
+    const soNgayCanDung = Math.min(remainingAbsence, availableLeave);
+    const message = `Bạn vẫn còn ${remainingAbsence} ngày nghỉ không lương. Bạn có muốn dùng ${soNgayCanDung} ngày phép để bù không?`;
     
-    const canUseExtraLeave = availableLeave >= remainingAbsence;
-    
-    if (canUseExtraLeave && confirm(message)) {
+    if (confirm(message)) {
         console.log('User confirmed extra leave usage');
         const formData = new FormData();
         formData.append('employee_code', employeeCode);
@@ -137,19 +101,12 @@ window.showExtraLeaveConfirmation = function(employeeCode, period, filename, rem
         formData.append('overtime_hours', document.getElementById('formOvertimeHours').value);
         formData.append('current_absence', document.getElementById('formCurrentAbsence').value);
         
-        // ✅ THÊM: Header cho request thứ 2
-        const headers = new Headers();
-        headers.append('X-Requested-With', 'XMLHttpRequest');
-        
-        console.log('Calling API with extra leave...');
-        
         fetch('/apply_adjustment', {
             method: 'POST',
             body: formData,
-            headers: headers
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
         })
         .then(response => {
-            console.log('Extra leave response - Redirected:', response.redirected);
             if (response.redirected) {
                 window.location.href = response.url;
             } else {
@@ -161,7 +118,7 @@ window.showExtraLeaveConfirmation = function(employeeCode, period, filename, rem
             location.reload();
         });
     } else {
-        console.log('User declined extra leave or not enough leave available');
+        console.log('User declined extra leave');
         location.reload();
     }
 }
