@@ -363,9 +363,9 @@
 
 <!-- ✅ THÊM: Form ẩn để reset phép năm -->
 <form id="resetLeaveForm" method="POST" action="{{ url_for('main.reset_paid_leave') }}" style="display: none;">
-  <input type="hidden" name="employee_id" id="resetLeaveEmployeeId">
-  <input type="hidden" name="period" id="resetLeavePeriod">
-  <input type="hidden" name="filename" value="{{ filename }}">
+    <input type="hidden" name="employee_id" id="resetLeaveEmployeeId">
+    <input type="hidden" name="period" id="resetLeavePeriod">
+    <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
 <!-- ✅ CẬP NHẬT: Form ẩn để submit điều chỉnh -->
