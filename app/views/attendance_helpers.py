@@ -47,106 +47,70 @@ def calculate_standard_work_days(year, month):
 
 def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung, phep_nam_kha_dung, use_extra_leave=False):
     """
-    Tính toán điều chỉnh - DÙNG PHÉP NĂM TÍCH LŨY
+    Tính toán điều chỉnh - LOGIC ĐƠN GIẢN
     """
     print(f"🧮 CALCULATION INPUT:")
     print(f"  - original_days: {original_days}")
     print(f"  - standard_days: {standard_days}")
     print(f"  - ngay_vang_ban_dau: {ngay_vang_ban_dau}")
     print(f"  - overtime_hours: {overtime_hours} ({overtime_hours/8} ngày)")
-    print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")  # ĐÃ DÙNG
-    print(f"  - phep_nam_kha_dung: {phep_nam_kha_dung}")  # CÒN LẠI TÍCH LŨY
+    print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")  # PHÉP NĂM ĐÃ DÙNG
+    print(f"  - phep_nam_kha_dung: {phep_nam_kha_dung}")  # PHÉP NĂM CÒN LẠI
     print(f"  - use_extra_leave: {use_extra_leave}")
     
     # Chuyển giờ tăng ca sang ngày
     overtime_days = overtime_hours / 8
     
-    # TÍNH TOÁN BAN ĐẦU - DÙNG PHÉP NĂM CÒN LẠI TÍCH LŨY
-    # 1. Dùng phép năm bù ngày vắng (tối đa = ngày vắng VÀ tối đa = phép năm còn lại)
-    ngay_phep_su_dung = min(ngay_vang_ban_dau, phep_nam_kha_dung)
+    # ✅ 1. TÍNH TOÁN CƠ BẢN
+    # Tổng số ngày có thể bù = Phép năm đã dùng + Tăng ca CN
+    tong_ngay_bu = ngay_nghi_phep_nam_da_dung + overtime_days
     
-    # 2. Ngày vắng còn lại sau khi dùng phép năm
-    ngay_vang_con_sau_phep = ngay_vang_ban_dau - ngay_phep_su_dung
+    # Ngày công sau gộp = Ngày công ban đầu + Tổng bù
+    ngay_cong_cuoi = original_days + tong_ngay_bu
     
-    # 3. Dùng tăng ca bù ngày vắng còn lại
-    ngay_tang_ca_su_dung = min(overtime_days, ngay_vang_con_sau_phep)
+    # Ngày nghỉ còn lại = Ngày nghỉ ban đầu - Tổng bù
+    ngay_vang_cuoi = ngay_vang_ban_dau - tong_ngay_bu
     
-    # 4. Tính ngày công tạm thời
-    ngay_cong_tam = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
+    # ✅ 2. KIỂM TRA GIỚI HẠN NGÀY CÔNG CHUẨN
+    if ngay_cong_cuoi > standard_days:
+        # Nếu vượt quá, chỉ được tối đa = standard_days
+        vuot_qua = ngay_cong_cuoi - standard_days
+        ngay_cong_cuoi = standard_days
+        # Điều chỉnh ngày nghỉ còn lại
+        ngay_vang_cuoi = ngay_vang_ban_dau - (standard_days - original_days)
     
-    # 5. KIỂM TRA GIỚI HẠN: Không được vượt quá ngày công chuẩn
-    if ngay_cong_tam > standard_days:
-        vuot_qua = ngay_cong_tam - standard_days
+    # Đảm bảo ngày nghỉ không âm
+    if ngay_vang_cuoi < 0:
+        ngay_vang_cuoi = 0
+    
+    # ✅ 3. XỬ LÝ THÊM PHÉP NĂM NẾU ĐƯỢC YÊU CẦU
+    if use_extra_leave and ngay_vang_cuoi > 0 and phep_nam_kha_dung > 0:
+        # Dùng thêm phép năm để bù nốt ngày nghỉ còn lại
+        so_ngay_them = min(ngay_vang_cuoi, phep_nam_kha_dung)
+        ngay_nghi_phep_nam_da_dung += so_ngay_them
+        ngay_vang_cuoi -= so_ngay_them
+        phep_nam_kha_dung -= so_ngay_them
+        ngay_cong_cuoi = original_days + ngay_nghi_phep_nam_da_dung + overtime_days
         
-        if ngay_tang_ca_su_dung >= vuot_qua:
-            ngay_tang_ca_su_dung -= vuot_qua
-            vuot_qua = 0
-        else:
-            vuot_qua -= ngay_tang_ca_su_dung
-            ngay_tang_ca_su_dung = 0
-            
-        if vuot_qua > 0 and ngay_phep_su_dung >= vuot_qua:
-            ngay_phep_su_dung -= vuot_qua
-            vuot_qua = 0
-        
-        ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
-    else:
-        ngay_cong_cuoi = ngay_cong_tam
+        # Kiểm tra lại giới hạn
+        if ngay_cong_cuoi > standard_days:
+            ngay_cong_cuoi = standard_days
     
-    # 6. Tính ngày vắng cuối cùng BAN ĐẦU
-    ngay_vang_cuoi = ngay_vang_ban_dau - ngay_phep_su_dung - ngay_tang_ca_su_dung
-    
-    print(f"📊 BEFORE EXTRA LEAVE:")
-    print(f"  - ngay_vang_cuoi: {ngay_vang_cuoi}")
-    print(f"  - ngay_phep_su_dung: {ngay_phep_su_dung}")
-    
-    # 7. XỬ LÝ XÁC NHẬN THÊM PHÉP NĂM (nếu được yêu cầu)
-    if use_extra_leave and ngay_vang_cuoi > 0:
-        # ✅ SỬA: Tính số phép năm còn lại có thể dùng = phép năm tích lũy - phép năm đã dùng trong lần này
-        phep_nam_con_lai_kha_dung = phep_nam_kha_dung - ngay_phep_su_dung
-        
-        print(f"  - EXTRA LEAVE - phep_nam_con_lai_kha_dung: {phep_nam_con_lai_kha_dung}")
-        
-        if phep_nam_con_lai_kha_dung >= ngay_vang_cuoi:
-            # Dùng hết phép năm còn lại để bù nốt
-            ngay_phep_su_dung += ngay_vang_cuoi
-            ngay_vang_cuoi = 0
-            ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
-            
-            # Kiểm tra lại không vượt quá chuẩn
-            if ngay_cong_cuoi > standard_days:
-                ngay_cong_cuoi = standard_days
-                
-            print(f"  - AFTER EXTRA LEAVE - ngay_phep_su_dung: {ngay_phep_su_dung}")
-            print(f"  - AFTER EXTRA LEAVE - ngay_vang_cuoi: {ngay_vang_cuoi}")
-        else:
-            # Chỉ dùng được một phần phép năm còn lại
-            ngay_phep_su_dung += phep_nam_con_lai_kha_dung
-            ngay_vang_cuoi -= phep_nam_con_lai_kha_dung
-            ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
-            
-            # Kiểm tra lại không vượt quá chuẩn
-            if ngay_cong_cuoi > standard_days:
-                ngay_cong_cuoi = standard_days
-                
-            print(f"  - AFTER EXTRA LEAVE - ngay_phep_su_dung: {ngay_phep_su_dung}")
-            print(f"  - AFTER EXTRA LEAVE - ngay_vang_cuoi: {ngay_vang_cuoi}")
-    
-    # 8. Tính toán kết quả cuối - PHÉP NĂM CÒN LẠI TÍCH LŨY
-    tang_ca_con_lai = overtime_hours - (ngay_tang_ca_su_dung * 8)
-    phep_nam_con_lai_tich_luy = phep_nam_kha_dung - ngay_phep_su_dung  # ✅ TÍNH LẠI TỪ PHÉP NĂM TÍCH LŨY
+    # ✅ 4. TÍNH TOÁN KẾT QUẢ CUỐI
+    tang_ca_con_lai = 0  # Đã dùng hết tăng ca
+    gio_tang_ca_da_dung = overtime_hours
 
     final_result = {
         'ngay_cong_cuoi': ngay_cong_cuoi,
         'ngay_vang_cuoi': ngay_vang_cuoi,
         'tang_ca_con_lai': tang_ca_con_lai,
-        'so_ngay_bu_tu_tang_ca': ngay_tang_ca_su_dung,
-        'ngay_nghi_phep_nam_da_dung': ngay_phep_su_dung,
-        'gio_tang_ca_da_dung': ngay_tang_ca_su_dung * 8,
-        'phep_nam_con_lai': phep_nam_con_lai_tich_luy,
-        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and (phep_nam_con_lai_tich_luy > 0) and not use_extra_leave,
+        'so_ngay_bu_tu_tang_ca': overtime_days,
+        'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,
+        'gio_tang_ca_da_dung': gio_tang_ca_da_dung,
+        'phep_nam_con_lai': phep_nam_kha_dung,
+        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and (phep_nam_kha_dung > 0) and not use_extra_leave,
         'ngay_vang_con_lai': ngay_vang_cuoi,
-        'phep_nam_kha_dung': phep_nam_con_lai_tich_luy  # ✅ TRẢ VỀ PHÉP NĂM CÒN LẠI MỚI
+        'phep_nam_kha_dung': phep_nam_kha_dung
     }
     
     print(f"🎯 FINAL RESULT:")
