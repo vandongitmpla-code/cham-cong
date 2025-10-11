@@ -521,7 +521,7 @@ def apply_adjustment():
             ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
             use_extra_leave=use_extra_leave
         )
-
+        
         print(f"DEBUG: Calculation result - ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}, phep_nam_kha_dung: {result.get('phep_nam_kha_dung')}")
 
         # ✅ KIỂM TRA CÓ CẦN XÁC NHẬN THÊM PHÉP NĂM KHÔNG
