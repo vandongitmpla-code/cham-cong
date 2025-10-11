@@ -232,8 +232,8 @@ def create_attendance_rows(records, period):
                 'current_days': ngay_cong_hien_thi,
                 'standard_days': standard_days,
                 'ngay_vang_ban_dau': ngay_vang_ban_dau,
-                'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,
-                'so_thang_duoc_huong': so_ngay_phep_con_lai,  # Dùng so_ngay_phep_con_lai làm số tháng được hưởng
+                'ngay_nghi_phep_nam_da_dung': ngay_nghi_phep_nam_da_dung,  # ✅ QUAN TRỌNG: Truyền giá trị này
+                'so_thang_duoc_huong': so_ngay_phep_con_lai,
                 'employee_id': employee.id,
                 'tang_ca_nghi_ban_dau': tang_ca_nghi_ban_dau
             }
