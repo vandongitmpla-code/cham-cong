@@ -233,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function(){
     tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
 
     // ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
+// ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('adjustment-icon')) {
         const employeeCode = e.target.getAttribute('data-employee-code');
@@ -243,9 +244,8 @@ document.addEventListener('click', function(e) {
         const currentAbsence = parseFloat(e.target.getAttribute('data-current-absence') || 0);
         const standardDays = parseFloat(e.target.getAttribute('data-standard-days') || 26);
         
-        // ✅ SỬA: Lấy ngay_nghi_phep_nam_da_dung từ metadata thay vì attribute
-        const metadata = JSON.parse(e.target.getAttribute('data-metadata') || '{}');
-        const ngayNghiPhepNamDaDung = parseFloat(metadata.ngay_nghi_phep_nam_da_dung || 0);
+        // ✅ SỬA: Lấy ngay_nghi_phep_nam_da_dung từ attribute riêng thay vì JSON
+        const ngayNghiPhepNamDaDung = parseFloat(e.target.getAttribute('data-ngay-nghi-phep-nam') || 0);
         
         console.log('Adjustment clicked:', {
             employeeCode, 
