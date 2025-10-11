@@ -469,7 +469,7 @@
     
     .stats-grid-modern {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
     }
     
     .stat-card-modern {
