@@ -227,13 +227,6 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     })();
 
-// ✅ THÊM: Event listener cho nút confirm adjustment
-document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
-    console.log('🎯 CONFIRM BUTTON CLICKED - EVENT LISTENER FIRED!');
-    e.preventDefault();
-    window.handleConfirmAdjustment();
-    });
-
     // ✅ HÀM TÍNH TOÁN ĐIỀU CHỈNH MỚI (ĐỒNG BỘ VỚI BACKEND)
     function calculateAdjustedWorkDays(originalDays, standardDays, overtimeHours, currentAbsence, ngayNghiPhepNamDaDung = 0) {
         const overtimeDays = overtimeHours / 8;
