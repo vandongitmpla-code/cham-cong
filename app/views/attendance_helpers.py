@@ -46,25 +46,24 @@ def calculate_standard_work_days(year, month):
     return standard_days
 
 def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung, phep_nam_kha_dung, use_extra_leave=False):
-
     """
-    Tính toán điều chỉnh - NHẬN THÊM THAM SỐ phep_nam_kha_dung
+    Tính toán điều chỉnh - DÙNG PHÉP NĂM TÍCH LŨY
     """
     print(f"🧮 CALCULATION INPUT:")
     print(f"  - original_days: {original_days}")
     print(f"  - standard_days: {standard_days}")
     print(f"  - ngay_vang_ban_dau: {ngay_vang_ban_dau}")
     print(f"  - overtime_hours: {overtime_hours} ({overtime_hours/8} ngày)")
-    print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")
-    print(f"  - phep_nam_kha_dung: {phep_nam_kha_dung}")  # ✅ THÊM
+    print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")  # ĐÃ DÙNG
+    print(f"  - phep_nam_kha_dung: {phep_nam_kha_dung}")  # CÒN LẠI TÍCH LŨY
     print(f"  - use_extra_leave: {use_extra_leave}")
     
     # Chuyển giờ tăng ca sang ngày
     overtime_days = overtime_hours / 8
     
-    # TÍNH TOÁN BAN ĐẦU
-    # 1. Dùng phép năm bù ngày vắng (tối đa = ngày vắng)
-    ngay_phep_su_dung = min(ngay_nghi_phep_nam_da_dung, ngay_vang_ban_dau)
+    # TÍNH TOÁN BAN ĐẦU - DÙNG PHÉP NĂM CÒN LẠI TÍCH LŨY
+    # 1. Dùng phép năm bù ngày vắng (tối đa = ngày vắng VÀ tối đa = phép năm còn lại)
+    ngay_phep_su_dung = min(ngay_vang_ban_dau, phep_nam_kha_dung)
     
     # 2. Ngày vắng còn lại sau khi dùng phép năm
     ngay_vang_con_sau_phep = ngay_vang_ban_dau - ngay_phep_su_dung
@@ -75,16 +74,9 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
     # 4. Tính ngày công tạm thời
     ngay_cong_tam = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
     
-    print(f"📊 INTERMEDIATE CALCULATION:")
-    print(f"  - ngay_phep_su_dung: {ngay_phep_su_dung}")
-    print(f"  - ngay_vang_con_sau_phep: {ngay_vang_con_sau_phep}")
-    print(f"  - ngay_tang_ca_su_dung: {ngay_tang_ca_su_dung}")
-    print(f"  - ngay_cong_tam: {ngay_cong_tam}")
-    
     # 5. KIỂM TRA GIỚI HẠN: Không được vượt quá ngày công chuẩn
     if ngay_cong_tam > standard_days:
         vuot_qua = ngay_cong_tam - standard_days
-        print(f"  - VUOT QUA: {vuot_qua} ngày")
         
         if ngay_tang_ca_su_dung >= vuot_qua:
             ngay_tang_ca_su_dung -= vuot_qua
@@ -98,9 +90,6 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
             vuot_qua = 0
         
         ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
-        print(f"  - ADJUSTED - ngay_phep_su_dung: {ngay_phep_su_dung}")
-        print(f"  - ADJUSTED - ngay_tang_ca_su_dung: {ngay_tang_ca_su_dung}")
-        print(f"  - ADJUSTED - ngay_cong_cuoi: {ngay_cong_cuoi}")
     else:
         ngay_cong_cuoi = ngay_cong_tam
     
@@ -113,8 +102,8 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
     
     # 7. XỬ LÝ XÁC NHẬN THÊM PHÉP NĂM (nếu được yêu cầu)
     if use_extra_leave and ngay_vang_cuoi > 0:
-        # Tính số phép năm còn lại có thể dùng
-        phep_nam_con_lai_kha_dung = ngay_nghi_phep_nam_da_dung - ngay_phep_su_dung
+        # ✅ SỬA: Tính số phép năm còn lại có thể dùng = phép năm tích lũy - phép năm đã dùng trong lần này
+        phep_nam_con_lai_kha_dung = phep_nam_kha_dung - ngay_phep_su_dung
         
         print(f"  - EXTRA LEAVE - phep_nam_con_lai_kha_dung: {phep_nam_con_lai_kha_dung}")
         
@@ -130,11 +119,22 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
                 
             print(f"  - AFTER EXTRA LEAVE - ngay_phep_su_dung: {ngay_phep_su_dung}")
             print(f"  - AFTER EXTRA LEAVE - ngay_vang_cuoi: {ngay_vang_cuoi}")
+        else:
+            # Chỉ dùng được một phần phép năm còn lại
+            ngay_phep_su_dung += phep_nam_con_lai_kha_dung
+            ngay_vang_cuoi -= phep_nam_con_lai_kha_dung
+            ngay_cong_cuoi = original_days + ngay_phep_su_dung + ngay_tang_ca_su_dung
+            
+            # Kiểm tra lại không vượt quá chuẩn
+            if ngay_cong_cuoi > standard_days:
+                ngay_cong_cuoi = standard_days
+                
+            print(f"  - AFTER EXTRA LEAVE - ngay_phep_su_dung: {ngay_phep_su_dung}")
+            print(f"  - AFTER EXTRA LEAVE - ngay_vang_cuoi: {ngay_vang_cuoi}")
     
-    # 8. Tính toán kết quả cuối
+    # 8. Tính toán kết quả cuối - PHÉP NĂM CÒN LẠI TÍCH LŨY
     tang_ca_con_lai = overtime_hours - (ngay_tang_ca_su_dung * 8)
-    # ✅ SỬA: phep_nam_con_lai = phep_nam_kha_dung (không tính lại)
-    phep_nam_con_lai = phep_nam_kha_dung
+    phep_nam_con_lai_tich_luy = phep_nam_kha_dung - ngay_phep_su_dung  # ✅ TÍNH LẠI TỪ PHÉP NĂM TÍCH LŨY
 
     final_result = {
         'ngay_cong_cuoi': ngay_cong_cuoi,
@@ -143,17 +143,17 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
         'so_ngay_bu_tu_tang_ca': ngay_tang_ca_su_dung,
         'ngay_nghi_phep_nam_da_dung': ngay_phep_su_dung,
         'gio_tang_ca_da_dung': ngay_tang_ca_su_dung * 8,
-        'phep_nam_con_lai': phep_nam_con_lai,
-        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and (phep_nam_con_lai > 0) and not use_extra_leave,
+        'phep_nam_con_lai': phep_nam_con_lai_tich_luy,
+        'can_xac_nhan_them_phep': (ngay_vang_cuoi > 0) and (phep_nam_con_lai_tich_luy > 0) and not use_extra_leave,
         'ngay_vang_con_lai': ngay_vang_cuoi,
-        'phep_nam_kha_dung': phep_nam_con_lai  # ✅ DÙNG phep_nam_con_lai
+        'phep_nam_kha_dung': phep_nam_con_lai_tich_luy  # ✅ TRẢ VỀ PHÉP NĂM CÒN LẠI MỚI
     }
     
     print(f"🎯 FINAL RESULT:")
     print(f"  - ngay_cong_cuoi: {final_result['ngay_cong_cuoi']}")
     print(f"  - ngay_vang_cuoi: {final_result['ngay_vang_cuoi']}")
-    print(f"  - phep_nam_kha_dung: {final_result['phep_nam_kha_dung']}")  # ✅ SẼ LÀ 3.0
-    print(f"  - can_xac_nhan_them_phep: {final_result['can_xac_nhan_them_phep']}")  # ✅ SẼ LÀ True
+    print(f"  - phep_nam_kha_dung: {final_result['phep_nam_kha_dung']}")
+    print(f"  - can_xac_nhan_them_phep: {final_result['can_xac_nhan_them_phep']}")
     
     return final_result
 
