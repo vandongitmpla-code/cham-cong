@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", function(){
         handleConfirmAdjustment: typeof window.handleConfirmAdjustment,
         applyAdjustment: typeof window.applyAdjustment
     });
+    
 
     // Khởi tạo timesheet data
     (function(){
