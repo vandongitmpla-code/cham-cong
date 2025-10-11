@@ -513,7 +513,7 @@ def apply_adjustment():
         # ✅ TÍNH TOÁN ĐIỀU CHỈNH
         from .attendance_helpers import calculate_adjustment_details
         
-       @bp.route("/apply_adjustment", methods=["POST"])
+@bp.route("/apply_adjustment", methods=["POST"])
     def apply_adjustment(): 
         try:
             # ... code hiện tại ...
