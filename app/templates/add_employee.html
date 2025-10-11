@@ -1,105 +1,168 @@
 {% extends "base.html" %}
-{% block title %}Thêm Nhân viên{% endblock %}
+{% block title %}Thêm Nhân viên mới{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_system.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/employee_add.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="section-card">
-  <h2 class="section-title">Thêm Nhân viên mới</h2>
-
-  <form method="post" class="mt-3">
-    <div class="mb-3">
-      <label class="form-label">Mã số</label>
-      <input type="text" name="code" class="form-control" required>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Họ và tên</label>
-      <input type="text" name="name" class="form-control" required>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Tổ</label>
-      <input type="text" name="team" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Phòng ban</label>
-      <input type="text" name="department" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Loại HĐ</label>
-      <input type="text" name="contract_type" class="form-control">
+<div class="add-form-container">
+    <!-- Header -->
+    <div class="add-form-header">
+        <h1 class="add-form-title">Thêm Nhân viên mới</h1>
+        <p class="add-form-subtitle">Thêm thông tin nhân viên mới vào hệ thống</p>
     </div>
 
-    <!-- TRƯỜNG CHỌN THÁNG MỚI -->
-    <div class="mb-4">
-        <label class="form-label">📅 Tháng bắt đầu làm</label>
-        <input type="month" name="start_month" id="startMonth" 
-               class="form-control form-control-lg" 
-               onchange="updateInsuranceMonth()"
-               required>
-        <div class="form-text">Chọn tháng và năm nhân viên bắt đầu làm việc</div>
-    </div>
+    <form method="post" class="add-form">
+        <!-- Thông tin cơ bản -->
+        <div class="add-form-section">
+            <h3 class="add-form-section-title">Thông tin cơ bản</h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group-add">
+                        <label class="form-label-add">MÃ SỐ</label>
+                        <input type="text" name="code" class="form-control-add" required
+                               placeholder="Nhập mã số nhân viên">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group-add">
+                        <label class="form-label-add">HỌ VÀ TÊN</label>
+                        <input type="text" name="name" class="form-control-add" required
+                               placeholder="Nhập họ và tên đầy đủ">
+                    </div>
+                </div>
+            </div>
 
-    <div class="mb-4">
-        <div id="insuranceLabel">
-            <!-- Hiển thị thông báo bảo hiểm sẽ xuất hiện ở đây -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group-add">
+                        <label class="form-label-add">TỔ</label>
+                        <input type="text" name="team" class="form-control-add"
+                               placeholder="Ví dụ: VP R&D">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group-add">
+                        <label class="form-label-add">PHÒNG BAN</label>
+                        <input type="text" name="department" class="form-control-add"
+                               placeholder="Ví dụ: R&D">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group-add">
+                        <label class="form-label-add">LOẠI HĐ</label>
+                        <input type="text" name="contract_type" class="form-control-add"
+                               placeholder="Ví dụ: HDLD">
+                    </div>
+                </div>
+            </div>
         </div>
-        <input type="hidden" name="insurance_start_month" id="insuranceMonth">
-    </div>
 
-    <button type="submit" class="btn btn-primary btn-lg w-100">
-        <i class="bi bi-check-circle"></i> Lưu thông tin
-    </button>
-</form>
+        <!-- Thông tin chấm công & bảo hiểm -->
+        <div class="add-form-section">
+            <h3 class="add-form-section-title">Thông tin chấm công & bảo hiểm</h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group-add">
+                        <label class="form-label-add">MÃ CHẤM CÔNG</label>
+                        <input type="text" name="att_code" class="form-control-add"
+                               placeholder="Nhập mã máy chấm công">
+                        <span class="form-helper-add">Mã sử dụng cho máy chấm công</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group-add">
+                        <label class="form-label-add">THÁNG BẮT ĐẦU LÀM</label>
+                        <div class="month-input-wrapper-add">
+                            <input type="month" name="start_month" id="addStartMonth" 
+                                   class="form-control-add"
+                                   onchange="updateAddInsuranceMonth()">
+                        </div>
+                        <span class="form-helper-add">Chọn tháng và năm nhân viên bắt đầu làm việc</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hiển thị tháng bảo hiểm -->
+            <div class="row">
+                <div class="col-12">
+                    <div id="addInsuranceLabel">
+                        <div class="insurance-display-add insurance-display-empty">
+                            <i class="bi bi-shield-exclamation"></i>
+                            Chưa có thông tin bảo hiểm
+                        </div>
+                    </div>
+                    <input type="hidden" name="insurance_start_month" id="addInsuranceMonth">
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section (Optional) -->
+        <div class="upload-section-add">
+            <div class="upload-icon-add">
+                <i class="bi bi-cloud-upload"></i>
+            </div>
+            <div class="upload-title-add">Upload</div>
+            <div class="upload-description-add">
+                Tải lên file Excel chứa thông tin nhân viên (Hỗ trợ .xlsx, .csv)
+            </div>
+            <button type="button" class="btn-upload-add">
+                <i class="bi bi-file-earmark-excel"></i> Chọn file
+            </button>
+        </div>
+
+        <!-- Form actions -->
+        <div class="form-actions-add">
+            <button type="submit" class="btn-add-primary">
+                <i class="bi bi-check-circle"></i> Lưu thông tin
+            </button>
+            <a href="{{ url_for('main.employees') }}" class="btn-add-secondary">
+                <i class="bi bi-x-circle"></i> Hủy bỏ
+            </a>
+        </div>
+    </form>
 </div>
 
 <script>
-function updateInsuranceMonth() {
-    const startMonth = document.getElementById('startMonth').value;
-    const insuranceLabel = document.getElementById('insuranceLabel');
-    const insuranceMonth = document.getElementById('insuranceMonth');
+function updateAddInsuranceMonth() {
+    const startMonthInput = document.getElementById('addStartMonth');
+    const insuranceMonthInput = document.getElementById('addInsuranceMonth');
+    const insuranceLabel = document.getElementById('addInsuranceLabel');
     
-    if (startMonth) {
-        const [year, month] = startMonth.split('-');
-        const insuranceMonthFormatted = `${month}/${year}`;
+    if (startMonthInput.value) {
+        // Tính tháng bảo hiểm (tháng làm việc + 1)
+        const startDate = new Date(startMonthInput.value + '-01');
+        startDate.setMonth(startDate.getMonth() + 1);
         
-        // Cập nhật label với hiệu ứng
-        insuranceLabel.innerHTML = `
-            <div class="insurance-display show">
-                📅 Bắt đầu đóng bảo hiểm từ tháng: <strong>${insuranceMonthFormatted}</strong>
-            </div>
-        `;
-        insuranceMonth.value = startMonth;
+        const insuranceYear = startDate.getFullYear();
+        const insuranceMonth = String(startDate.getMonth() + 1).padStart(2, '0');
+        const insuranceDate = `${insuranceYear}-${insuranceMonth}`;
         
-        // Tự động focus vào nút Lưu để người dùng dễ thấy
-        setTimeout(() => {
-            document.querySelector('button[type="submit"]').scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
-        }, 300);
+        insuranceMonthInput.value = insuranceDate;
         
+        // Cập nhật hiển thị
+        const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
+                           'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        const displayText = `<div class="insurance-display-add">
+            <i class="bi bi-shield-check"></i>
+            Bắt đầu đóng bảo hiểm từ: <strong>${monthNames[insuranceMonth - 1]} năm ${insuranceYear}</strong>
+        </div>`;
+        
+        insuranceLabel.innerHTML = displayText;
     } else {
-        insuranceLabel.innerHTML = 'Bắt đầu đóng bảo hiểm từ tháng: ';
-        insuranceMonth.value = '';
+        insuranceMonthInput.value = '';
+        insuranceLabel.innerHTML = '<div class="insurance-display-add insurance-display-empty"><i class="bi bi-shield-exclamation"></i>Chưa có thông tin bảo hiểm</div>';
     }
 }
 
-// Thêm sự kiện khi trang load xong
+// Khởi tạo khi trang load
 document.addEventListener('DOMContentLoaded', function() {
-    const startMonthInput = document.getElementById('startMonth');
-    
-    // Tự động kích hoạt nếu có giá trị mặc định (trong trường hợp edit)
-    if (startMonthInput.value) {
-        updateInsuranceMonth();
-    }
-    
-    // Thêm placeholder cho input month
-    startMonthInput.addEventListener('focus', function() {
-        if (!this.value) {
-            this.setAttribute('placeholder', 'Chọn tháng/năm');
-        }
-    });
-    
-    startMonthInput.addEventListener('blur', function() {
-        this.removeAttribute('placeholder');
-    });
+    // Focus vào ô mã số đầu tiên
+    document.querySelector('input[name="code"]').focus();
 });
 </script>
 {% endblock %}
