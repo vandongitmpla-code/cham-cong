@@ -1,72 +1,158 @@
 {% extends "base.html" %}
 {% block title %}Danh sách nhân viên{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/form_system.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/employees.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="section-card">
-  <div class="d-flex justify-content-between align-items-center">
-    <h2 class="section-title">Danh sách nhân viên</h2>
-    <a href="{{ url_for('main.add_employee') }}" class="btn btn-success">
-      <i class="bi bi-plus-circle"></i> Thêm mới
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="section-title">Danh sách nhân viên</h2>
+      <p class="text-muted mb-0">Quản lý thông tin nhân viên và mã chấm công</p>
+    </div>
+    <a href="{{ url_for('main.add_employee') }}" class="btn btn-success btn-lg">
+      <i class="bi bi-plus-circle"></i> Thêm nhân viên
     </a>
   </div>
 
-  <table class="table table-bordered mt-3">
-    <thead>
-      <tr>
-        <th>Mã số</th>
-        <th>Họ và tên</th>
-        <th>Tổ</th>
-        <th>Phòng ban</th>
-        <th>Loại HĐ</th>
-        <th>Bắt đầu làm</th>
-        <th>Bắt đầu BH</th>
-        <th>Mã chấm công</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for emp in employees %}
-      <tr>
-        <td>{{ emp.code }}</td>
-        <td>{{ emp.name }}</td>
-        <td>{{ emp.team }}</td>
-        <td>{{ emp.department }}</td>
-        <td>{{ emp.contract_type }}</td>
-        <td>
-          {% if emp.start_month %}
-            {{ emp.start_month[5:7] }}/{{ emp.start_month[:4] }}
-          {% else %}
-            -
-          {% endif %}
-        </td>
-        <td>
-          {% if emp.insurance_start_month %}
-            {{ emp.insurance_start_month[5:7] }}/{{ emp.insurance_start_month[:4] }}
-          {% else %}
-            -
-          {% endif %}
-        </td>
-        <td>
-          <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" class="d-flex">
-            <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
-                   class="form-control form-control-sm me-1" placeholder="Nhập mã">
-            <button type="submit" class="btn btn-sm btn-primary">
-              <i class="bi bi-save"></i>
-            </button>
-          </form>
-        </td>
-        <td>
-          <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="btn btn-sm btn-warning mb-1">
-            <i class="bi bi-pencil"></i> Sửa
-          </a>
-          <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
-              <i class="bi bi-trash"></i> Xóa
-            </button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <!-- Thống kê nhanh -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-number">{{ employees|length }}</div>
+        <div class="stat-label">Tổng nhân viên</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-number">{{ employees|selectattr('att_code')|list|length }}</div>
+        <div class="stat-label">Đã có mã chấm công</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lưới nhân viên dạng card -->
+  {% if employees %}
+  <div class="employees-grid">
+    {% for emp in employees %}
+    <div class="employee-card">
+      <!-- Header -->
+      <div class="employee-header">
+        <div class="employee-avatar">
+          {{ emp.name[0] if emp.name }}
+        </div>
+        <div class="employee-basic-info">
+          <div class="employee-code">#{{ emp.code }}</div>
+          <div class="employee-name">{{ emp.name }}</div>
+          <div class="employee-status status-active">
+            <i class="bi bi-circle-fill me-1"></i> Đang làm việc
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông tin chi tiết -->
+      <div class="employee-details">
+        <div class="detail-item">
+          <span class="detail-label">Tổ:</span>
+          <span class="detail-value">{{ emp.team or 'Chưa cập nhật' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Phòng ban:</span>
+          <span class="detail-value">{{ emp.department or 'Chưa cập nhật' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Loại HĐ:</span>
+          <span class="detail-value">{{ emp.contract_type or 'Chưa cập nhật' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Bắt đầu làm:</span>
+          <span class="detail-value">
+            {% if emp.start_month %}
+              {{ emp.start_month[5:7] }}/{{ emp.start_month[:4] }}
+            {% else %}
+              Chưa cập nhật
+            {% endif %}
+          </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Bắt đầu BH:</span>
+          <span class="detail-value">
+            {% if emp.insurance_start_month %}
+              {{ emp.insurance_start_month[5:7] }}/{{ emp.insurance_start_month[:4] }}
+            {% else %}
+              Chưa cập nhật
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <!-- Form mã chấm công -->
+      <div class="att-code-form">
+        <div class="att-code-label">Mã chấm công</div>
+        <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" class="att-code-input-group">
+          <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
+                 class="att-code-input" placeholder="Nhập mã máy chấm công">
+          <button type="submit" class="att-code-btn" title="Lưu mã chấm công">
+            <i class="bi bi-save"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Actions -->
+      <div class="employee-actions">
+        <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="action-btn action-btn-edit">
+          <i class="bi bi-pencil"></i> Sửa
+        </a>
+        <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display: inline;">
+          <button type="submit" class="action-btn action-btn-delete" 
+                  onclick="return confirm('Bạn có chắc chắn muốn xóa nhân viên {{ emp.name }}?')">
+            <i class="bi bi-trash"></i> Xóa
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <!-- Empty state -->
+  <div class="employees-empty">
+    <div class="employees-empty-icon">
+      <i class="bi bi-people"></i>
+    </div>
+    <div class="employees-empty-text">Chưa có nhân viên nào</div>
+    <p class="text-muted">Hãy thêm nhân viên đầu tiên để bắt đầu quản lý</p>
+    <a href="{{ url_for('main.add_employee') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Thêm nhân viên đầu tiên
+    </a>
+  </div>
+  {% endif %}
 </div>
+
+<style>
+/* Additional styles for statistics */
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #3b82f6;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+</style>
 {% endblock %}
