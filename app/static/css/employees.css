@@ -337,7 +337,10 @@
     transition: all 0.3s ease;
     margin: 2rem auto 0 auto;
 }
-
+.btn-primary-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+}
 /* Stats grid cân đối */
 .stats-grid-modern {
     display: grid;
