@@ -170,32 +170,8 @@
               </td>
 
             {% elif colname == "Số ngày phép còn tồn" %}
-              <td class="text-success fw-bold">
-                {{ cell }}
-              </td>
-
-            {% elif colname in ["Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)", 
-                               "Số giờ làm việc tăng ca (ngày lễ)",
-                               "Số giờ làm việc tăng ca (ngày làm trong tuần)"] %}
-              <td class="fw-bold text-primary">
-                {{ cell }}
-              </td>
-
-            {% elif colname == "Ghi chú" %}
-              <td class="note-cell" data-emp="{{ row[1] }}">
-                {% if cell == "ICON_ONLY" or (cell is string and cell.endswith("|||ICON")) %}
-                  {% if cell != "ICON_ONLY" %}
-                    {{ cell.replace("|||ICON", "") }}
-                  {% endif %}
-                  <i class="bi bi-pencil-square text-primary ms-1 note-icon"
-                    title="Thêm ghi chú"
-                    style="cursor:pointer;"></i>
-                  <input type="text"
-                        class="note-input form-control form-control-sm mt-1 d-none"
-                        placeholder="Nhập ghi chú...">
-                {% else %}
-                  {{ cell }}
-                {% endif %}
+  {% include "partials/_remaining_leave_cell.html" %}
+{% endif %}
               </td>
 
             {% else %}
