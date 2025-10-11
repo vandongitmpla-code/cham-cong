@@ -1,0 +1,308 @@
+/* form_system.css - Hệ thống form chung cho dự án */
+
+/* ====== FORM BASE STYLES ====== */
+.form-system {
+    max-width: 100%;
+}
+
+.form-system .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-system .form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-system .form-control {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #ffffff;
+}
+
+.form-system .form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.form-system .form-control:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* ====== FORM VARIANTS ====== */
+.form-system .form-control-success {
+    border-color: #10b981;
+}
+
+.form-system .form-control-error {
+    border-color: #ef4444;
+}
+
+.form-system .form-control-warning {
+    border-color: #f59e0b;
+}
+
+/* ====== FORM SIZES ====== */
+.form-system .form-control-sm {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+}
+
+.form-system .form-control-lg {
+    padding: 16px 20px;
+    font-size: 1.125rem;
+}
+
+/* ====== FORM ELEMENTS ====== */
+.form-system select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.form-system textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* ====== FORM VALIDATION ====== */
+.form-system .form-text {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-system .invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #ef4444;
+}
+
+.form-system .was-validated .form-control:invalid ~ .invalid-feedback,
+.form-system .form-control.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+.form-system .was-validated .form-control:invalid,
+.form-system .form-control.is-invalid {
+    border-color: #ef4444;
+}
+
+.form-system .was-validated .form-control:valid,
+.form-system .form-control.is-valid {
+    border-color: #10b981;
+}
+
+/* ====== FORM LAYOUTS ====== */
+.form-system .row {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+}
+
+.form-system .row > [class*="col-"] {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+.form-system .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+}
+
+.form-system .form-row > [class*="col-"] {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* ====== INPUT GROUPS ====== */
+.form-system .input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+
+.form-system .input-group .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+}
+
+.form-system .input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #374151;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.form-system .input-group > .form-control:not(:first-child),
+.form-system .input-group > .input-group-text:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+}
+
+.form-system .input-group > .form-control:not(:last-child),
+.form-system .input-group > .input-group-text:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* ====== FORM SECTIONS ====== */
+.form-system .form-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.form-system .form-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+/* ====== BUTTONS IN FORMS ====== */
+.form-system .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 2rem;
+}
+
+.form-system .btn-form {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.form-system .btn-form-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.form-system .btn-form-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.form-system .btn-form-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.form-system .btn-form-secondary:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+}
+
+/* ====== SPECIAL FORM ELEMENTS ====== */
+.form-system .month-input-wrapper {
+    position: relative;
+}
+
+.form-system .month-input-wrapper::after {
+    content: "📅";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.form-system .insurance-display {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 1rem;
+    color: #0369a1;
+    font-weight: 500;
+}
+
+.form-system .insurance-display.vietnamese {
+    font-size: 0.95rem;
+}
+
+/* ====== RESPONSIVE DESIGN ====== */
+@media (max-width: 768px) {
+    .form-system .form-section {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-system .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-system .btn-form {
+        width: 100%;
+    }
+    
+    .form-system .row > [class*="col-"] {
+        margin-bottom: 1rem;
+    }
+}
+
+/* ====== DARK MODE SUPPORT ====== */
+@media (prefers-color-scheme: dark) {
+    .form-system .form-control {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+    }
+    
+    .form-system .form-label {
+        color: #f9fafb;
+    }
+    
+    .form-system .form-section {
+        background: #374151;
+        border-color: #4b5563;
+    }
+    
+    .form-system .input-group-text {
+        background: #4b5563;
+        border-color: #6b7280;
+        color: #f9fafb;
+    }
+}
