@@ -3,27 +3,62 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/timesheet.css') }}">
 {% endblock %}
+
 {% block content %}
 <div class="timesheet-wrapper">
-  <h2 class="page-title">Bảng chấm công bằng máy</h2>
-  <div class="timesheet-period">
-    <strong>Kỳ công:</strong> {{ att_meta.period }}
+  <!-- Header Section -->
+  <div class="timesheet-header">
+    <div class="timesheet-header-content">
+      <h1 class="timesheet-title">Bảng chấm công bằng máy</h1>
+      <div class="timesheet-period">
+        <i class="bi bi-calendar-week"></i>
+        <strong>Kỳ công:</strong> {{ att_meta.period }}
+      </div>
+    </div>
+    
+    <div class="timesheet-info">
+      <div class="timesheet-filename">
+        <i class="bi bi-file-earmark-excel"></i>
+        {{ filename }}
+      </div>
+    </div>
   </div>
-  <div class="d-flex justify-content-end mb-2">
-  <a href="{{ url_for('main.payroll', filename=filename) }}" class="btn btn-primary">
-    <i class="bi bi-table"></i> Bảng công tính lương
-  </a>
 
-  <form method="POST" action="{{ url_for('main.import_payroll', filename=filename) }}" class="ms-2">
-    <button type="submit" class="btn btn-success">
-      <i class="bi bi-database"></i> Import dữ liệu vào Database
-    </button>
-  </form>
-</div>
+  <!-- Actions Section -->
+  <div class="timesheet-actions">
+    <a href="{{ url_for('main.payroll', filename=filename) }}" class="btn btn-report-primary">
+      <i class="bi bi-calculator"></i> Bảng công tính lương
+    </a>
 
+    <form method="POST" action="{{ url_for('main.import_payroll', filename=filename) }}" class="ms-2">
+      <button type="submit" class="btn btn-report-success">
+        <i class="bi bi-database-add"></i> Import vào Database
+      </button>
+    </form>
+  </div>
 
+  <!-- Table Controls (Optional - có thể thêm filter sau) -->
+  <div class="timesheet-controls">
+    <div class="control-group">
+      <span class="control-label">Hiển thị:</span>
+      <select class="control-select" id="rowCountSelect">
+        <option value="50">50 dòng</option>
+        <option value="100">100 dòng</option>
+        <option value="all">Tất cả</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Phòng ban:</span>
+      <select class="control-select" id="departmentFilter">
+        <option value="all">Tất cả</option>
+        <!-- Có thể thêm options department dynamic sau -->
+      </select>
+    </div>
+  </div>
+
+  <!-- Table Container -->
   <div class="timesheet-table-container">
-    <table class="table table-bordered table-hover timesheet-table">
+    <table class="timesheet-table">
       <thead>
         <tr>
           <th>Chi tiết</th>
@@ -35,20 +70,284 @@
       <tbody>
         {% for row in rows %}
         <tr>
+          <!-- Detail Button -->
           <td>
             <button 
-              class="btn btn-detail"
-              data-emp='{{ {"Mã": row[0], "Tên": row[1], "Phòng ban": row[2], "days": row[3:] } | tojson }}'>
+              class="btn-detail"
+              data-emp='{{ {"Mã": row[0], "Tên": row[1], "Phòng ban": row[2], "days": row[3:] } | tojson }}'
+              title="Xem chi tiết nhân viên">
               <i class="bi bi-eye"></i>
             </button>
           </td>
+          
+          <!-- Data Cells -->
           {% for cell in row %}
-          <td>{{ cell|safe }}</td>
+          <td>
+            {% if loop.index0 >= 3 %} {# Assuming days start from index 3 #}
+              {% if cell == 'P' or cell == 'C' %}
+                <span class="status-present">{{ cell }}</span>
+              {% elif cell == 'A' or cell == 'V' %}
+                <span class="status-absent">{{ cell }}</span>
+              {% elif cell == 'L' or ':' in cell %} {# Late or time entry #}
+                <span class="status-late">{{ cell }}</span>
+              {% else %}
+                {{ cell|safe }}
+              {% endif %}
+            {% else %}
+              {{ cell|safe }}
+            {% endif %}
+          </td>
           {% endfor %}
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+
+  <!-- Summary Section -->
+  <div class="timesheet-summary">
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <div class="summary-number">{{ rows|length }}</div>
+        <div class="summary-label">Tổng nhân viên</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-number">{{ cols[3:]|length }}</div>
+        <div class="summary-label">Ngày làm việc</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-number">{{ att_meta.period }}</div>
+        <div class="summary-label">Kỳ công</div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Employee Detail Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Chi tiết chấm công</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="employeeDetailContent">
+          <!-- Dynamic content will be loaded here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-report-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Employee detail modal functionality
+  const detailButtons = document.querySelectorAll('.btn-detail');
+  const employeeModal = new bootstrap.Modal(document.getElementById('employeeModal'));
+  const detailContent = document.getElementById('employeeDetailContent');
+
+  detailButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const empData = JSON.parse(this.getAttribute('data-emp'));
+      
+      // Create modal content
+      let content = `
+        <div class="employee-detail">
+          <div class="detail-header">
+            <h4>${empData.Tên}</h4>
+            <div class="detail-meta">
+              <span class="badge bg-primary">${empData.Mã}</span>
+              <span class="badge bg-secondary">${empData['Phòng ban']}</span>
+            </div>
+          </div>
+          <div class="detail-stats">
+            <div class="stat-item">
+              <span class="stat-label">Tổng ngày:</span>
+              <span class="stat-value">${empData.days.length}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Có mặt:</span>
+              <span class="stat-value">${empData.days.filter(day => day === 'P' || day === 'C').length}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Vắng:</span>
+              <span class="stat-value">${empData.days.filter(day => day === 'A' || day === 'V').length}</span>
+            </div>
+          </div>
+          <div class="detail-days">
+            <h6>Chi tiết từng ngày:</h6>
+            <div class="days-grid">
+      `;
+      
+      empData.days.forEach((day, index) => {
+        let dayClass = 'day-present';
+        if (day === 'A' || day === 'V') dayClass = 'day-absent';
+        if (day === 'L' || day.includes(':')) dayClass = 'day-late';
+        
+        content += `<span class="day ${dayClass}" title="Ngày ${index + 1}">${day}</span>`;
+      });
+      
+      content += `
+            </div>
+          </div>
+        </div>
+      `;
+      
+      detailContent.innerHTML = content;
+      employeeModal.show();
+    });
+  });
+
+  // Row count selector
+  const rowCountSelect = document.getElementById('rowCountSelect');
+  if (rowCountSelect) {
+    rowCountSelect.addEventListener('change', function() {
+      // Implementation for row count filtering
+      console.log('Selected row count:', this.value);
+    });
+  }
+
+  // Department filter
+  const departmentFilter = document.getElementById('departmentFilter');
+  if (departmentFilter) {
+    departmentFilter.addEventListener('change', function() {
+      // Implementation for department filtering
+      console.log('Selected department:', this.value);
+    });
+  }
+
+  // Add loading state when importing
+  const importForm = document.querySelector('form[action*="import_payroll"]');
+  if (importForm) {
+    importForm.addEventListener('submit', function(e) {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang import...';
+      submitBtn.disabled = true;
+    });
+  }
+});
+</script>
+
+<style>
+/* Additional styles for the modal and summary */
+.timesheet-summary {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.summary-stat {
+  text-align: center;
+  padding: 1rem;
+}
+
+.summary-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2563eb;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Employee detail modal styles */
+.employee-detail {
+  padding: 1rem 0;
+}
+
+.detail-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.detail-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.detail-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.day {
+  padding: 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.day-present {
+  background: rgba(16, 185, 129, 0.1);
+  color: #065f46;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.day-absent {
+  background: rgba(239, 68, 68, 0.1);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.day-late {
+  background: rgba(245, 158, 11, 0.1);
+  color: #92400e;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+</style>
 {% endblock %}
