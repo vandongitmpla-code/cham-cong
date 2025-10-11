@@ -481,13 +481,14 @@
 /* THÊM VÀO CUỐI FILE employees.css */
 .section-card {
     background: #ffffff;
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
-    margin: 0 auto 2rem auto; /* CĂN GIỮA */
-    max-width: 1300px; /* ĐỘ RỘNG TỐI ĐA */
-    width: 95%; /* CHIẾM 95% KHÔNG GIAN */
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    margin: 0 auto 2rem auto;
+    max-width: 1200px;
+    width: 95%;
+    text-align: center;
 }
 
 /* CĂN GIỮA TOÀN BỘ NỘI DUNG */
