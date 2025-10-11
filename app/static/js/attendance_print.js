@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function(){
 document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
     console.log('🎯 CONFIRM BUTTON CLICKED - EVENT LISTENER FIRED!');
     e.preventDefault();
-     window.handleConfirmAdjustment();
+    window.handleConfirmAdjustment();
     });
 
     // ✅ HÀM TÍNH TOÁN ĐIỀU CHỈNH MỚI (ĐỒNG BỘ VỚI BACKEND)
