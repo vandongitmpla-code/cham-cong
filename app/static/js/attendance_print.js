@@ -526,3 +526,4 @@ document.addEventListener("DOMContentLoaded", function(){
         console.log('❌ Confirm button NOT FOUND after DOM loaded!');
     }
 });
+
