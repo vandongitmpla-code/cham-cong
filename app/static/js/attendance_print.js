@@ -488,5 +488,5 @@ document.addEventListener('click', function(e) {
 });
 
 
-
+// remaining_leave.js - JavaScript cho phép năm còn tồn
 <script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
