@@ -521,7 +521,18 @@ def apply_adjustment():
             ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
             use_extra_leave=use_extra_leave
         )
-        
+         # ✅ THÊM DEBUG CHI TIẾT
+        print(f"🔍 DEBUG ADJUSTMENT DETAILS:")
+        print(f"  - original_days: {original_days}")
+        print(f"  - standard_days: {ngay_cong_chuan}")
+        print(f"  - current_absence: {current_absence}")
+        print(f"  - overtime_hours: {overtime_hours}")
+        print(f"  - ngay_nghi_phep_nam_da_dung: {ngay_nghi_phep_nam_da_dung}")
+        print(f"  - use_extra_leave: {use_extra_leave}")
+        print(f"  - RESULT - ngay_cong_cuoi: {result['ngay_cong_cuoi']}")
+        print(f"  - RESULT - ngay_vang_cuoi: {result['ngay_vang_cuoi']}")
+        print(f"  - RESULT - phep_nam_kha_dung: {result['phep_nam_kha_dung']}")
+        print(f"  - RESULT - can_xac_nhan_them_phep: {result['can_xac_nhan_them_phep']}")
         print(f"DEBUG: Calculation result - ngay_vang_con_lai: {result.get('ngay_vang_con_lai')}, phep_nam_kha_dung: {result.get('phep_nam_kha_dung')}")
 
         # ✅ KIỂM TRA CÓ CẦN XÁC NHẬN THÊM PHÉP NĂM KHÔNG
