@@ -513,7 +513,7 @@ def apply_adjustment():
         # ✅ TÍNH TOÁN ĐIỀU CHỈNH
         from .attendance_helpers import calculate_adjustment_details
         
-        result = calculate_adjustment_details(
+    result = calculate_adjustment_details(
             original_days=original_days,
             standard_days=ngay_cong_chuan,
             ngay_vang_ban_dau=current_absence,
