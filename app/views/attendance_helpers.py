@@ -133,7 +133,8 @@ def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau
     
     # 8. Tính toán kết quả cuối
     tang_ca_con_lai = overtime_hours - (ngay_tang_ca_su_dung * 8)
-    phep_nam_con_lai = ngay_nghi_phep_nam_da_dung - ngay_phep_su_dung
+    # ✅ SỬA: phep_nam_con_lai = phep_nam_kha_dung (không tính lại)
+    phep_nam_con_lai = phep_nam_kha_dung
 
     final_result = {
         'ngay_cong_cuoi': ngay_cong_cuoi,
