@@ -209,9 +209,9 @@
 /* ====== FORM ELEMENTS ====== */
 .input-group-compact {
     display: flex;
-    gap: 0.375rem;
     align-items: center;
-    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .input-compact {
