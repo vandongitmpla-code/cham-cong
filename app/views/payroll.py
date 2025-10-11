@@ -524,14 +524,14 @@ def apply_adjustment():
         from .attendance_helpers import calculate_adjustment_details
         
         result = calculate_adjustment_details(
-    original_days=original_days,
-    standard_days=ngay_cong_chuan,
-    ngay_vang_ban_dau=current_absence,
-    overtime_hours=overtime_hours,
-    ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
-    phep_nam_kha_dung=phep_nam_kha_dung,  # ✅ THÊM THAM SỐ NÀY
-    use_extra_leave=use_extra_leave
-)
+        original_days=original_days,
+        standard_days=ngay_cong_chuan,
+        ngay_vang_ban_dau=current_absence,
+        overtime_hours=overtime_hours,
+        ngay_nghi_phep_nam_da_dung=ngay_nghi_phep_nam_da_dung,
+        phep_nam_kha_dung=phep_nam_kha_dung,  # ✅ THÊM THAM SỐ NÀY
+        use_extra_leave=use_extra_leave
+    )
          # ✅ THÊM DEBUG CHI TIẾT
         print(f"🔍 DEBUG ADJUSTMENT DETAILS:")
         print(f"  - original_days: {original_days}")
