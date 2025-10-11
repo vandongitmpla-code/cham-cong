@@ -165,15 +165,37 @@ class NotificationSystem {
 
     // ====== FLASH MESSAGE SUPPORT ======
     showFlashMessages() {
-        // Tự động hiển thị flash messages từ Flask
-        const flashMessages = document.querySelectorAll('.alert');
-        flashMessages.forEach(alert => {
+    // CHỈ hiển thị flash messages thực sự, không hiển thị phần cố định
+    const flashMessages = document.querySelectorAll('.alert');
+    
+    flashMessages.forEach(alert => {
+        // Kiểm tra xem có phải là flash message thực sự không
+        const isRealFlashMessage = 
+            alert.textContent.includes('✅') ||
+            alert.textContent.includes('❌') ||
+            alert.textContent.includes('Đã') ||
+            alert.textContent.includes('thành công') ||
+            alert.textContent.includes('lỗi') ||
+            alert.textContent.includes('Lỗi') ||
+            alert.textContent.match(/\b(reset|cập nhật|thêm|xóa)\b/i);
+        
+        // Loại trừ phần giải thích công thức
+        const isFormulaExplanation = 
+            alert.textContent.includes('công thức') ||
+            alert.textContent.includes('Ngày công thực tế') ||
+            alert.textContent.includes('Ngày nghỉ cuối') ||
+            alert.textContent.includes('Giới hạn') ||
+            alert.closest('.bg-light') || // Phần có nền light
+            alert.closest('.border-rounded'); // Phần có border rounded
+        
+        if (isRealFlashMessage && !isFormulaExplanation) {
             const type = this.detectFlashType(alert);
             const message = alert.textContent.trim();
             this.show(message, type);
             alert.remove(); // Xóa flash message gốc
-        });
-    }
+        }
+    });
+}
 
     detectFlashType(alertElement) {
         const classList = alertElement.className;
