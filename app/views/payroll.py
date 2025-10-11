@@ -488,22 +488,22 @@ def apply_adjustment():
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
         # ✅ LẤY THÔNG TIN PHÉP NĂM
-paid_leave = PaidLeave.query.filter_by(
-    employee_id=emp.id,
-    period=period
-).first()
+        paid_leave = PaidLeave.query.filter_by(
+            employee_id=emp.id,
+            period=period
+        ).first()
 
-# ✅ SỬA: Dùng remaining_leave_days từ database thay vì tính toán
-if paid_leave:
-    ngay_nghi_phep_nam_da_dung = paid_leave.leave_days_used
-    phep_nam_kha_dung = paid_leave.remaining_leave_days  # ✅ DÙNG GIÁ TRỊ TỪ DATABASE
-else:
-    ngay_nghi_phep_nam_da_dung = 0
-    # Nếu chưa có paid_leave record, tính từ tháng bắt đầu
-    thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_duoc_huong = calculate_leave_info(emp, period)
-    phep_nam_kha_dung = so_ngay_phep_duoc_huong
+        # ✅ SỬA: Dùng remaining_leave_days từ database thay vì tính toán
+        if paid_leave:
+            ngay_nghi_phep_nam_da_dung = paid_leave.leave_days_used
+            phep_nam_kha_dung = paid_leave.remaining_leave_days  # ✅ DÙNG GIÁ TRỊ TỪ DATABASE
+        else:
+            ngay_nghi_phep_nam_da_dung = 0
+            # Nếu chưa có paid_leave record, tính từ tháng bắt đầu
+            thang_bat_dau_tinh_phep, so_thang_duoc_huong, so_ngay_phep_duoc_huong = calculate_leave_info(emp, period)
+            phep_nam_kha_dung = so_ngay_phep_duoc_huong
 
-print(f"DEBUG PHÉP NĂM: đã_dùng={ngay_nghi_phep_nam_da_dung}, còn_lại={phep_nam_kha_dung}")
+        print(f"DEBUG PHÉP NĂM: đã_dùng={ngay_nghi_phep_nam_da_dung}, còn_lại={phep_nam_kha_dung}")
 
         # ✅ TÍNH NGÀY CÔNG CHUẨN
         year, month = map(int, period.split('-'))
