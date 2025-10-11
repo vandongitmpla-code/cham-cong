@@ -1,57 +1,89 @@
-// notifications.js - Hệ thống quản lý thông báo
+// notifications_system.js - Hệ thống quản lý thông báo chuyên nghiệp
 
 class NotificationSystem {
     constructor() {
         this.container = null;
+        this.defaultOptions = {
+            autoDismiss: true,
+            dismissTime: 5000,
+            icon: true,
+            position: 'top-right',
+            animation: 'slideInDown'
+        };
         this.init();
     }
 
     init() {
-        // Tạo container nếu chưa có
-        if (!document.querySelector('.notification-container')) {
-            this.createContainer();
-        }
-        this.container = document.querySelector('.notification-container');
+        this.createContainer();
+        this.setupGlobalStyles();
+        console.log('🎯 Notification System initialized');
     }
 
     createContainer() {
+        // Kiểm tra nếu container đã tồn tại
+        if (document.querySelector('.notification-container')) {
+            this.container = document.querySelector('.notification-container');
+            return;
+        }
+
         const container = document.createElement('div');
         container.className = 'notification-container';
+        container.setAttribute('aria-live', 'polite');
+        container.setAttribute('aria-atomic', 'true');
         document.body.appendChild(container);
+        this.container = container;
+    }
+
+    setupGlobalStyles() {
+        // Đảm bảo CSS đã được load
+        if (!document.querySelector('link[href*="notifications_system.css"]')) {
+            console.warn('⚠️ notifications_system.css chưa được load');
+        }
     }
 
     show(message, type = 'success', options = {}) {
-        const {
-            autoDismiss = true,
-            dismissTime = 5000,
-            icon = true,
-            position = 'top-right'
-        } = options;
-
-        const alertId = 'alert-' + Date.now();
+        const config = { ...this.defaultOptions, ...options };
+        const alertId = 'notification-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        
         const iconClass = this.getIconClass(type);
-        const iconHtml = icon ? `<i class="bi ${iconClass} custom-alert-icon"></i>` : '';
+        const iconHtml = config.icon ? `<i class="bi ${iconClass} custom-alert-icon"></i>` : '';
 
         const alertHtml = `
-            <div id="${alertId}" class="custom-alert custom-alert-${type} alert-dismissible fade show ${autoDismiss ? 'auto-dismiss' : ''}" role="alert">
+            <div id="${alertId}" 
+                 class="custom-alert custom-alert-${type} alert-dismissible fade show ${config.autoDismiss ? 'auto-dismiss' : ''} floating-notification" 
+                 role="alert" 
+                 aria-live="assertive"
+                 aria-atomic="true">
                 <div class="custom-alert-content">
                     ${iconHtml}
                     <div class="custom-alert-message">${message}</div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="notificationSystem.remove('${alertId}')"></button>
+                <button type="button" 
+                        class="btn-close" 
+                        data-bs-dismiss="alert" 
+                        aria-label="Đóng"
+                        onclick="notificationSystem.remove('${alertId}')">
+                </button>
             </div>
         `;
 
         this.container.insertAdjacentHTML('afterbegin', alertHtml);
 
         // Tự động ẩn
-        if (autoDismiss) {
-            setTimeout(() => {
-                this.remove(alertId);
-            }, dismissTime);
+        if (config.autoDismiss) {
+            this.autoDismiss(alertId, config.dismissTime);
         }
 
+        // Log for debugging
+        console.log(`🔔 Notification [${type}]: ${message}`);
+
         return alertId;
+    }
+
+    autoDismiss(alertId, dismissTime) {
+        setTimeout(() => {
+            this.remove(alertId);
+        }, dismissTime);
     }
 
     remove(alertId) {
@@ -61,6 +93,7 @@ class NotificationSystem {
             setTimeout(() => {
                 if (alert.parentNode) {
                     alert.parentNode.removeChild(alert);
+                    console.log(`🗑️ Notification removed: ${alertId}`);
                 }
             }, 300);
         }
@@ -68,6 +101,11 @@ class NotificationSystem {
 
     clearAll() {
         const alerts = this.container.querySelectorAll('.custom-alert');
+        if (alerts.length === 0) {
+            console.log('📭 No notifications to clear');
+            return;
+        }
+
         alerts.forEach(alert => {
             alert.classList.add('fade-out');
             setTimeout(() => {
@@ -76,6 +114,8 @@ class NotificationSystem {
                 }
             }, 300);
         });
+        
+        console.log(`🧹 Cleared ${alerts.length} notifications`);
     }
 
     getIconClass(type) {
@@ -89,7 +129,7 @@ class NotificationSystem {
         return icons[type] || 'bi-info-circle-fill';
     }
 
-    // Phương thức tiện ích nhanh
+    // ====== PHƯƠNG THỨC TIỆN ÍCH NHANH ======
     success(message, options = {}) {
         return this.show(message, 'success', options);
     }
@@ -105,13 +145,70 @@ class NotificationSystem {
     info(message, options = {}) {
         return this.show(message, 'info', options);
     }
+
+    primary(message, options = {}) {
+        return this.show(message, 'primary', options);
+    }
+
+    // ====== PHƯƠNG THỨC ĐẶC BIỆT ======
+    loading(message = 'Đang xử lý...', options = {}) {
+        return this.show(`<div class="spinner-border spinner-border-sm me-2" role="status"></div> ${message}`, 'info', {
+            autoDismiss: false,
+            icon: false,
+            ...options
+        });
+    }
+
+    removeLoading(alertId) {
+        this.remove(alertId);
+    }
+
+    // ====== FLASH MESSAGE SUPPORT ======
+    showFlashMessages() {
+        // Tự động hiển thị flash messages từ Flask
+        const flashMessages = document.querySelectorAll('.alert');
+        flashMessages.forEach(alert => {
+            const type = this.detectFlashType(alert);
+            const message = alert.textContent.trim();
+            this.show(message, type);
+            alert.remove(); // Xóa flash message gốc
+        });
+    }
+
+    detectFlashType(alertElement) {
+        const classList = alertElement.className;
+        if (classList.includes('alert-success')) return 'success';
+        if (classList.includes('alert-danger')) return 'error';
+        if (classList.includes('alert-warning')) return 'warning';
+        if (classList.includes('alert-info')) return 'info';
+        return 'info';
+    }
 }
 
-// Khởi tạo global instance
+// ====== GLOBAL INSTANCE & HELPERS ======
 window.notificationSystem = new NotificationSystem();
 
-// Helper functions để sử dụng trực tiếp
+// Global helper functions
 window.showSuccess = (message, options) => notificationSystem.success(message, options);
 window.showError = (message, options) => notificationSystem.error(message, options);
 window.showWarning = (message, options) => notificationSystem.warning(message, options);
 window.showInfo = (message, options) => notificationSystem.info(message, options);
+window.showLoading = (message, options) => notificationSystem.loading(message, options);
+window.hideLoading = (alertId) => notificationSystem.removeLoading(alertId);
+window.clearNotifications = () => notificationSystem.clearAll();
+
+// Auto-initialize khi DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Hiển thị flash messages nếu có
+    notificationSystem.showFlashMessages();
+    
+    // Global error handler
+    window.addEventListener('error', function(e) {
+        notificationSystem.error('Có lỗi xảy ra trong ứng dụng!');
+    });
+});
+
+// Export cho module system (nếu cần)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = NotificationSystem;
+}
