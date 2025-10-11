@@ -1,36 +1,4 @@
-// ✅ THÊM DEBUG ĐỂ KIỂM TRA
-console.log('🎯 attendance_print.js loaded - handleConfirmAdjustment defined:', typeof handleConfirmAdjustment);
-
-// ✅ CÁC HÀM HIỂN THỊ/ẨN NÚT - ĐẶT NGOÀI DOMContentLoaded
-function showAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideAdjustmentButtons(cell) {
-    const buttons = cell.querySelector('.adjustment-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
-    }
-}
-
-function showLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'block';
-    }
-}
-
-function hideLeaveButtons(cell) {
-    const buttons = cell.querySelector('.leave-buttons');
-    if (buttons) {
-        buttons.style.display = 'none';
-    }
-}
-
-// ✅ SỬA: ĐẢM BẢO HÀM LÀ GLOBAL
+// ✅ ĐẶT CÁC HÀM GLOBAL Ở ĐẦU FILE - TRƯỚC KHI ĐƯỢC GỌI
 window.handleConfirmAdjustment = function() {
     console.log('🎯 === HANDLE CONFIRM ADJUSTMENT CALLED ===');
     
@@ -81,12 +49,18 @@ window.handleConfirmAdjustment = function() {
     window.applyAdjustment(empCode, periodVal, filenameVal);
 };
 
-// ✅ THÊM: HÀM GLOBAL applyAdjustment
 window.applyAdjustment = function(employeeCode, period, filename) {
     console.log('=== STARTING ADJUSTMENT PROCESS ===');
     console.log('Employee:', employeeCode, 'Period:', period, 'Filename:', filename);
     
-    const formData = new FormData(document.getElementById('adjustmentForm'));
+    const form = document.getElementById('adjustmentForm');
+    if (!form) {
+        console.error('❌ Adjustment form not found!');
+        alert('Lỗi: Không tìm thấy form điều chỉnh.');
+        return;
+    }
+    
+    const formData = new FormData(form);
     
     console.log('Form data:');
     for (let [key, value] of formData.entries()) {
@@ -129,7 +103,7 @@ window.applyAdjustment = function(employeeCode, period, filename) {
         
         if (data.need_extra_leave_confirmation && data.remaining_absence > 0) {
             console.log('Need extra leave confirmation:', data.remaining_absence, 'days remaining');
-            showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
+            window.showExtraLeaveConfirmation(employeeCode, period, filename, data.remaining_absence, data.available_leave);
         } else {
             console.log('No extra leave needed, reloading page');
             location.reload();
@@ -143,7 +117,7 @@ window.applyAdjustment = function(employeeCode, period, filename) {
 };
 
 // ✅ HÀM HIỂN THỊ XÁC NHẬN THÊM PHÉP NĂM
-function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbsence, availableLeave) {
+window.showExtraLeaveConfirmation = function(employeeCode, period, filename, remainingAbsence, availableLeave) {
     console.log('Showing extra leave confirmation:', {remainingAbsence, availableLeave});
     
     const message = availableLeave >= remainingAbsence 
@@ -192,17 +166,46 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
     }
 }
 
+// ✅ CÁC HÀM HIỂN THỊ/ẨN NÚT
+function showAdjustmentButtons(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+function hideAdjustmentButtons(cell) {
+    const buttons = cell.querySelector('.adjustment-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
+
+function showLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'block';
+    }
+}
+
+function hideLeaveButtons(cell) {
+    const buttons = cell.querySelector('.leave-buttons');
+    if (buttons) {
+        buttons.style.display = 'none';
+    }
+}
+
+// ✅ DEBUG: KIỂM TRA NGAY KHI LOAD
+console.log('🎯 attendance_print.js loaded - handleConfirmAdjustment defined:', typeof window.handleConfirmAdjustment);
+console.log('🎯 attendance_print.js loaded - applyAdjustment defined:', typeof window.applyAdjustment);
+
 // attendance_print.js - JavaScript cho trang attendance_print - CÔNG THỨC MỚI ĐÃ SỬA
 document.addEventListener("DOMContentLoaded", function(){
     // ✅ DEBUG: KIỂM TRA GLOBAL FUNCTIONS
     console.log('🔍 Global functions check:', {
         handleConfirmAdjustment: typeof window.handleConfirmAdjustment,
-        applyAdjustment: typeof window.applyAdjustment
-    });
-    document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
-        console.log('🎯 EVENT LISTENER FIRED for confirm button!');
-        e.preventDefault();
-        window.handleConfirmAdjustment();
+        applyAdjustment: typeof window.applyAdjustment,
+        showExtraLeaveConfirmation: typeof window.showExtraLeaveConfirmation
     });
 
     // Khởi tạo timesheet data
@@ -510,16 +513,16 @@ document.addEventListener("DOMContentLoaded", function(){
             document.getElementById('detailModal').style.display = 'none';
         });
     }
+    
+    // ✅ DEBUG: KIỂM TRA NÚT CONFIRM SAU KHI DOM LOADED
+    console.log('🔍 Checking confirm button after DOM loaded...');
+    const confirmBtn = document.getElementById('confirmAdjustmentBtn');
+    console.log('Confirm button found:', confirmBtn);
+
+    if (confirmBtn) {
+        console.log('✅ Confirm button exists, checking onclick...');
+        console.log('onclick attribute:', confirmBtn.getAttribute('onclick'));
+    } else {
+        console.log('❌ Confirm button NOT FOUND after DOM loaded!');
+    }
 });
-
-// ✅ DEBUG: KIỂM TRA NÚT CONFIRM
-console.log('🔍 Checking confirm button...');
-const confirmBtn = document.getElementById('confirmAdjustmentBtn');
-console.log('Confirm button found:', confirmBtn);
-
-if (confirmBtn) {
-    console.log('✅ Confirm button exists, checking onclick...');
-    console.log('onclick attribute:', confirmBtn.getAttribute('onclick'));
-} else {
-    console.log('❌ Confirm button NOT FOUND!');
-}
