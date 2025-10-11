@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Danh sách nhân viên{% endblock %}
+{% block title %}Quản lý Nhân viên • HR System{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/form_system.css') }}">
@@ -8,148 +8,179 @@
 
 {% block content %}
 <div class="section-card">
-  <!-- Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="section-title">Quản lý nhân viên</h2>
-      <p class="text-muted mb-0">Theo dõi và quản lý thông tin nhân viên</p>
+    <!-- Modern Header -->
+    <div class="header-modern">
+        <div class="header-content">
+            <h1>Nhân sự</h1>
+            <p>Quản lý đội ngũ nhân viên của bạn</p>
+        </div>
+        <a href="{{ url_for('main.add_employee') }}" class="btn-primary-modern">
+            <i class="bi bi-person-plus"></i>
+            Thêm nhân viên
+        </a>
     </div>
-    <a href="{{ url_for('main.add_employee') }}" class="btn btn-success btn-lg">
-      <i class="bi bi-plus-circle"></i> Thêm nhân viên
-    </a>
-  </div>
 
-  <!-- Thống kê -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-number">{{ employees|length }}</div>
-      <div class="stat-label">Tổng nhân viên</div>
+    <!-- Statistics Cards -->
+    <div class="stats-grid-modern">
+        <div class="stat-card-modern">
+            <div class="stat-number-modern">{{ employees|length }}</div>
+            <div class="stat-label-modern">Tổng nhân viên</div>
+        </div>
+        <div class="stat-card-modern">
+            <div class="stat-number-modern">{{ employees|selectattr('att_code')|list|length }}</div>
+            <div class="stat-label-modern">Đã có mã chấm công</div>
+        </div>
+        <div class="stat-card-modern">
+            <div class="stat-number-modern">{{ employees|selectattr('start_month')|list|length }}</div>
+            <div class="stat-label-modern">Đã cập nhật ngày làm</div>
+        </div>
+        <div class="stat-card-modern">
+            <div class="stat-number-modern">{{ (employees|length - employees|selectattr('att_code')|list|length) }}</div>
+            <div class="stat-label-modern">Chưa có mã chấm công</div>
+        </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-number">{{ employees|selectattr('att_code')|list|length }}</div>
-      <div class="stat-label">Đã có mã chấm công</div>
+
+    {% if employees %}
+    <!-- Modern Table -->
+    <div class="modern-table-container glass-effect">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Nhân viên</th>
+                    <th>Thông tin</th>
+                    <th>Hợp đồng</th>
+                    <th>Thời gian</th>
+                    <th>Chấm công</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in employees %}
+                <tr>
+                    <!-- Employee Card -->
+                    <td>
+                        <div class="employee-card-modern">
+                            <div class="employee-avatar-modern">
+                                {{ emp.name[0] if emp.name }}
+                            </div>
+                            <div class="employee-info-modern">
+                                <div class="employee-name-modern">{{ emp.name }}</div>
+                                <div class="employee-code-modern">#{{ emp.code }}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Department Info -->
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <span style="font-weight: 600; color: var(--text-primary);">{{ emp.team or 'Chưa cập nhật' }}</span>
+                            <span style="font-size: 0.8rem; color: var(--text-tertiary);">{{ emp.department or 'Chưa cập nhật' }}</span>
+                        </div>
+                    </td>
+
+                    <!-- Contract Type -->
+                    <td>
+                        <span class="badge-modern badge-contract">
+                            {{ emp.contract_type or 'Chưa cập nhật' }}
+                        </span>
+                    </td>
+
+                    <!-- Dates -->
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--text-tertiary);">Bắt đầu làm</div>
+                                <div style="font-weight: 600; font-size: 0.85rem;">
+                                    {% if emp.start_month %}
+                                        {{ emp.start_month[5:7] }}/{{ emp.start_month[:4] }}
+                                    {% else %}
+                                        --
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--text-tertiary);">Bảo hiểm</div>
+                                <div style="font-weight: 600; font-size: 0.85rem;">
+                                    {% if emp.insurance_start_month %}
+                                        {{ emp.insurance_start_month[5:7] }}/{{ emp.insurance_start_month[:4] }}
+                                    {% else %}
+                                        --
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Attendance Code -->
+                    <td>
+                        <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" class="input-group-modern">
+                            <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
+                                   class="input-modern" placeholder="Mã máy" style="width: 100px;">
+                            <button type="submit" class="btn-attendance" title="Lưu mã chấm công">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                        </form>
+                    </td>
+
+                    <!-- Status -->
+                    <td>
+                        <span class="badge-modern badge-active">
+                            <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i>
+                            Đang làm việc
+                        </span>
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <div class="actions-modern">
+                            <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="btn-modern btn-modern-edit">
+                                <i class="bi bi-pencil"></i>
+                                Sửa
+                            </a>
+                            <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display: inline;">
+                                <button type="submit" class="btn-modern btn-modern-delete" 
+                                        onclick="return confirm('Bạn có chắc muốn xóa {{ emp.name }}?')">
+                                    <i class="bi bi-trash"></i>
+                                    Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="stat-card">
-      <div class="stat-number">{{ employees|selectattr('start_month')|list|length }}</div>
-      <div class="stat-label">Đã cập nhật ngày làm</div>
+    {% else %}
+    <!-- Modern Empty State -->
+    <div class="empty-state-modern">
+        <div class="empty-icon-modern">
+            <i class="bi bi-people"></i>
+        </div>
+        <h2 class="empty-title-modern">Chưa có nhân viên</h2>
+        <p class="empty-description-modern">
+            Bắt đầu xây dựng đội ngũ của bạn bằng cách thêm nhân viên đầu tiên.
+        </p>
+        <a href="{{ url_for('main.add_employee') }}" class="btn-primary-modern">
+            <i class="bi bi-person-plus"></i>
+            Thêm nhân viên đầu tiên
+        </a>
     </div>
-  </div>
-
-  {% if employees %}
-  <!-- Bảng nhân viên -->
-  <div class="employees-table-container">
-    <table class="employees-table">
-      <thead>
-        <tr>
-          <th>Nhân viên</th>
-          <th>Tổ / Phòng ban</th>
-          <th>Loại HĐ</th>
-          <th>Ngày làm việc</th>
-          <th>Mã chấm công</th>
-          <th>Trạng thái</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for emp in employees %}
-        <tr>
-          <!-- Thông tin nhân viên -->
-          <td>
-            <div class="employee-info-cell">
-              <div class="employee-avatar-small">
-                {{ emp.name[0] if emp.name }}
-              </div>
-              <div class="employee-main-info">
-                <div class="employee-name">{{ emp.name }}</div>
-                <div class="employee-code">#{{ emp.code }}</div>
-              </div>
-            </div>
-          </td>
-
-          <!-- Tổ / Phòng ban -->
-          <td>
-            <div>
-              <div style="font-weight: 500;">{{ emp.team or '-' }}</div>
-              <div style="font-size: 0.8rem; color: #6b7280;">{{ emp.department or '-' }}</div>
-            </div>
-          </td>
-
-          <!-- Loại hợp đồng -->
-          <td>
-            <span style="font-weight: 500; color: #374151;">{{ emp.contract_type or '-' }}</span>
-          </td>
-
-          <!-- Ngày làm việc -->
-          <td>
-            <div>
-              <div style="font-size: 0.85rem;">
-                <strong>Bắt đầu:</strong> 
-                {% if emp.start_month %}
-                  {{ emp.start_month[5:7] }}/{{ emp.start_month[:4] }}
-                {% else %}
-                  -
-                {% endif %}
-              </div>
-              <div style="font-size: 0.8rem; color: #6b7280;">
-                <strong>BH:</strong> 
-                {% if emp.insurance_start_month %}
-                  {{ emp.insurance_start_month[5:7] }}/{{ emp.insurance_start_month[:4] }}
-                {% else %}
-                  -
-                {% endif %}
-              </div>
-            </div>
-          </td>
-
-          <!-- Mã chấm công -->
-          <td>
-            <form action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" method="post" class="table-att-code">
-              <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
-                     class="table-att-input" placeholder="Nhập mã">
-              <button type="submit" class="table-att-btn" title="Lưu mã chấm công">
-                <i class="bi bi-save"></i>
-              </button>
-            </form>
-          </td>
-
-          <!-- Trạng thái -->
-          <td>
-            <span class="status-badge status-badge-active">
-              <i class="bi bi-circle-fill me-1"></i> Đang làm
-            </span>
-          </td>
-
-          <!-- Hành động -->
-          <td>
-            <div class="table-actions">
-              <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="table-btn table-btn-edit">
-                <i class="bi bi-pencil"></i> Sửa
-              </a>
-              <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display: inline;">
-                <button type="submit" class="table-btn table-btn-delete" 
-                        onclick="return confirm('Xóa nhân viên {{ emp.name }}?')">
-                  <i class="bi bi-trash"></i> Xóa
-                </button>
-              </form>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-  <!-- Empty state -->
-  <div class="employees-empty">
-    <div class="employees-empty-icon">
-      <i class="bi bi-people"></i>
-    </div>
-    <div class="employees-empty-text">Chưa có nhân viên nào</div>
-    <p class="text-muted mb-4">Hãy thêm nhân viên đầu tiên để bắt đầu quản lý</p>
-    <a href="{{ url_for('main.add_employee') }}" class="btn btn-primary btn-lg">
-      <i class="bi bi-plus-circle"></i> Thêm nhân viên đầu tiên
-    </a>
-  </div>
-  {% endif %}
+    {% endif %}
 </div>
+
+<!-- Floating Action Button -->
+<a href="{{ url_for('main.add_employee') }}" class="fab" title="Thêm nhân viên mới">
+    <i class="bi bi-plus-lg"></i>
+</a>
+
+<style>
+.section-card {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+}
+</style>
 {% endblock %}
