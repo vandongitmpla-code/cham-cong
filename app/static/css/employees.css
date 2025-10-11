@@ -32,7 +32,7 @@
     border: 1px solid var(--border);
         /* Thêm để bảng rộng hơn */
     margin: 0 -1rem; /* Mở rộng ra ngoài container */
-    width: calc(00% + 30rem); /* Tăng độ rộng */
+    width: calc(70% + 30rem); /* Tăng độ rộng */
 
 }
 
