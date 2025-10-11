@@ -31,7 +31,7 @@
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
     /* Thêm để bảng rộng hơn */
-    margin: 01 -1rem; /* Mở rộng ra ngoài container */
+    margin: 1 -1rem; /* Mở rộng ra ngoài container */
     width: calc(100% + 10rem); /* Tăng độ rộng */
 }
 
