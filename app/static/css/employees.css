@@ -439,38 +439,37 @@
 }
 
 /* ====== RESPONSIVE ====== */
-@media (max-width: 1024px) {
-    .modern-table-container {
-        overflow-x: auto;
-    }
-    
-    .modern-table {
-        min-width: 900px;
-    }
-    
-    .stats-grid-modern {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* Table cân đối */
+.modern-table-container {
+    background: var(--surface);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-    .header-modern {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1.5rem;
-    }
-    
-    .header-content h1 {
-        font-size: 2rem;
-    }
-    
-    .stats-grid-modern {
-        grid-template-columns: 1fr;
-    }
-    
-    .modern-table {
-        min-width: 800px;
-    }
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    background: var(--surface);
+    table-layout: fixed;
+}
+
+.modern-table thead {
+    background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
+}
+
+.modern-table th {
+    padding: 1.25rem 1rem;
+    text-align: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* ====== FLOATING ACTION BUTTON ====== */
