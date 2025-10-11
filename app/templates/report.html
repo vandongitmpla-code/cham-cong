@@ -5,22 +5,164 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}">
 {% endblock %}
+
 {% block content %}
-<div class="card text-center">
-  <div class="mb-3">
-    <span style="font-size: 48px; color: #28a745;">✔️</span>
+<div class="report-card success">
+  <!-- Icon thành công -->
+  <div class="report-icon">
+    <i class="bi bi-check-circle-fill"></i>
   </div>
-  <h2>Upload thành công!</h2>
-  <p class="mt-3">File <strong>{{ filename }}</strong> đã được tải lên.</p>
-  <div class="mt-4">
-   <a href="{{ url_for('main.timesheet', filename=filename) }}" class="btn btn-custom">
-  Bảng chấm công
-</a>
-
-<a href="{{ url_for('main.index') }}" class="btn btn-custom">
-  ⬅ Quay lại Upload
-</a>
-
+  
+  <!-- Tiêu đề và mô tả -->
+  <h1 class="report-title">Upload thành công!</h1>
+  <p class="report-subtitle">File của bạn đã được xử lý thành công và sẵn sàng để xem bảng chấm công</p>
+  
+  <!-- Tên file -->
+  <div class="report-filename">
+    <i class="bi bi-file-earmark-excel"></i>
+    {{ filename }}
+  </div>
+  
+  <!-- Thống kê (có thể thêm dynamic data sau) -->
+  <div class="report-stats">
+    <div class="report-stat">
+      <div class="report-stat-number">✓</div>
+      <div class="report-stat-label">Đã xử lý</div>
+    </div>
+    <div class="report-stat">
+      <div class="report-stat-number">📊</div>
+      <div class="report-stat-label">Sẵn sàng</div>
+    </div>
+  </div>
+  
+  <!-- Các hành động -->
+  <div class="report-actions">
+    <a href="{{ url_for('main.timesheet', filename=filename) }}" class="btn btn-report-primary">
+      <i class="bi bi-table"></i> Xem bảng chấm công
+    </a>
+    <a href="{{ url_for('main.index') }}" class="btn btn-report-secondary">
+      <i class="bi bi-arrow-left"></i> Quay lại Upload
+    </a>
+  </div>
+  
+  <!-- Thông tin chi tiết (tùy chọn) -->
+  <div class="report-details">
+    <div class="report-details-title">
+      <i class="bi bi-info-circle"></i>
+      Thông tin xử lý
+    </div>
+    <div class="report-details-content">
+      <ul class="report-details-list">
+        <li>
+          <i class="bi bi-check-lg"></i>
+          File đã được upload thành công
+        </li>
+        <li>
+          <i class="bi bi-check-lg"></i>
+          Dữ liệu đã được xác thực
+        </li>
+        <li>
+          <i class="bi bi-check-lg"></i>
+          Sẵn sàng để xem báo cáo
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Hiệu ứng khi load trang
+document.addEventListener('DOMContentLoaded', function() {
+  const reportCard = document.querySelector('.report-card');
+  
+  // Thêm hiệu ứng typewriter cho subtitle (tùy chọn)
+  const subtitle = document.querySelector('.report-subtitle');
+  if (subtitle) {
+    const text = subtitle.textContent;
+    subtitle.textContent = '';
+    let i = 0;
+    
+    function typeWriter() {
+      if (i < text.length) {
+        subtitle.textContent += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, 50);
+      }
+    }
+    
+    // Bắt đầu hiệu ứng sau 1 giây
+    setTimeout(typeWriter, 1000);
+  }
+  
+  // Hiệu ứng count-up cho stats (có thể cập nhật với real data sau)
+  const statNumbers = document.querySelectorAll('.report-stat-number');
+  statNumbers.forEach(stat => {
+    if (stat.textContent === '✓' || stat.textContent === '📊') return;
+    
+    const target = parseInt(stat.textContent);
+    let current = 0;
+    const increment = target / 50;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        stat.textContent = target;
+        clearInterval(timer);
+      } else {
+        stat.textContent = Math.floor(current);
+      }
+    }, 30);
+  });
+});
+</script>
+
+<style>
+/* Additional animations */
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.report-icon {
+  animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.report-title {
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.report-subtitle {
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.report-filename {
+  animation: fadeInUp 0.6s ease-out 0.6s both;
+}
+
+.report-stats {
+  animation: fadeInUp 0.6s ease-out 0.8s both;
+}
+
+.report-actions {
+  animation: fadeInUp 0.6s ease-out 1s both;
+}
+
+.report-details {
+  animation: fadeInUp 0.6s ease-out 1.2s both;
+}
+</style>
 {% endblock %}
