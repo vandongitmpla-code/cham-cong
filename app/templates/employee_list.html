@@ -9,68 +9,68 @@
 {% block content %}
 <div class="section-card">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="section-title">Danh sách nhân viên</h2>
-      <p class="text-muted mb-0">Phiên bản xem nhanh</p>
-    </div>
+    <h2 class="section-title">Danh sách nhân viên</h2>
     <a href="{{ url_for('main.add_employee') }}" class="btn btn-success">
       <i class="bi bi-plus-circle"></i> Thêm mới
     </a>
   </div>
 
   {% if employees %}
-  <div class="employees-grid">
-    {% for emp in employees %}
-    <div class="employee-card">
-      <div class="employee-header">
-        <div class="employee-avatar">
-          {{ emp.name[0] if emp.name }}
-        </div>
-        <div class="employee-basic-info">
-          <div class="employee-code">#{{ emp.code }}</div>
-          <div class="employee-name">{{ emp.name }}</div>
-        </div>
-      </div>
-
-      <div class="employee-details">
-        <div class="detail-item">
-          <span class="detail-label">Tổ:</span>
-          <span class="detail-value">{{ emp.team or '-' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Phòng ban:</span>
-          <span class="detail-value">{{ emp.department or '-' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Loại HĐ:</span>
-          <span class="detail-value">{{ emp.contract_type or '-' }}</span>
-        </div>
-      </div>
-
-      <div class="employee-actions">
-        <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="action-btn action-btn-edit">
-          <i class="bi bi-pencil"></i> Sửa
-        </a>
-        <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display: inline;">
-          <button type="submit" class="action-btn action-btn-delete" 
-                  onclick="return confirm('Xóa nhân viên {{ emp.name }}?')">
-            <i class="bi bi-trash"></i> Xóa
-          </button>
-        </form>
-      </div>
-
-      <div class="att-code-form mt-2">
-        <div class="att-code-label">Mã chấm công</div>
-        <form method="post" action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" class="att-code-input-group">
-          <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
-                 class="att-code-input" placeholder="Mã máy">
-          <button type="submit" class="att-code-btn">
-            <i class="bi bi-save"></i>
-          </button>
-        </form>
-      </div>
-    </div>
-    {% endfor %}
+  <div class="employees-table-container">
+    <table class="employees-table">
+      <thead>
+        <tr>
+          <th>Nhân viên</th>
+          <th>Tổ</th>
+          <th>Phòng ban</th>
+          <th>Loại HĐ</th>
+          <th>Mã chấm công</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emp in employees %}
+        <tr>
+          <td>
+            <div class="employee-info-cell">
+              <div class="employee-avatar-small">
+                {{ emp.name[0] if emp.name }}
+              </div>
+              <div class="employee-main-info">
+                <div class="employee-name">{{ emp.name }}</div>
+                <div class="employee-code">#{{ emp.code }}</div>
+              </div>
+            </div>
+          </td>
+          <td>{{ emp.team or '-' }}</td>
+          <td>{{ emp.department or '-' }}</td>
+          <td>{{ emp.contract_type or '-' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('main.update_att_code', emp_id=emp.id) }}" class="table-att-code">
+              <input type="text" name="att_code" value="{{ emp.att_code or '' }}" 
+                     class="table-att-input" placeholder="Mã máy">
+              <button type="submit" class="table-att-btn">
+                <i class="bi bi-save"></i>
+              </button>
+            </form>
+          </td>
+          <td>
+            <div class="table-actions">
+              <a href="{{ url_for('main.edit_employee', emp_id=emp.id) }}" class="table-btn table-btn-edit">
+                <i class="bi bi-pencil"></i> Sửa
+              </a>
+              <form action="{{ url_for('main.delete_employee', emp_id=emp.id) }}" method="post" style="display: inline;">
+                <button type="submit" class="table-btn table-btn-delete" 
+                        onclick="return confirm('Xóa {{ emp.name }}?')">
+                  <i class="bi bi-trash"></i> Xóa
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
   {% else %}
   <div class="employees-empty">
@@ -79,7 +79,7 @@
     </div>
     <div class="employees-empty-text">Chưa có nhân viên nào</div>
     <a href="{{ url_for('main.add_employee') }}" class="btn btn-primary mt-3">
-      <i class="bi bi-plus-circle"></i> Thêm nhân viên đầu tiên
+      <i class="bi bi-plus-circle"></i> Thêm nhân viên
     </a>
   </div>
   {% endif %}
