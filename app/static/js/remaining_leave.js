@@ -1,4 +1,4 @@
-// remaining_leave.js - JavaScript cho phép năm còn tồn (PHIÊN BẢN MODAL)
+// remaining_leave.js - JavaScript cho phép năm còn tồn (PHIÊN BẢN FIX)
 
 // ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM CÒN TỒN - GLOBAL
 window.showRemainingLeaveButtons = function(cell) {
@@ -26,6 +26,8 @@ window.handleRemainingLeaveAdd = function(e) {
     const currentRemaining = parseFloat(e.target.getAttribute('data-current-remaining'));
     const filename = e.target.getAttribute('data-filename');
     
+    console.log('Remaining leave add clicked:', {employeeId, employeeName, currentRemaining});
+    
     // Lưu dữ liệu tạm thời
     currentRemainingLeaveData = {
         employeeId,
@@ -40,7 +42,7 @@ window.handleRemainingLeaveAdd = function(e) {
     document.getElementById('remainingLeaveCurrentValue').textContent = currentRemaining + ' ngày';
     document.getElementById('remainingLeaveInput').value = currentRemaining;
     
-    // Hiển thị modal
+    // Hiển thị modal Bootstrap
     const modal = new bootstrap.Modal(document.getElementById('remainingLeaveModal'));
     modal.show();
 }
@@ -51,6 +53,8 @@ window.handleRemainingLeaveReset = function(e) {
     const employeeName = e.target.getAttribute('data-employee-name');
     const period = e.target.getAttribute('data-period');
     const filename = e.target.getAttribute('data-filename');
+    
+    console.log('Remaining leave reset clicked:', {employeeId, employeeName});
     
     // Lưu dữ liệu tạm thời
     currentRemainingLeaveData = {
@@ -69,7 +73,7 @@ window.handleRemainingLeaveReset = function(e) {
 
 // ✅ XÁC NHẬN CẬP NHẬT PHÉP NĂM CÒN TỒN
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ remaining_leave.js loaded (Modal Version)');
+    console.log('✅ remaining_leave.js loaded (Fixed Modal Version)');
     
     // Xử lý xác nhận cập nhật
     document.getElementById('confirmRemainingLeave')?.addEventListener('click', function() {
@@ -79,6 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Vui lòng nhập số ngày phép hợp lệ!');
             return;
         }
+        
+        console.log('Updating remaining leave to:', newValue);
         
         // Điền form và submit
         document.getElementById('formRemainingLeaveEmployeeId').value = currentRemainingLeaveData.employeeId;
@@ -90,6 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Xử lý xác nhận reset
     document.getElementById('confirmResetRemainingLeave')?.addEventListener('click', function() {
+        console.log('Resetting remaining leave');
+        
         // Điền form và submit
         document.getElementById('resetRemainingLeaveEmployeeId').value = currentRemainingLeaveData.employeeId;
         document.getElementById('resetRemainingLeavePeriod').value = currentRemainingLeaveData.period;
