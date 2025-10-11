@@ -375,14 +375,15 @@ def import_payroll(filename):
                 employee_code=emp.code,
                 employee_name=emp.name,
                 period=period,
-                ngay_cong=ngay_cong_goc,
-                ngay_vang=ngay_vang_goc,
+                ngay_cong=ngay_cong_goc,      # ✅ GIÁ TRỊ GỐC
+                ngay_vang=ngay_vang_goc,       # ✅ GIÁ TRỊ GỐC  
                 chu_nhat=x_chu_nhat,
                 le_tet=x_le,
                 le_tet_gio=le_tet_gio,
-                tang_ca_nghi=tang_ca_nghi_goc,
+                tang_ca_nghi=tang_ca_nghi_goc, # ✅ GIÁ TRỊ GỐC
                 tang_ca_tuan=tang_ca_tuan,
                 standard_work_days=ngay_cong_chuan,
+                
                 ghi_chu=ghi_chu,
                 raw_data={
                     'daily_status': daily_status,
@@ -398,16 +399,15 @@ def import_payroll(filename):
                 },
                 to=getattr(emp, "team", ""),
                 phong_ban=getattr(emp, "department", ""),
-                loai_hd=getattr(emp, "contract_type", ""),
-                # ✅ THÊM: Lưu thông tin phép năm
-                thang_bat_dau_tinh_phep=thang_bat_dau_tinh_phep,
-                ngay_phep_con_lai=so_ngay_phep_duoc_huong  # Số phép năm ban đầu
+                loai_hd=getattr(emp, "contract_type", "")
             )
             
+            # ✅ CHỈ LƯU PayrollRecord, KHÔNG TẠO WorkAdjustment KHI IMPORT
             db.session.add(record)
 
+        # COMMIT CUỐI CÙNG
         db.session.commit()
-        flash("Đã import payroll thành công! Bao gồm cả thông tin phép năm.", "success")
+        flash("Đã import payroll thành công! Dữ liệu đang ở trạng thái gốc.", "success")
 
     except Exception as e:
         db.session.rollback()
