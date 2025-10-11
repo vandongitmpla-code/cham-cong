@@ -383,7 +383,5 @@
 {{ {"weekdays": weekdays|default({}), "day_count": day_count|default(31)} | tojson | safe }}
 </script>
 
-<!-- ✅ THAY ĐỔI: Load JavaScript riêng thay vì inline -->
-<script src="{{ url_for('static', filename='js/attendance_print.js') }}"></script>
 
 {% endblock %}
