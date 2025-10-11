@@ -61,7 +61,7 @@
               <div class="adjustment-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
                 
                 <!-- ✅ NÚT "+" - CHỈ HIỆN KHI CHƯA ĐIỀU CHỈNH VÀ CÓ TĂNG CA -->
-               
+                {% if row[-1].has_overtime and not row[-1].has_adjustment %}
                 <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
@@ -78,6 +78,7 @@
                   data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}"  <!-- ✅ THÊM ATTRIBUTE RIÊNG -->
                   data-filename="{{ filename }}">
                 </i>
+                {% endif %}
                 
                 <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ ĐIỀU CHỈNH -->
                 {% if row[-1].has_adjustment %}
