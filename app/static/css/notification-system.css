@@ -142,7 +142,7 @@
     to { width: 0%; }
 }
 
-/* ====== FLOATING NOTIFICATIONS - VỊ TRÍ MỚI ====== */
+/* ====== FLOATING NOTIFICATIONS ====== */
 .notification-container {
     position: fixed;
     top: 20px;
