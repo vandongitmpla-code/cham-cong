@@ -476,3 +476,34 @@
     z-index: 1000;
 }
 
+/* THÊM VÀO CUỐI FILE employees.css */
+.section-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    margin: 0 auto 2rem auto; /* CĂN GIỮA */
+    max-width: 1300px; /* ĐỘ RỘNG TỐI ĐA */
+    width: 95%; /* CHIẾM 95% KHÔNG GIAN */
+}
+
+/* CĂN GIỮA TOÀN BỘ NỘI DUNG */
+.container-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* ĐẢM BẢO BẢNG KHÔNG VƯỢT QUÁ */
+.modern-table-container {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    width: 100%; /* CHIẾM TOÀN BỘ KHÔNG GIAN CÓ SẴN */
+    max-width: 100%; /* KHÔNG VƯỢT QUÁ CONTAINER */
+}
