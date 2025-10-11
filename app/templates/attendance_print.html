@@ -63,21 +63,21 @@
                 <!-- ✅ NÚT "+" - CHỈ HIỆN KHI CHƯA ĐIỀU CHỈNH VÀ CÓ TĂNG CA -->
                 {% if row[-1].has_overtime and not row[-1].has_adjustment %}
                 <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Gộp ngày tăng ca"
-                style="cursor:pointer; font-size: 16px;"
-                data-employee-code="{{ row[1] }}"
-                data-employee-name="{{ row[2] }}"
-                data-period="{{ period }}"
-                data-original-days="{{ row[-1].original_days }}"
-                data-actual-days="{{ row[8] }}"
-                data-overtime-hours="{{ row[-1].tang_ca_nghi_ban_dau }}"
-                data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
-                data-standard-days="{{ row[-1].standard_days or 26 }}"
-                data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}"
-                data-filename="{{ filename }}">  <!-- ✅ THÊM DẤU NHÁY -->
-              </i>
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Gộp ngày tăng ca"
+                  style="cursor:pointer; font-size: 16px;"
+                  data-employee-code="{{ row[1] }}"
+                  data-employee-name="{{ row[2] }}"
+                  data-period="{{ period }}"
+                  data-original-days="{{ row[-1].original_days }}"
+                  data-actual-days="{{ row[8] }}"
+                  data-overtime-hours="{{ row[-1].tang_ca_nghi_ban_dau }}"
+                  data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
+                  data-standard-days="{{ row[-1].standard_days or 26 }}"
+                  data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}"
+                  data-filename="{{ filename }}">  <!-- ✅ THÊM DẤU NHÁY -->
+                </i>
                 {% endif %}
                 
                 <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ ĐIỀU CHỈNH -->
