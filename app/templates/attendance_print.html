@@ -415,7 +415,77 @@
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
+<!-- ✅ THÊM: Modal điều chỉnh phép năm còn tồn -->
+<div class="modal fade" id="remainingLeaveModal" tabindex="-1">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Điều chỉnh phép năm còn tồn</h3>
+      <div class="modal-subtitle">Cập nhật số ngày phép cho kỳ sau</div>
+      <button type="button" class="modal-close" data-bs-dismiss="modal">
+        <span class="modal-close-icon">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="info-card">
+        <div class="info-item">
+          <span class="info-label">Nhân viên</span>
+          <span class="info-value" id="remainingLeaveEmployeeName"></span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Giá trị hiện tại</span>
+          <span class="info-value" id="remainingLeaveCurrentValue"></span>
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="info-label">Số ngày phép còn tồn mới</label>
+        <input type="number" class="form-control modern-input" id="remainingLeaveInput" 
+               step="0.5" min="0" placeholder="Nhập số ngày phép...">
+        <div class="form-text">Số ngày phép này sẽ được kế thừa cho kỳ công tháng sau</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="modal-btn modal-btn-outline" data-bs-dismiss="modal">Hủy</button>
+      <button type="button" class="modal-btn modal-btn-primary" id="confirmRemainingLeave">Cập nhật</button>
+    </div>
+  </div>
+</div>
 
+<!-- ✅ THÊM: Modal xác nhận reset phép năm còn tồn -->
+<div class="modal fade" id="resetRemainingLeaveModal" tabindex="-1">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Reset phép năm còn tồn</h3>
+      <div class="modal-subtitle">Khôi phục về giá trị mặc định</div>
+      <button type="button" class="modal-close" data-bs-dismiss="modal">
+        <span class="modal-close-icon">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Bạn có muốn reset phép năm còn tồn về giá trị mặc định cho <strong id="resetRemainingLeaveEmployeeName"></strong>?</p>
+      <p class="text-muted">Giá trị sẽ được tính toán lại dựa trên tháng bắt đầu tính phép của nhân viên.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="modal-btn modal-btn-outline" data-bs-dismiss="modal">Không</button>
+      <button type="button" class="modal-btn modal-btn-danger" id="confirmResetRemainingLeave">Có, reset</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ THÊM: Form ẩn cho phép năm còn tồn -->
+<form id="remainingLeaveForm" method="POST" action="{{ url_for('main.update_remaining_leave') }}" style="display: none;">
+    <input type="hidden" name="employee_id" id="formRemainingLeaveEmployeeId">
+    <input type="hidden" name="period" id="formRemainingLeavePeriod">
+    <input type="hidden" name="remaining_leave_days" id="formRemainingLeaveDays">
+    <input type="hidden" name="filename" value="{{ filename }}">
+</form>
+
+<!-- ✅ THÊM: Form ẩn reset phép năm còn tồn -->
+<form id="resetRemainingLeaveForm" method="POST" action="{{ url_for('main.reset_remaining_leave') }}" style="display: none;">
+    <input type="hidden" name="employee_id" id="resetRemainingLeaveEmployeeId">
+    <input type="hidden" name="period" id="resetRemainingLeavePeriod">
+    <input type="hidden" name="filename" value="{{ filename }}">
+</form>
 
 <!-- ✅ THAY ĐỔI: Đặt script TRƯỚC khi sử dụng trong HTML -->
 <script src="{{ url_for('static', filename='js/attendance_print.js') }}"></script>
