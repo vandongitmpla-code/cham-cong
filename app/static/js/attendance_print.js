@@ -361,8 +361,8 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    // ✅ XÁC NHẬN RESET ĐIỀU CHỈNH
-document.getElementById('confirmReset')?.addEventListener('click', function() {
+    // Xác nhận reset điều chỉnh
+    document.getElementById('confirmReset')?.addEventListener('click', function() {
         console.log('Confirming reset...');
         document.getElementById('resetForm').submit();
     });
@@ -373,18 +373,29 @@ document.getElementById('confirmReset')?.addEventListener('click', function() {
         document.getElementById('resetLeaveForm').submit();
     });
 
-    // ✅ XÁC NHẬN THÊM PHÉP NĂM
+    // Xác nhận thêm phép năm
     document.getElementById('confirmLeave')?.addEventListener('click', function() {
         const leaveDays = parseFloat(document.getElementById('leaveDaysInput').value);
         const maxLeave = parseFloat(document.getElementById('leaveDaysInput').max);
         
         if (leaveDays > maxLeave) {
-            alert(`Số ngày phép không được vượt quá ${maxLeave} ngày!`);
+            if (typeof notificationSystem !== 'undefined') {
+                notificationSystem.warning(
+                    `Số ngày phép không được vượt quá ${maxLeave} ngày!`,
+                    'Số ngày phép không hợp lệ'
+                );
+            } else {
+                alert(`Số ngày phép không được vượt quá ${maxLeave} ngày!`);
+            }
             return;
         }
         
         if (leaveDays < 0) {
-            alert('Số ngày phép không được âm!');
+            if (typeof notificationSystem !== 'undefined') {
+                notificationSystem.warning('Số ngày phép không được âm!', 'Số ngày phép không hợp lệ');
+            } else {
+                alert('Số ngày phép không được âm!');
+            }
             return;
         }
         
