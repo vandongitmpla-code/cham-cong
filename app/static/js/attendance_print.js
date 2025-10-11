@@ -199,7 +199,11 @@ document.addEventListener("DOMContentLoaded", function(){
         handleConfirmAdjustment: typeof window.handleConfirmAdjustment,
         applyAdjustment: typeof window.applyAdjustment
     });
-    
+    document.getElementById('confirmAdjustmentBtn')?.addEventListener('click', function(e) {
+        console.log('🎯 EVENT LISTENER FIRED for confirm button!');
+        e.preventDefault();
+        window.handleConfirmAdjustment();
+    });
 
     // Khởi tạo timesheet data
     (function(){
