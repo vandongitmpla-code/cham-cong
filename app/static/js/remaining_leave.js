@@ -1,4 +1,4 @@
-// static/js/remaining_leave.js
+// remaining_leave.js - JavaScript cho phép năm còn tồn
 
 // ✅ HÀM HIỂN THỊ/ẨN NÚT PHÉP NĂM CÒN TỒN - GLOBAL
 window.showRemainingLeaveButtons = function(cell) {
@@ -81,17 +81,21 @@ window.handleRemainingLeaveReset = function(e) {
     }
 }
 
-// ✅ EVENT LISTENERS - KHÔNG DÙNG DOMContentLoaded
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remaining-leave-add-icon')) {
-        window.handleRemainingLeaveAdd(e);
-    }
+// ✅ EVENT LISTENERS CHO REMAINING LEAVE
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ remaining_leave.js loaded');
+    
+    // Xử lý click icon thêm phép năm còn tồn
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remaining-leave-add-icon')) {
+            window.handleRemainingLeaveAdd(e);
+        }
+    });
+    
+    // Xử lý click icon reset phép năm còn tồn
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remaining-leave-reset-icon')) {
+            window.handleRemainingLeaveReset(e);
+        }
+    });
 });
-
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remaining-leave-reset-icon')) {
-        window.handleRemainingLeaveReset(e);
-    }
-});
-
-console.log('✅ remaining_leave.js loaded successfully');
