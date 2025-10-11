@@ -6,106 +6,194 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <!-- Upload chấm công -->
-  <div class="col-md-6">
-    <div class="upload-card">
-      <div class="title">Upload file từ máy chấm công</div>
-      <div class="subtitle">Chỉ chấp nhận .xls, .xlsx — kéo thả hoặc chọn file</div>
+<div class="upload-container">
+  <div class="row justify-content-center">
+    <!-- Upload chấm công -->
+    <div class="col-lg-5 col-md-6 mb-4">
+      <div class="upload-card">
+        <div class="title">Upload file từ máy chấm công</div>
+        <div class="subtitle">Chỉ chấp nhận .xls, .xlsx — kéo thả hoặc chọn file</div>
 
-      <form method="post" action="{{ url_for('main.upload') }}" enctype="multipart/form-data" id="uploadForm" class="mt-3">
-        <label class="file-drop" id="fileDrop">
-          <div class="icon"><i class="bi bi-cloud-arrow-up"></i></div>
-          <div class="hint">Kéo file vào đây hoặc nhấp để chọn file</div>
-          <input type="file" name="file" id="fileInput" class="file-input" accept=".xls,.xlsx" required>
-          <a class="file-label" onclick="document.getElementById('fileInput').click()">Chọn file</a>
-        </label>
+        <form method="post" action="{{ url_for('main.upload') }}" enctype="multipart/form-data" id="uploadForm" class="mt-4">
+          <label class="file-drop" id="fileDrop">
+            <div class="icon"><i class="bi bi-cloud-arrow-up"></i></div>
+            <div class="hint">Kéo file vào đây hoặc nhấp để chọn file</div>
+            <div class="hint-small">Định dạng hỗ trợ: .xls, .xlsx</div>
+            <input type="file" name="file" id="fileInput" class="file-input" accept=".xls,.xlsx" required>
+            <a class="file-label" onclick="document.getElementById('fileInput').click()">
+              <i class="bi bi-folder2-open"></i> Chọn file
+            </a>
+          </label>
 
-        <div class="file-meta" id="fileMeta" style="display:none;">
-          <div class="name" id="fileName"></div>
-          <div class="size" id="fileSize"></div>
-        </div>
+          <div class="file-meta" id="fileMeta" style="display:none;">
+            <div class="name" id="fileName"></div>
+            <div class="size" id="fileSize"></div>
+          </div>
 
-        <div class="upload-actions">
-          <button type="submit" class="btn-upload">Upload</button>
-          <a href="{{ url_for('main.index') }}" class="btn-cancel">Hủy</a>
-        </div>
-        <div id="uploadMsg" class="upload-msg"></div>
-      </form>
+          <div class="upload-actions">
+            <button type="submit" class="btn-upload">
+              <i class="bi bi-upload"></i> Upload
+            </button>
+            <a href="{{ url_for('main.index') }}" class="btn-cancel">
+              <i class="bi bi-x-circle"></i> Hủy
+            </a>
+          </div>
+          <div id="uploadMsg" class="upload-msg"></div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- Import nhân viên -->
-  <div class="col-md-6">
-    <div class="upload-card">
-      <div class="title">Thêm nhân viên mới</div>
-      <div class="subtitle">Chỉ chấp nhận .xls, .xlsx — kéo thả hoặc chọn file</div>
+    <!-- Import nhân viên -->
+    <div class="col-lg-5 col-md-6 mb-4">
+      <div class="upload-card">
+        <div class="title">Import nhân viên từ Excel</div>
+        <div class="subtitle">Chỉ chấp nhận .xls, .xlsx — kéo thả hoặc chọn file</div>
 
-      <form method="post" action="{{ url_for('main.import_employees') }}" enctype="multipart/form-data" id="importForm" class="mt-3">
-        <label class="file-drop" id="fileDropEmp">
-          <div class="icon"><i class="bi bi-person-lines-fill"></i></div>
-          <div class="hint">Kéo file vào đây hoặc nhấp để chọn file</div>
-          <input type="file" name="file" id="fileInputEmp" class="file-input" accept=".xls,.xlsx" required>
-          <a class="file-label" onclick="document.getElementById('fileInputEmp').click()">Chọn file</a>
-        </label>
+        <form method="post" action="{{ url_for('main.import_employees') }}" enctype="multipart/form-data" id="importForm" class="mt-4">
+          <label class="file-drop" id="fileDropEmp">
+            <div class="icon"><i class="bi bi-person-lines-fill"></i></div>
+            <div class="hint">Kéo file vào đây hoặc nhấp để chọn file</div>
+            <div class="hint-small">Định dạng hỗ trợ: .xls, .xlsx</div>
+            <input type="file" name="file" id="fileInputEmp" class="file-input" accept=".xls,.xlsx" required>
+            <a class="file-label" onclick="document.getElementById('fileInputEmp').click()">
+              <i class="bi bi-folder2-open"></i> Chọn file
+            </a>
+          </label>
 
-        <div class="file-meta" id="fileMetaEmp" style="display:none;">
-          <div class="name" id="fileNameEmp"></div>
-          <div class="size" id="fileSizeEmp"></div>
-        </div>
+          <div class="file-meta" id="fileMetaEmp" style="display:none;">
+            <div class="name" id="fileNameEmp"></div>
+            <div class="size" id="fileSizeEmp"></div>
+          </div>
 
-        <div class="upload-actions">
-          <button type="submit" class="btn-upload">Import</button>
-          <a href="{{ url_for('main.employees') }}" class="btn-view">Xem danh sách</a>
-        </div>
+          <div class="upload-actions">
+            <button type="submit" class="btn-upload">
+              <i class="bi bi-upload"></i> Import
+            </button>
+            <a href="{{ url_for('main.employees') }}" class="btn-view">
+              <i class="bi bi-people"></i> Xem danh sách
+            </a>
+          </div>
 
-        <div id="importMsg" class="upload-msg"></div>
-      </form>
+          <div id="importMsg" class="upload-msg"></div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 {% endblock %}
+
 {% block extra_js %}
 <script>
-  const fileInput = document.getElementById('fileInput');
-  const fileDrop = document.getElementById('fileDrop');
-  const fileMeta = document.getElementById('fileMeta');
-  const fileName = document.getElementById('fileName');
-  const fileSize = document.getElementById('fileSize');
-
+  // Hàm định dạng kích thước file
   function humanSize(bytes){
     if(bytes < 1024) return bytes + ' B';
     if(bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
     return (bytes/1024/1024).toFixed(2) + ' MB';
   }
 
-  fileDrop.addEventListener('click', () => fileInput.click());
+  // Xử lý cho form upload chấm công
+  const fileInput = document.getElementById('fileInput');
+  const fileDrop = document.getElementById('fileDrop');
+  const fileMeta = document.getElementById('fileMeta');
+  const fileName = document.getElementById('fileName');
+  const fileSize = document.getElementById('fileSize');
 
-  fileInput.addEventListener('change', (e) => {
-    const f = e.target.files[0];
-    if(!f) return;
-    fileMeta.style.display = 'flex';
-    fileName.textContent = f.name;
-    fileSize.textContent = humanSize(f.size);
+  // Xử lý cho form import nhân viên
+  const fileInputEmp = document.getElementById('fileInputEmp');
+  const fileDropEmp = document.getElementById('fileDropEmp');
+  const fileMetaEmp = document.getElementById('fileMetaEmp');
+  const fileNameEmp = document.getElementById('fileNameEmp');
+  const fileSizeEmp = document.getElementById('fileSizeEmp');
+
+  // Hàm xử lý chung cho file input
+  function setupFileInput(fileInput, fileDrop, fileMeta, fileName, fileSize) {
+    // Click vào drop zone để mở file dialog
+    fileDrop.addEventListener('click', () => fileInput.click());
+
+    // Xử lý khi chọn file
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if(!f) return;
+      fileMeta.style.display = 'flex';
+      fileName.textContent = f.name;
+      fileSize.textContent = humanSize(f.size);
+    });
+
+    // Drag & drop
+    ['dragenter','dragover'].forEach(evt => {
+      fileDrop.addEventListener(evt, (e)=>{ 
+        e.preventDefault(); 
+        fileDrop.classList.add('dragover'); 
+      });
+    });
+    
+    ['dragleave','drop'].forEach(evt => {
+      fileDrop.addEventListener(evt, (e)=>{ 
+        e.preventDefault(); 
+        fileDrop.classList.remove('dragover'); 
+      });
+    });
+    
+    fileDrop.addEventListener('drop', (e)=>{
+      const dt = e.dataTransfer;
+      if(!dt) return;
+      const f = dt.files[0];
+      if(!f) return;
+      fileInput.files = dt.files; // set file input
+      fileMeta.style.display = 'flex';
+      fileName.textContent = f.name;
+      fileSize.textContent = humanSize(f.size);
+    });
+  }
+
+  // Thiết lập cho cả 2 form
+  setupFileInput(fileInput, fileDrop, fileMeta, fileName, fileSize);
+  setupFileInput(fileInputEmp, fileDropEmp, fileMetaEmp, fileNameEmp, fileSizeEmp);
+
+  // Xử lý form submission với loading state
+  document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('.btn-upload');
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang upload...';
+    submitBtn.disabled = true;
   });
 
-  // Drag & drop
-  ['dragenter','dragover'].forEach(evt => {
-    fileDrop.addEventListener(evt, (e)=>{ e.preventDefault(); fileDrop.classList.add('dragover'); });
+  document.getElementById('importForm').addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('.btn-upload');
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang import...';
+    submitBtn.disabled = true;
   });
-  ['dragleave','drop'].forEach(evt => {
-    fileDrop.addEventListener(evt, (e)=>{ e.preventDefault(); fileDrop.classList.remove('dragover'); });
-  });
-  fileDrop.addEventListener('drop', (e)=>{
-    const dt = e.dataTransfer;
-    if(!dt) return;
-    const f = dt.files[0];
-    if(!f) return;
-    fileInput.files = dt.files; // set file input
-    fileMeta.style.display = 'flex';
-    fileName.textContent = f.name;
-    fileSize.textContent = humanSize(f.size);
+
+  // Hiệu ứng khi load trang
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.upload-card');
+    cards.forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      
+      setTimeout(() => {
+        card.style.transition = 'all 0.5s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 200);
+    });
   });
 </script>
 
+<style>
+  .upload-container {
+    padding: 2rem 1rem;
+  }
+  
+  /* Animation cho cards */
+  .upload-card {
+    transition: all 0.5s ease;
+  }
+  
+  /* Loading state cho buttons */
+  .btn-upload:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+</style>
 {% endblock %}
