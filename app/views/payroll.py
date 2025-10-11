@@ -547,10 +547,10 @@ def apply_adjustment():
         # ✅ NẾU LÀ AJAX VÀ CẦN XÁC NHẬN THÊM PHÉP
         is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
         if can_xac_nhan_them_phep and is_ajax:
-            print(f"DEBUG: Returning JSON confirmation - remaining_absence: {result['ngay_vang_con_lai']}, available_leave: {result['phep_nam_kha_dung']}")
+            print(f"🚨 SENDING CONFIRMATION - remaining_absence: {result['ngay_vang_cuoi']}, available_leave: {result['phep_nam_kha_dung']}")
             return jsonify({
                 'need_extra_leave_confirmation': True,
-                'remaining_absence': result['ngay_vang_con_lai'],
+                'remaining_absence': result['ngay_vang_cuoi'],
                 'available_leave': result['phep_nam_kha_dung'],
                 'employee_code': employee_code,
                 'period': period
