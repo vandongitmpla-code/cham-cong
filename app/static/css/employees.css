@@ -32,7 +32,7 @@
     border: 1px solid var(--border);
         /* Thêm để bảng rộng hơn */
     margin: 0 -1rem; /* Mở rộng ra ngoài container */
-    width: calc(100% + 30rem); /* Tăng độ rộng */
+    width: calc(0% + 30rem); /* Tăng độ rộng */
 
 }
 
@@ -66,7 +66,7 @@
 }
 
 /* Độ rộng cột */
-.modern-table th:nth-child(1) { width: 900px; }
+.modern-table th:nth-child(1) { width: 150px; }
 .modern-table th:nth-child(2) { width: 150px; }
 .modern-table th:nth-child(3) { width: 120px; }
 .modern-table th:nth-child(4) { width: 140px; }
