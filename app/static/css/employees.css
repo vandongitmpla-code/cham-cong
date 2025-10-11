@@ -1,5 +1,20 @@
 /* employees.css - Optimized Clean Version */
 
+/* Thêm vào đầu file employees.css */
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* Hoặc nếu muốn font cụ thể hơn */
+.employees-container {
+    font-family: 'Inter', sans-serif;
+}
 /* ====== MODERN DESIGN VARIABLES ====== */
 :root {
     --primary: #2563eb;
