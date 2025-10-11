@@ -45,7 +45,8 @@ def calculate_standard_work_days(year, month):
     standard_days = total_days - sunday_count - (holidays_count * 2)
     return standard_days
 
-def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung, use_extra_leave=False):
+def calculate_adjustment_details(original_days, standard_days, ngay_vang_ban_dau, overtime_hours, ngay_nghi_phep_nam_da_dung, phep_nam_kha_dung, use_extra_leave=False):
+
     """
     Tính toán điều chỉnh theo logic mới - CÓ THÊM XÁC NHẬN PHÉP NĂM
     """
