@@ -1,5 +1,10 @@
 /* form_system.css - Hệ thống form chung cho dự án */
-
+/* Thêm vào đầu file form_system.css */
+.form-system,
+.form-section,
+.form-control {
+    font-family: 'Inter', sans-serif;
+}
 /* ====== FORM BASE STYLES ====== */
 .form-system {
     max-width: 100%;
