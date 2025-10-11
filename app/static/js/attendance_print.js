@@ -490,3 +490,4 @@ function showExtraLeaveConfirmation(employeeCode, period, filename, remainingAbs
         location.reload();
     }
 }
+
