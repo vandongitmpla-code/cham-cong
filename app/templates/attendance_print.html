@@ -157,25 +157,25 @@
           </td>
 
           {% elif colname == "Số ngày nghỉ không lương" %}
-<td class="fw-bold absence-cell" 
-    data-bs-toggle="tooltip" 
-    data-bs-placement="top"
-    data-bs-html="true"
-    data-bs-title="
-        <div class='text-start small'>
-            <strong>📊 Chi tiết ngày nghỉ không lương:</strong><br>
-            - Ngày nghỉ gốc: <strong class='text-danger'>{{ row[-1].ngay_vang_ban_dau }}</strong> ngày<br>
-            - Đã dùng phép năm: <strong class='text-primary'>{{ row[-1].ngay_nghi_phep_nam_da_dung }}</strong> ngày<br>
-            {% if row[-1].has_adjustment %}
-            - Đã bù bằng tăng ca: <strong class='text-success'>{{ (row[-1].adjustment_info / 8) | round(1) }}</strong> ngày<br>
-            {% else %}
-            - Có thể bù bằng tăng ca: <strong class='text-warning'>{{ (row[-1].tang_ca_nghi_ban_dau / 8) | round(1) }}</strong> ngày<br>
-            {% endif %}
-            - <strong>Ngày nghỉ cuối: {{ cell }} ngày</strong>
-        </div>
-    ">
-    {{ cell }}
-</td>
+          <td class="fw-bold absence-cell" 
+              data-bs-toggle="tooltip" 
+              data-bs-placement="top"
+              data-bs-html="true"
+              data-bs-title="
+                  <div class='text-start small'>
+                      <strong>📊 Chi tiết ngày nghỉ không lương:</strong><br>
+                      - Ngày nghỉ gốc: <strong class='text-danger'>{{ row[-1].ngay_vang_ban_dau }}</strong> ngày<br>
+                      - Đã dùng phép năm: <strong class='text-primary'>{{ row[-1].ngay_nghi_phep_nam_da_dung }}</strong> ngày<br>
+                      {% if row[-1].has_adjustment %}
+                      - Đã bù bằng tăng ca: <strong class='text-success'>{{ (row[-1].adjustment_info / 8) | round(1) }}</strong> ngày<br>
+                      {% else %}
+                      - Có thể bù bằng tăng ca: <strong class='text-warning'>{{ (row[-1].tang_ca_nghi_ban_dau / 8) | round(1) }}</strong> ngày<br>
+                      {% endif %}
+                      - <strong>Ngày nghỉ cuối: {{ cell }} ngày</strong>
+                  </div>
+              ">
+              {{ cell }}
+          </td>
 
           {% elif colname == "Bắt đầu tính phép từ tháng" %}
             <td class="text-info fw-bold">
