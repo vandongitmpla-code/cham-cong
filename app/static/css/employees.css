@@ -472,16 +472,3 @@
     z-index: 1000;
 }
 
-/* THÊM VÀO CUỐI FILE CSS */
-.section-wide {
-    margin: 0 -2rem;
-    padding: rem;
-    background: var(--surface);
-}
-
-@media (max-width: 768px) {
-    .section-wide {
-        margin: 0 -1rem;
-        padding: 1.5rem;
-    }
-}
