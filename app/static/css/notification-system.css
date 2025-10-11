@@ -1,4 +1,4 @@
-/* notifications.css - Custom notification styles */
+/* notifications_system.css - Hệ thống thông báo hiện đại */
 
 /* ====== ALERT BASE STYLES ====== */
 .custom-alert {
@@ -11,6 +11,7 @@
     animation: slideInDown 0.3s ease-out;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
 .custom-alert::before {
@@ -85,6 +86,7 @@
     padding: 0.75em;
     margin: -0.75em -0.75em -0.75em auto;
     transition: all 0.2s ease;
+    filter: brightness(0) invert(1);
 }
 
 .custom-alert .btn-close:hover {
@@ -132,6 +134,7 @@
     height: 3px;
     background: rgba(255, 255, 255, 0.5);
     animation: progressBar 5s linear forwards;
+    border-radius: 0 0 0 8px;
 }
 
 @keyframes progressBar {
@@ -154,11 +157,18 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* ====== INLINE NOTIFICATIONS ====== */
+.inline-notification {
+    margin: 16px 0;
+    border-radius: 8px;
+}
+
 /* ====== RESPONSIVE ====== */
 @media (max-width: 768px) {
     .custom-alert {
         padding: 14px 16px;
         margin-bottom: 12px;
+        border-radius: 10px;
     }
     
     .notification-container {
@@ -176,18 +186,50 @@
     .custom-alert-icon {
         font-size: 1.1rem;
     }
+    
+    .custom-alert-message {
+        font-size: 0.9rem;
+    }
+}
+
+/* ====== DARK MODE SUPPORT ====== */
+@media (prefers-color-scheme: dark) {
+    .custom-alert {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
 }
 
 /* ====== PRINT STYLES ====== */
 @media print {
+    .notification-container,
     .custom-alert {
-        border: 1px solid #dee2e6 !important;
-        background: #f8f9fa !important;
-        color: #000 !important;
-        box-shadow: none !important;
-    }
-    
-    .btn-close {
         display: none !important;
     }
+}
+
+/* ====== ACCESSIBILITY ====== */
+.custom-alert:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* ====== ICON ANIMATIONS ====== */
+.custom-alert-success .custom-alert-icon {
+    animation: bounceIn 0.6s ease;
+}
+
+.custom-alert-danger .custom-alert-icon {
+    animation: pulse 0.6s ease;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
