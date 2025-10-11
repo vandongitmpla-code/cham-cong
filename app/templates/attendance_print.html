@@ -4,7 +4,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_print.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -414,7 +413,6 @@
   <input type="hidden" name="period" id="resetPeriod">
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
-
 
 
 <!-- ✅ THAY ĐỔI: Đặt script TRƯỚC khi sử dụng trong HTML -->
