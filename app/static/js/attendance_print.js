@@ -488,4 +488,5 @@ document.addEventListener('click', function(e) {
 });
 
 
+
 <script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
