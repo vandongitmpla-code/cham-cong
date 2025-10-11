@@ -836,13 +836,14 @@
     text-overflow: ellipsis;
 }
 
-.truncate-multiline {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+/* THAY THẾ TOÀN BỘ PHẦN NÀY */
+.truncate {
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+/* XÓA HOÀN TOÀN .truncate-multiline */
 /* ====== TOOLTIP FOR TRUNCATED TEXT ====== */
 .has-tooltip {
     position: relative;
