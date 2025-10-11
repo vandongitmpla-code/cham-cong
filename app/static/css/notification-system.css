@@ -142,19 +142,22 @@
     to { width: 0%; }
 }
 
-/* ====== FLOATING NOTIFICATIONS ====== */
+/* ====== FLOATING NOTIFICATIONS - VỊ TRÍ MỚI ====== */
 .notification-container {
     position: fixed;
     top: 20px;
-    right: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 9999;
     min-width: 300px;
-    max-width: 400px;
+    max-width: 500px;
+    width: auto;
 }
 
 .floating-notification {
     margin-bottom: 10px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
 }
 
 /* ====== INLINE NOTIFICATIONS ====== */
