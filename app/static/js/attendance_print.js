@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function(){
     const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltips.forEach(t => new bootstrap.Tooltip(t, {container: 'body'}));
 
-    // ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
+
 // ✅ XỬ LÝ CLICK ICON ĐIỀU CHỈNH (+) - CÔNG THỨC MỚI
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('adjustment-icon')) {
