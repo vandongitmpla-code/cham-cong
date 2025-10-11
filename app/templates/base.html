@@ -79,6 +79,8 @@
 
   <!-- JS riêng từng trang -->
   <script src="{{ url_for('static', filename='js/notification-system.js') }}"></script>
-  {% block extra_js %}{% endblock %}
+  {% block extra_js %}
+<script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
+{% endblock %}
 </body>
 </html>
