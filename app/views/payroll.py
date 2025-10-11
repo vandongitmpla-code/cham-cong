@@ -482,7 +482,7 @@ def apply_adjustment():
             flash("Không tìm thấy nhân viên!", "danger")
             return redirect(url_for("main.attendance_print", filename=filename)) if filename else redirect(url_for("main.index"))
         
-        # ✅ LẤY THÔNG TIN PHÉP NĂM TỪ PAYROLL_RECORDS (DUY NHẤT)
+        # ✅ LẤY THÔNG TIN PHÉP NĂM TỪ PAYROLL_RECORDS
         payroll_record = PayrollRecord.query.filter_by(
             employee_code=employee_code, 
             period=period
