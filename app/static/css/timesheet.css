@@ -536,3 +536,23 @@
   margin-top: 0.25rem;
 }
 
+/* Thêm vào timesheet.css */
+.time-entries {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: #1e40af;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Đảm bảo line breaks hoạt động tốt */
+.timesheet-table td {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* Giữ nguyên chiều cao hàng cho đẹp */
+.timesheet-table tbody tr {
+    height: 60px;
+}
