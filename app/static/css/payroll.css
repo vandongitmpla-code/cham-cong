@@ -46,11 +46,6 @@
     min-width: 1600px; /* Tăng từ 1400px */
 }
 
-.payroll-container-full {
-    width: 99%; /* Tăng từ 96% */
-    max-width: 199vw; /* Tăng từ 98vw */
-    min-width: 100%;
-}
 
 /* ====== HEADER SECTION ====== */
 .payroll-header {
