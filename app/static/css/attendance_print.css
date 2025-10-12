@@ -94,8 +94,8 @@
     border: 1px solid #f1f5f9;
     margin-bottom: 2rem;
     width: 100%;
-   max-height: none;
-    min-height: 600px;
+    max-height: none;
+        min-height: 600px;
 }
 
 .print-container table {
