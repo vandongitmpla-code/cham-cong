@@ -563,3 +563,56 @@
     height: 60px;
 }
 
+/* ====== VARIABLES FOR STICKY COLUMNS ====== */
+:root {
+    --col1-width: 60px;   /* Chi tiết */
+    --col2-width: 80px;   /* Mã */
+    --col3-width: 120px;  /* Tên */
+    --col4-width: 150px;  /* Phòng ban */
+}
+
+/* Cột 1 */
+.timesheet-table th:nth-child(1),
+.timesheet-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    width: var(--col1-width);
+    min-width: var(--col1-width);
+    background: #ffffff;
+    z-index: 20;
+}
+
+/* Cột 2 */
+.timesheet-table th:nth-child(2),
+.timesheet-table td:nth-child(2) {
+    position: sticky;
+    left: var(--col1-width);
+    width: var(--col2-width);
+    min-width: var(--col2-width);
+    background: #ffffff;
+    z-index: 20;
+}
+
+/* Cột 3 */
+.timesheet-table th:nth-child(3),
+.timesheet-table td:nth-child(3) {
+    position: sticky;
+    left: calc(var(--col1-width) + var(--col2-width));
+    width: var(--col3-width);
+    min-width: var(--col3-width);
+    background: #ffffff;
+    z-index: 20;
+}
+
+/* Cột 4 */
+.timesheet-table th:nth-child(4),
+.timesheet-table td:nth-child(4) {
+    position: sticky;
+    left: calc(var(--col1-width) + var(--col2-width) + var(--col3-width));
+    width: var(--col4-width);
+    min-width: var(--col4-width);
+    background: #ffffff;
+    z-index: 20;
+    border-right: 2px solid #e2e8f0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
