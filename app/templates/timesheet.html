@@ -230,42 +230,48 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="days-grid">
       `;
       
-      empData.days.forEach((day, index) => {
-        const dayNumber = index + 1;
-        const weekday = empData.weekdays && empData.weekdays[dayNumber] ? empData.weekdays[dayNumber] : '';
-        
-        let dayClass = 'day-absent';
-        let dayIcon = '❌';
-        let dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
-        
-        if (day && day !== '') {
-          if (day.includes('A') || day.includes('V')) {
+      // Trong phần modal - cập nhật hiển thị chi tiết
+empData.days.forEach((day, index) => {
+    const dayNumber = index + 1;
+    const weekday = empData.weekdays && empData.weekdays[dayNumber] ? empData.weekdays[dayNumber] : '';
+    
+    let dayClass = 'day-absent';
+    let dayIcon = '❌';
+    let dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
+    let dayContent = 'V';
+    
+    if (day && day !== '') {
+        if (day.includes('A') || day.includes('V')) {
             dayClass = 'day-absent';
             dayIcon = '❌';
-            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng (${day})`;
-          } else if (day.includes('L') || day.includes('D')) {
+            dayContent = 'V';
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
+        } else if (day.includes('L') || day.includes('D')) {
             dayClass = 'day-late';
             dayIcon = '⚠️';
-            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Đi muộn (${day})`;
-          } else if (day.includes('<br>')) {
+            dayContent = day;
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Đi muộn`;
+        } else if (day.includes('<br>')) {
             dayClass = 'day-present';
             dayIcon = '✅';
-            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt - ${day.replace(/<br>/g, ', ')}`;
-          } else {
+            dayContent = day.replace(/<br>/g, '\n');
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt`;
+        } else {
             dayClass = 'day-present';
             dayIcon = '✅';
-            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt (${day})`;
-          }
+            dayContent = day;
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt`;
         }
-        
-        content += `
-          <div class="day ${dayClass}" title="${dayTitle}">
-            <div class="day-number">${dayNumber}</div>
-            <div class="day-icon">${dayIcon}</div>
-            <div class="day-status">${day || 'A'}</div>
-          </div>
-        `;
-      });
+    }
+    
+    content += `
+      <div class="day ${dayClass}" title="${dayTitle}">
+        <div class="day-number">${dayNumber}</div>
+        <div class="day-icon">${dayIcon}</div>
+        <div class="day-content">${dayContent}</div>
+      </div>
+    `;
+});
       
       content += `
             </div>
