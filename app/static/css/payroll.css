@@ -520,3 +520,162 @@
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
+/* payroll.css - Flexible sticky system */
+
+/* ====== VARIABLES FOR FLEXIBLE STICKY SYSTEM ====== */
+:root {
+    --sticky-col-1-width: 80px;   /* Mã */
+    --sticky-col-2-width: 120px;  /* Tên */
+    --sticky-col-3-width: 150px;  /* Phòng ban */
+    --sticky-col-4-width: 100px;  /* Ngày công */
+    --sticky-col-5-width: 100px;  /* Ngày vắng */
+    --sticky-col-6-width: 100px;  /* Chủ nhật */
+    --sticky-col-7-width: 100px;  /* Lễ, tết */
+    --header-row-1-height: 56px;
+    --header-row-2-height: 48px;
+}
+
+/* ====== FLEXIBLE STICKY COLUMNS ====== */
+/* Cột 1: Mã */
+.payroll-table th:nth-child(1),
+.payroll-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    width: var(--sticky-col-1-width);
+    min-width: var(--sticky-col-1-width);
+    max-width: var(--sticky-col-1-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 2: Tên */
+.payroll-table th:nth-child(2),
+.payroll-table td:nth-child(2) {
+    position: sticky;
+    left: var(--sticky-col-1-width);
+    width: var(--sticky-col-2-width);
+    min-width: var(--sticky-col-2-width);
+    max-width: var(--sticky-col-2-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 3: Phòng ban */
+.payroll-table th:nth-child(3),
+.payroll-table td:nth-child(3) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width));
+    width: var(--sticky-col-3-width);
+    min-width: var(--sticky-col-3-width);
+    max-width: var(--sticky-col-3-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 4: Ngày công */
+.payroll-table th:nth-child(4),
+.payroll-table td:nth-child(4) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width));
+    width: var(--sticky-col-4-width);
+    min-width: var(--sticky-col-4-width);
+    max-width: var(--sticky-col-4-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 5: Ngày vắng */
+.payroll-table th:nth-child(5),
+.payroll-table td:nth-child(5) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width));
+    width: var(--sticky-col-5-width);
+    min-width: var(--sticky-col-5-width);
+    max-width: var(--sticky-col-5-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 6: Chủ nhật */
+.payroll-table th:nth-child(6),
+.payroll-table td:nth-child(6) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width));
+    width: var(--sticky-col-6-width);
+    min-width: var(--sticky-col-6-width);
+    max-width: var(--sticky-col-6-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 7: Lễ, tết */
+.payroll-table th:nth-child(7),
+.payroll-table td:nth-child(7) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width) + var(--sticky-col-6-width));
+    width: var(--sticky-col-7-width);
+    min-width: var(--sticky-col-7-width);
+    max-width: var(--sticky-col-7-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ====== FLEXIBLE STICKY HEADERS ====== */
+.payroll-table thead tr:nth-child(1) th {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-row-1-height);
+}
+
+.payroll-table thead tr:nth-child(2) th {
+    position: sticky;
+    top: var(--header-row-1-height);
+    z-index: 49;
+    height: var(--header-row-2-height);
+}
+
+/* Đảm bảo sticky columns cũng sticky theo header */
+.payroll-table thead tr:nth-child(1) th:nth-child(-n+7) {
+    z-index: 60; /* Cao hơn các header thông thường */
+}
+
+.payroll-table thead tr:nth-child(2) th:nth-child(-n+7) {
+    z-index: 59;
+}
+
+/* ====== DYNAMIC STICKY SYSTEM ====== */
+/* Class để tự động thêm sticky columns */
+.sticky-col {
+    position: sticky;
+    background: #ffffff;
+    z-index: 40;
+}
+
+/* Có thể thêm class này cho bất kỳ cột nào */
+.sticky-col-1 { left: 0; }
+.sticky-col-2 { left: 80px; }
+.sticky-col-3 { left: 200px; }
+.sticky-col-4 { left: 350px; }
+.sticky-col-5 { left: 450px; }
+.sticky-col-6 { left: 550px; }
+.sticky-col-7 { left: 650px; }
+
+/* Class để thêm sticky rows */
+.sticky-row {
+    position: sticky;
+    background: #ffffff;
+    z-index: 30;
+}
+
+.sticky-row-1 { top: 0; }
+.sticky-row-2 { top: 56px; }
+.sticky-row-3 { top: 104px; }
