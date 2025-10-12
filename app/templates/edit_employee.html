@@ -1,130 +1,132 @@
 {% extends "base.html" %}
-{% block title %}Sửa Nhân viên{% endblock %}
+{% block title %}Sửa thông tin nhân viên{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/form_system.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/employees.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/employee_edit.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="section-card">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="section-title">Sửa thông tin nhân viên</h2>
-      <p class="text-muted mb-0">Cập nhật thông tin cá nhân và chấm công</p>
-    </div>
-    <a href="{{ url_for('main.employees') }}" class="btn btn-outline-secondary">
-      <i class="bi bi-arrow-left"></i> Quay lại
-    </a>
-  </div>
-
-  <form method="post" class="form-system">
-    <div class="form-section">
-      <h3 class="form-section-title">Thông tin cơ bản</h3>
-      
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="form-label">Mã số nhân viên</label>
-            <input type="text" name="code" class="form-control" value="{{ emp.code }}" required
-                   placeholder="Nhập mã số nhân viên">
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="form-label">Họ và tên</label>
-            <input type="text" name="name" class="form-control" value="{{ emp.name }}" required
-                   placeholder="Nhập họ và tên đầy đủ">
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group">
-            <label class="form-label">Tổ</label>
-            <input type="text" name="team" class="form-control" value="{{ emp.team }}"
-                   placeholder="Ví dụ: Tổ 1">
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label class="form-label">Phòng ban</label>
-            <input type="text" name="department" class="form-control" value="{{ emp.department }}"
-                   placeholder="Ví dụ: Kỹ thuật">
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
-            <label class="form-label">Loại hợp đồng</label>
-            <input type="text" name="contract_type" class="form-control" value="{{ emp.contract_type }}"
-                   placeholder="Ví dụ: Chính thức">
-          </div>
-        </div>
-      </div>
+<div class="edit-form-container">
+    <!-- Header -->
+    <div class="edit-form-header">
+        <h1 class="edit-form-title">Sửa thông tin nhân viên</h1>
+        <p class="edit-form-subtitle">Cập nhật thông tin cá nhân và chấm công</p>
     </div>
 
-    <div class="form-section">
-      <h3 class="form-section-title">Thông tin chấm công & bảo hiểm</h3>
-      
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="form-label">Mã chấm công</label>
-            <input type="text" name="att_code" class="form-control" value="{{ emp.att_code or '' }}"
-                   placeholder="Nhập mã máy chấm công">
-            <div class="form-text">Mã sử dụng cho máy chấm công</div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label class="form-label">Tháng bắt đầu làm việc</label>
-            <div class="month-input-wrapper">
-              <input type="month" name="start_month" id="editStartMonth" 
-                     class="form-control" 
-                     value="{{ emp.start_month or '' }}"
-                     onchange="updateEditInsuranceMonth()">
+    <form method="post" class="edit-form">
+        <!-- Thông tin cơ bản -->
+        <div class="edit-form-section">
+            <h3 class="edit-form-section-title">Thông tin cơ bản</h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group-edit">
+                        <label class="form-label-edit">MÃ SỐ NHÂN VIÊN</label>
+                        <input type="text" name="code" class="form-control-edit" value="{{ emp.code }}" required
+                               placeholder="Nhập mã số nhân viên">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group-edit">
+                        <label class="form-label-edit">HỌ VÀ TÊN</label>
+                        <input type="text" name="name" class="form-control-edit" value="{{ emp.name }}" required
+                               placeholder="Nhập họ và tên đầy đủ">
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Hiển thị tháng bảo hiểm -->
-      <div class="row">
-        <div class="col-12">
-          <div id="editInsuranceLabel">
-            {% if emp.insurance_start_month %}
-            <div class="insurance-display vietnamese">
-              <i class="bi bi-shield-check me-2"></i>
-              Bắt đầu đóng bảo hiểm từ: 
-              <strong>
-                {% set month = emp.insurance_start_month[5:7] %}
-                {% set year = emp.insurance_start_month[:4] %}
-                {% set month_names = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'] %}
-                {{ month_names[month|int - 1] }} năm {{ year }}
-              </strong>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group-edit">
+                        <label class="form-label-edit">TỔ</label>
+                        <input type="text" name="team" class="form-control-edit" value="{{ emp.team }}"
+                               placeholder="Ví dụ: VP">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group-edit">
+                        <label class="form-label-edit">PHÒNG BAN</label>
+                        <input type="text" name="department" class="form-control-edit" value="{{ emp.department }}"
+                               placeholder="Ví dụ: R&D">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group-edit">
+                        <label class="form-label-edit">LOẠI HỢP ĐỒNG</label>
+                        <input type="text" name="contract_type" class="form-control-edit" value="{{ emp.contract_type }}"
+                               placeholder="Ví dụ: HDLD">
+                    </div>
+                </div>
             </div>
-            {% else %}
-            <div class="insurance-display vietnamese text-muted">
-              <i class="bi bi-shield-exclamation me-2"></i>
-              Chưa có thông tin bảo hiểm
-            </div>
-            {% endif %}
-          </div>
-          <input type="hidden" name="insurance_start_month" id="editInsuranceMonth" value="{{ emp.insurance_start_month or '' }}">
         </div>
-      </div>
-    </div>
 
-    <div class="form-actions">
-      <button type="submit" class="btn-form btn-form-primary">
-        <i class="bi bi-check-circle"></i> Cập nhật thông tin
-      </button>
-      <a href="{{ url_for('main.employees') }}" class="btn-form btn-form-secondary">
-        <i class="bi bi-x-circle"></i> Hủy bỏ
-      </a>
-    </div>
-  </form>
+        <!-- Thông tin chấm công & bảo hiểm -->
+        <div class="edit-form-section">
+            <h3 class="edit-form-section-title">Thông tin chấm công & bảo hiểm</h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group-edit">
+                        <label class="form-label-edit">MÃ CHẤM CÔNG</label>
+                        <input type="text" name="att_code" class="form-control-edit" value="{{ emp.att_code or '' }}"
+                               placeholder="Nhập mã máy chấm công">
+                        <small style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; display: block;">
+                            Mã sử dụng cho máy chấm công
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group-edit">
+                        <label class="form-label-edit">THÁNG BẮT ĐẦU LÀM VIỆC</label>
+                        <div class="month-input-wrapper-edit">
+                            <input type="month" name="start_month" id="editStartMonth" 
+                                   class="form-control-edit" 
+                                   value="{{ emp.start_month or '' }}"
+                                   onchange="updateEditInsuranceMonth()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hiển thị tháng bảo hiểm -->
+            <div class="row">
+                <div class="col-12">
+                    <div id="editInsuranceLabel">
+                        {% if emp.insurance_start_month %}
+                        <div class="insurance-display-edit">
+                            <i class="bi bi-shield-check"></i>
+                            Bắt đầu đóng bảo hiểm từ: 
+                            <strong>
+                                {% set month = emp.insurance_start_month[5:7] %}
+                                {% set year = emp.insurance_start_month[:4] %}
+                                {% set month_names = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'] %}
+                                {{ month_names[month|int - 1] }} năm {{ year }}
+                            </strong>
+                        </div>
+                        {% else %}
+                        <div class="insurance-display-edit insurance-display-empty">
+                            <i class="bi bi-shield-exclamation"></i>
+                            Chưa có thông tin bảo hiểm
+                        </div>
+                        {% endif %}
+                    </div>
+                    <input type="hidden" name="insurance_start_month" id="editInsuranceMonth" value="{{ emp.insurance_start_month or '' }}">
+                </div>
+            </div>
+        </div>
+
+        <!-- Form actions -->
+        <div class="form-actions-edit">
+            <button type="submit" class="btn-edit-primary">
+                <i class="bi bi-check-circle"></i> Cập nhật thông tin
+            </button>
+            <a href="{{ url_for('main.employees') }}" class="btn-edit-secondary">
+                <i class="bi bi-x-circle"></i> Hủy bỏ
+            </a>
+        </div>
+    </form>
 </div>
 
 <script>
@@ -134,7 +136,6 @@ function updateEditInsuranceMonth() {
     const insuranceLabel = document.getElementById('editInsuranceLabel');
     
     if (startMonthInput.value) {
-        // Tính tháng bảo hiểm (tháng làm việc + 1)
         const startDate = new Date(startMonthInput.value + '-01');
         startDate.setMonth(startDate.getMonth() + 1);
         
@@ -144,19 +145,20 @@ function updateEditInsuranceMonth() {
         
         insuranceMonthInput.value = insuranceDate;
         
-        // Cập nhật hiển thị
         const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
                            'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
-        const displayText = `🏢 Bắt đầu đóng bảo hiểm từ: <strong>${monthNames[insuranceMonth - 1]} năm ${insuranceYear}</strong>`;
+        const displayText = `<div class="insurance-display-edit">
+            <i class="bi bi-shield-check"></i>
+            Bắt đầu đóng bảo hiểm từ: <strong>${monthNames[insuranceMonth - 1]} năm ${insuranceYear}</strong>
+        </div>`;
         
-        insuranceLabel.innerHTML = `<div class="insurance-display vietnamese">${displayText}</div>`;
+        insuranceLabel.innerHTML = displayText;
     } else {
         insuranceMonthInput.value = '';
-        insuranceLabel.innerHTML = '<div class="insurance-display vietnamese text-muted"><i class="bi bi-shield-exclamation me-2"></i>Chưa có thông tin bảo hiểm</div>';
+        insuranceLabel.innerHTML = '<div class="insurance-display-edit insurance-display-empty"><i class="bi bi-shield-exclamation"></i>Chưa có thông tin bảo hiểm</div>';
     }
 }
 
-// Khởi tạo khi trang load
 document.addEventListener('DOMContentLoaded', function() {
     updateEditInsuranceMonth();
 });

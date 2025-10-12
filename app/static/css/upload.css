@@ -1,221 +1,299 @@
-/* static/css/upload.css */
+/* upload.css - Updated to match employees design */
 
-/* Card chính của trang upload */
+/* ====== UPLOAD CARD ====== */
 .upload-card {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-  padding: 28px;
-  max-width: 800px;
-  margin: 36px auto;
-  text-align: center;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    margin: 2rem auto;
+    max-width: 800px;
+    width: 95%;
+    text-align: center;
 }
 
 /* Tiêu đề */
 .upload-card .title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #ff6600;
-  margin-bottom: 12px;
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
 }
 
 /* Mô tả nhỏ */
 .upload-card .subtitle {
-  color: #666;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    font-weight: 400;
 }
 
-/* Khu vực kéo thả */
+/* ====== FILE DROP ZONE ====== */
 .file-drop {
-  border: 2px dashed #dfe7ee;
-  border-radius: 10px;
-  padding: 28px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
-  cursor: pointer;
-  transition: border-color .18s ease, box-shadow .18s ease, background .18s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+    border: 2px dashed #e2e8f0;
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
 
 /* trạng thái khi hover / drag */
 .file-drop:hover,
 .file-drop.dragover {
-  border-color: #ff8a33;
-  box-shadow: 0 8px 30px rgba(255,102,0,0.06);
-  background: #fffaf6;
+    border-color: #2563eb;
+    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.1);
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    transform: translateY(-2px);
 }
 
 /* icon to ở vùng drop */
 .file-drop .icon {
-  font-size: 40px;
-  color: #ff6600;
+    font-size: 4rem;
+    color: #2563eb;
+    margin-bottom: 1rem;
 }
 
 /* mô tả trong vùng drop */
 .file-drop .hint {
-  color: #666;
-  font-size: 0.95rem;
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
-/* Ẩn input file gốc, dùng label làm button */
+.file-drop .hint-small {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* ====== FILE INPUT & BUTTONS ====== */
 .file-input {
-  display: none;
+    display: none;
 }
+
 .file-label {
-  display: inline-block;
-  margin-top: 8px;
-  background: #ff6600;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background .12s ease, transform .08s ease;
-  text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    margin-top: 1rem;
 }
-.file-label:hover { background: #e65c00; transform: translateY(-1px); }
 
-/* Thông tin file sau khi chọn */
+.file-label:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+}
+
+/* ====== FILE META INFO ====== */
 .file-meta {
-  margin-top: 12px;
-  font-size: 0.95rem;
-  color: #333;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:center;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #0f172a;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
 }
-.file-meta .name { font-weight:600; }
-.file-meta .size { color:#777; font-size:0.85rem; }
 
-/* Nút Upload */
+.file-meta .name {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.file-meta .size {
+    color: #64748b;
+    font-size: 0.9rem;
+    background: #e2e8f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* ====== UPLOAD ACTIONS ====== */
 .upload-actions {
-  margin-top: 18px;
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  align-items:center;
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
 }
-.btn-upload {
-  background: #198754;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.btn-upload:hover { background: #157347; transform: translateY(-1px); }
-.btn-cancel {
-  background: transparent;
-  border: 1px solid #dee2e6;
-  color: #333;
-  padding: 8px 14px;
-  border-radius: 8px;
-}
-.btn-cancel,
-.btn-view {
-  background: #6c757d; /* xám nhạt */
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-.btn-cancel:hover,
-.btn-view:hover {
-  background: #5a6268;
-}
-/* Thông báo lỗi / thành công */
-.upload-msg {
-  margin-top: 12px;
-  font-size: 0.95rem;
-}
-.upload-msg.error { color: #d9534f; }
-.upload-msg.ok { color: #28a745; }
 
-/* Hỗ trợ responsive */
-@media (max-width: 720px) {
-  .upload-card { padding: 18px; margin: 18px; }
-  .file-drop { padding: 18px; gap:8px; }
-  .file-label, .btn-upload { padding: 8px 12px; font-size: 0.95rem; }
+.btn-upload {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
-/* ====== Import nhân viên Section ====== */
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn-cancel {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-cancel:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+    transform: translateY(-2px);
+}
+
+.btn-view {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+}
+
+/* ====== UPLOAD MESSAGES ====== */
+.upload-msg {
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.upload-msg.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.upload-msg.ok {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* ====== IMPORT SECTION ====== */
 .section-card {
-  background: #ffffff;
-  padding: 28px;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
-  max-width: 800px;
-  margin: 40px auto;
-  text-align: center;
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    max-width: 800px;
+    margin: 2rem auto;
+    text-align: center;
 }
 
 .section-card .section-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #ff6600;
-  margin-bottom: 20px;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f1f5f9;
+    position: relative;
+}
+
+.section-card .section-title::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    border-radius: 2px;
 }
 
 .section-card form input[type="file"] {
-  display: block;
-  margin: 0 auto;
-  padding: 10px;
-  border: 2px dashed #dee2e6;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
+    display: block;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    width: 100%;
+    max-width: 400px;
 }
 
 .section-card form input[type="file"]:hover {
-  border-color: #ff6600;
+    border-color: #2563eb;
+    background: #f0f9ff;
 }
 
 .section-card .btn-custom {
-  margin-top: 16px;
-  font-size: 0.95rem;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 600;
 }
 
-/* Link xem danh sách nhân viên */
-.section-card .btn {
-  margin-top: 12px;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-}
-
-.section-card .btn i {
-  margin-right: 6px;
-}
-.section-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* Thêm vào static/css/upload.css */
-
-/* ====== STYLE HIỂN THỊ TIẾNG VIỆT CHO LỊCH ====== */
+/* ====== FORM STYLES ====== */
 .form-group {
     margin-bottom: 1.5rem;
+    text-align: left;
 }
 
 .form-label {
     font-weight: 600;
-    color: #333;
+    color: #0f172a;
     margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     display: block;
 }
 
-/* Custom input month với icon lịch */
 .month-input-wrapper {
     position: relative;
     width: 100%;
@@ -236,35 +314,88 @@
     padding-right: 50px;
     cursor: pointer;
     background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    width: 100%;
+    transition: all 0.2s ease;
 }
 
-/* Hiển thị thông báo bảo hiểm */
+.form-control[type="month"]:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
 .insurance-display {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
     padding: 1rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    text-align: center;
-    margin-top: 0.5rem;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    margin-top: 1rem;
+    color: #1e40af;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
 .insurance-display.vietnamese {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
-/* Focus effect */
-.form-control:focus {
-    border-color: #ff6600;
-    box-shadow: 0 0 0 0.2rem rgba(255, 102, 0, 0.25);
-}
-
-/* Responsive */
+/* ====== RESPONSIVE DESIGN ====== */
 @media (max-width: 768px) {
-    .insurance-display {
-        padding: 0.8rem 1rem;
-        font-size: 1rem;
+    .upload-card,
+    .section-card {
+        padding: 1.5rem;
+        margin: 1rem auto;
+        width: 98%;
+    }
+    
+    .upload-card .title {
+        font-size: 1.75rem;
+    }
+    
+    .file-drop {
+        padding: 2rem 1rem;
+    }
+    
+    .file-drop .icon {
+        font-size: 3rem;
+    }
+    
+    .upload-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-upload,
+    .btn-cancel,
+    .btn-view,
+    .file-label {
+        width: 100%;
+        justify-content: center;
+        padding: 0.875rem 1.5rem;
+    }
+    
+    .file-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .upload-card,
+    .section-card {
+        padding: 1.25rem;
+    }
+    
+    .upload-card .title {
+        font-size: 1.5rem;
+    }
+    
+    .section-card .section-title {
+        font-size: 1.4rem;
     }
 }
