@@ -52,7 +52,7 @@ def timesheet(filename):
             end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
             # Tính số ngày thực tế từ period
             day_count = (end_date - start_date).days + 1
-        else:
+             else:
             # Fallback: dùng số ngày từ file như cũ
             day_count = max(int(str(c)) for c in day_cols)
         except Exception as e:
