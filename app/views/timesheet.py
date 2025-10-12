@@ -55,7 +55,7 @@ def timesheet(filename):
         else:
             # Fallback: dùng số ngày từ file như cũ
             day_count = max(int(str(c)) for c in day_cols)
-    except Exception as e:
+        except Exception as e:
         print("Lỗi tính day_count từ period:", e, flush=True)
         # Fallback: dùng số ngày từ file
         day_count = max(int(str(c)) for c in day_cols)
