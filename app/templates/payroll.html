@@ -100,7 +100,7 @@
         </tr>
       </thead>
 
-      
+      <!-- Trong phần table body - cập nhật cell rendering -->
       <!-- Trong phần table body - cập nhật cell rendering -->
       <tbody>
         {% for row in rows %}
@@ -110,7 +110,7 @@
               {% set cell = row[i] %}
               
               {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
-                <t<!-- Trong phần table body - cập nhật cell rendering -->d class="highlight-col fw-bold">{{ cell }}</td>
+                <td class="highlight-col fw-bold">{{ cell }}</td>
               {% elif colname.isdigit() %}
                 {% set d = colname|int %}
                 {% set wd = weekdays.get(d, "") %}
