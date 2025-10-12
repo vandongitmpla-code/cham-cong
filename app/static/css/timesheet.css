@@ -67,6 +67,10 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
     position: relative;
+    max-height: 85vh; /* Tăng chiều cao tối đa */
+    min-height: 600px; /* Chiều cao tối thiểu */
+    width: 100%; /* Đảm bảo chiếm full width */
+    min-width: 100%; /* Không bị giới hạn */
 }
 
 .timesheet-table {
@@ -75,6 +79,8 @@
     min-width: 100%;
     font-size: 0.9rem;
     background: #ffffff;
+    table-layout: auto; /* Cho phép cột co giãn */
+    white-space: nowrap; /* Ngăn text xuống dòng */
 }
 
 /* ====== TABLE HEADER ====== */
@@ -385,4 +391,228 @@
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
     color: #374151;
+}
+
+/* Additional styles for the modal and summary */
+.timesheet-stats {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.timesheet-summary {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.summary-stat {
+  text-align: center;
+  padding: 1rem;
+}
+
+.summary-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2563eb;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Employee detail modal styles */
+.employee-detail {
+  padding: 1rem 0;
+}
+
+.detail-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.detail-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.detail-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.text-success { color: #10b981 !important; }
+.text-danger { color: #ef4444 !important; }
+.text-warning { color: #f59e0b !important; }
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.day {
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  border: 2px solid transparent;
+}
+
+.day-present {
+  background: rgba(16, 185, 129, 0.1);
+  color: #065f46;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.day-absent {
+  background: rgba(239, 68, 68, 0.1);
+  color: #991b1b;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.day-late {
+  background: rgba(245, 158, 11, 0.1);
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.day-number {
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.day-icon {
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.day-status {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Table header styling for weekdays */
+.timesheet-table thead th small {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.8;
+  font-weight: 400;
+  margin-top: 0.25rem;
+}
+
+/* Thêm vào timesheet.css */
+.time-entries {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: #1e40af;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Đảm bảo line breaks hoạt động tốt */
+.timesheet-table td {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* Giữ nguyên chiều cao hàng cho đẹp */
+.timesheet-table tbody tr {
+    height: 60px;
+}
+
+/* ====== VARIABLES FOR STICKY COLUMNS ====== */
+:root {
+    --col1-width: 60px;   /* Chi tiết */
+    --col2-width: 80px;   /* Mã */
+    --col3-width: 120px;  /* Tên */
+    --col4-width: 150px;  /* Phòng ban */
+}
+
+/* Cột 1 */
+.timesheet-table th:nth-child(1),
+.timesheet-table td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    width: var(--col1-width);
+    min-width: var(--col1-width);
+    background: #ffffff;
+    z-index: 20;
+}
+
+/* Cột 2 */
+.timesheet-table th:nth-child(2),
+.timesheet-table td:nth-child(2) {
+    position: sticky;
+    left: var(--col1-width);
+    width: var(--col2-width);
+    min-width: var(--col2-width);
+    background: #ffffff;
+    z-index: 20;
+}
+
+/* Cột 3 */
+.timesheet-table th:nth-child(3),
+.timesheet-table td:nth-child(3) {
+    position: sticky;
+    left: calc(var(--col1-width) + var(--col2-width));
+    width: var(--col3-width);
+    min-width: var(--col3-width);
+    background: #ffffff;
+    z-index: 20;
+}
+
+/* Cột 4 */
+.timesheet-table th:nth-child(4),
+.timesheet-table td:nth-child(4) {
+    position: sticky;
+    left: calc(var(--col1-width) + var(--col2-width) + var(--col3-width));
+    width: var(--col4-width);
+    min-width: var(--col4-width);
+    background: #ffffff;
+    z-index: 20;
+    border-right: 2px solid #e2e8f0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }

@@ -12,7 +12,7 @@
       <h1 class="timesheet-title">Bảng chấm công bằng máy</h1>
       <div class="timesheet-period">
         <i class="bi bi-calendar-week"></i>
-        <strong>Kỳ công:</strong> {{ att_meta.period }}
+        <strong>Kỳ công:</strong> {{ att_meta.period if att_meta.period else "Chưa xác định" }}
       </div>
     </div>
     
@@ -20,6 +20,10 @@
       <div class="timesheet-filename">
         <i class="bi bi-file-earmark-excel"></i>
         {{ filename }}
+      </div>
+      <div class="timesheet-stats">
+        <span class="badge bg-primary">{{ rows|length }} nhân viên</span>
+        <span class="badge bg-success">{{ day_count }} ngày</span>
       </div>
     </div>
   </div>
@@ -30,28 +34,29 @@
       <i class="bi bi-calculator"></i> Bảng công tính lương
     </a>
 
-    <form method="POST" action="{{ url_for('main.import_payroll', filename=filename) }}" class="ms-2">
+    <form method="POST" action="{{ url_for('main.import_timesheet', filename=filename) }}" class="ms-2">
       <button type="submit" class="btn btn-report-success">
         <i class="bi bi-database-add"></i> Import vào Database
       </button>
     </form>
+    
+    <a href="{{ url_for('main.index') }}" class="btn btn-report-secondary">
+      <i class="bi bi-arrow-left"></i> Quay lại Upload
+    </a>
   </div>
 
-  <!-- Table Controls (Optional - có thể thêm filter sau) -->
+  <!-- Table Controls -->
   <div class="timesheet-controls">
+    <div class="control-group">
+      <span class="control-label">Tìm kiếm:</span>
+      <input type="text" class="control-select" id="searchInput" placeholder="Tìm theo tên, mã, phòng ban...">
+    </div>
     <div class="control-group">
       <span class="control-label">Hiển thị:</span>
       <select class="control-select" id="rowCountSelect">
         <option value="50">50 dòng</option>
         <option value="100">100 dòng</option>
         <option value="all">Tất cả</option>
-      </select>
-    </div>
-    <div class="control-group">
-      <span class="control-label">Phòng ban:</span>
-      <select class="control-select" id="departmentFilter">
-        <option value="all">Tất cả</option>
-        <!-- Có thể thêm options department dynamic sau -->
       </select>
     </div>
   </div>
@@ -63,37 +68,61 @@
         <tr>
           <th>Chi tiết</th>
           {% for col in cols %}
-          <th>{{ col }}</th>
+            {% if col in ['Mã', 'Tên', 'Phòng ban'] %}
+              <th>{{ col }}</th>
+            {% else %}
+              <th title="{{ weekdays.get(col|int, '') }}">{{ col }}<br><small>{{ weekdays.get(col|int, '') }}</small></th>
+            {% endif %}
           {% endfor %}
         </tr>
       </thead>
-      <tbody>
+      <tbody id="timesheetBody">
         {% for row in rows %}
-        <tr>
+        <tr class="employee-row">
           <!-- Detail Button -->
           <td>
             <button 
               class="btn-detail"
-              data-emp='{{ {"Mã": row[0], "Tên": row[1], "Phòng ban": row[2], "days": row[3:] } | tojson }}'
-              title="Xem chi tiết nhân viên">
+              data-emp='{{ 
+                {
+                  "Mã": row[0], 
+                  "Tên": row[1], 
+                  "Phòng ban": row[2], 
+                  "days": row[3:],
+                  "weekdays": weekdays
+                } | tojson 
+              }}'
+              title="Xem chi tiết chấm công">
               <i class="bi bi-eye"></i>
             </button>
           </td>
           
           <!-- Data Cells -->
           {% for cell in row %}
-          <td>
-            {% if loop.index0 >= 3 %} {# Assuming days start from index 3 #}
-              {% if cell == 'P' or cell == 'C' %}
-                <span class="status-present">{{ cell }}</span>
-              {% elif cell == 'A' or cell == 'V' %}
-                <span class="status-absent">{{ cell }}</span>
-              {% elif cell == 'L' or ':' in cell %} {# Late or time entry #}
-                <span class="status-late">{{ cell }}</span>
+          <td class="{% if loop.index0 >= 3 %}day-cell{% endif %}">
+            {% if loop.index0 >= 3 %} {# Day columns start from index 3 #}
+              {% if cell %}
+                {% if '<br>' in cell %}
+                  {# Multiple time entries - hiển thị nguyên bản với line breaks #}
+                  <div class="time-entries" style="font-size: 0.8rem; line-height: 1.2;">
+                    {{ cell|safe }}
+                  </div>
+                {% elif cell in ['P', 'C', 'X'] %}
+                  <span class="status-present">{{ cell }}</span>
+                {% elif cell in ['A', 'V', 'N'] %}
+                  <span class="status-absent">V</span>
+                {% elif cell in ['L', 'D'] %}
+                  <span class="status-late">{{ cell }}</span>
+                {% else %}
+                  {# Hiển thị nguyên bản cho các giá trị khác #}
+                  {{ cell|safe }}
+                {% endif %}
               {% else %}
-                {{ cell|safe }}
+                {# Empty cell - vắng #}
+                <span class="status-absent">V</span>
               {% endif %}
             {% else %}
+              {# Employee info columns #}
               {{ cell|safe }}
             {% endif %}
           </td>
@@ -112,12 +141,16 @@
         <div class="summary-label">Tổng nhân viên</div>
       </div>
       <div class="summary-stat">
-        <div class="summary-number">{{ cols[3:]|length }}</div>
+        <div class="summary-number">{{ day_count }}</div>
         <div class="summary-label">Ngày làm việc</div>
       </div>
       <div class="summary-stat">
-        <div class="summary-number">{{ att_meta.period }}</div>
-        <div class="summary-label">Kỳ công</div>
+        <div class="summary-number">{{ period[:7] if period else "N/A" }}</div>
+        <div class="summary-label">Tháng</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-number" id="presentCount">-</div>
+        <div class="summary-label">Có mặt hôm nay</div>
       </div>
     </div>
   </div>
@@ -156,6 +189,19 @@ document.addEventListener('DOMContentLoaded', function() {
     button.addEventListener('click', function() {
       const empData = JSON.parse(this.getAttribute('data-emp'));
       
+      // Calculate statistics
+      // Tính toán statistics trong modal
+      const totalDays = empData.days.length;
+      const presentDays = empData.days.filter(day => 
+          day && day !== '' && !day.includes('A') && !day.includes('V')
+      ).length;
+      const absentDays = empData.days.filter(day => 
+          (day && (day.includes('A') || day.includes('V'))) || day === ''
+      ).length;
+      const lateDays = empData.days.filter(day => 
+          day && (day.includes('L') || day.includes('D'))
+      ).length;
+      
       // Create modal content
       let content = `
         <div class="employee-detail">
@@ -166,43 +212,104 @@ document.addEventListener('DOMContentLoaded', function() {
               <span class="badge bg-secondary">${empData['Phòng ban']}</span>
             </div>
           </div>
+          
           <div class="detail-stats">
             <div class="stat-item">
               <span class="stat-label">Tổng ngày:</span>
-              <span class="stat-value">${empData.days.length}</span>
+              <span class="stat-value">${totalDays}</span>
             </div>
             <div class="stat-item">
               <span class="stat-label">Có mặt:</span>
-              <span class="stat-value">${empData.days.filter(day => day === 'P' || day === 'C').length}</span>
+              <span class="stat-value text-success">${presentDays}</span>
             </div>
             <div class="stat-item">
               <span class="stat-label">Vắng:</span>
-              <span class="stat-value">${empData.days.filter(day => day === 'A' || day === 'V').length}</span>
+              <span class="stat-value text-danger">${absentDays}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Đi muộn:</span>
+              <span class="stat-value text-warning">${lateDays}</span>
             </div>
           </div>
+          
           <div class="detail-days">
             <h6>Chi tiết từng ngày:</h6>
             <div class="days-grid">
       `;
       
+      // Trong phần modal - cập nhật hiển thị chi tiết
       empData.days.forEach((day, index) => {
-        let dayClass = 'day-present';
-        if (day === 'A' || day === 'V') dayClass = 'day-absent';
-        if (day === 'L' || day.includes(':')) dayClass = 'day-late';
-        
-        content += `<span class="day ${dayClass}" title="Ngày ${index + 1}">${day}</span>`;
-      });
-      
-      content += `
+          const dayNumber = index + 1;
+          const weekday = empData.weekdays && empData.weekdays[dayNumber] ? empData.weekdays[dayNumber] : '';
+          
+          let dayClass = 'day-absent';
+          let dayIcon = '❌';
+          let dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
+          let dayContent = 'V';
+          
+          if (day && day !== '') {
+              if (day.includes('A') || day.includes('V')) {
+                  dayClass = 'day-absent';
+                  dayIcon = '❌';
+                  dayContent = 'V';
+                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
+              } else if (day.includes('L') || day.includes('D')) {
+                  dayClass = 'day-late';
+                  dayIcon = '⚠️';
+                  dayContent = day;
+                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Đi muộn`;
+              } else if (day.includes('<br>')) {
+                  dayClass = 'day-present';
+                  dayIcon = '✅';
+                  dayContent = day.replace(/<br>/g, '\n');
+                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt`;
+              } else {
+                  dayClass = 'day-present';
+                  dayIcon = '✅';
+                  dayContent = day;
+                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt`;
+              }
+          }
+          
+          content += `
+            <div class="day ${dayClass}" title="${dayTitle}">
+              <div class="day-number">${dayNumber}</div>
+              <div class="day-icon">${dayIcon}</div>
+              <div class="day-content">${dayContent}</div>
             </div>
-          </div>
-        </div>
-      `;
+          `;
+      });
+            
+            content += `
+                  </div>
+                </div>
+              </div>
+            `;
+            
+            detailContent.innerHTML = content;
+            employeeModal.show();
+          });
+        });
+
+  // Search functionality
+  const searchInput = document.getElementById('searchInput');
+  const timesheetBody = document.getElementById('timesheetBody');
+  const employeeRows = document.querySelectorAll('.employee-row');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
       
-      detailContent.innerHTML = content;
-      employeeModal.show();
+      employeeRows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
     });
-  });
+  }
 
   // Row count selector
   const rowCountSelect = document.getElementById('rowCountSelect');
@@ -213,17 +320,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Department filter
-  const departmentFilter = document.getElementById('departmentFilter');
-  if (departmentFilter) {
-    departmentFilter.addEventListener('change', function() {
-      // Implementation for department filtering
-      console.log('Selected department:', this.value);
+  // Calculate present count for today
+  function calculatePresentCount() {
+    const today = new Date().getDate();
+    let presentCount = 0;
+    
+    employeeRows.forEach(row => {
+      const dayCells = row.querySelectorAll('.day-cell');
+      if (dayCells.length >= today) {
+        const todayCell = dayCells[today - 1];
+        if (todayCell && !todayCell.querySelector('.status-absent')) {
+          presentCount++;
+        }
+      }
     });
+    
+    document.getElementById('presentCount').textContent = presentCount;
   }
+  
+  // Calculate present count on load
+  calculatePresentCount();
 
   // Add loading state when importing
-  const importForm = document.querySelector('form[action*="import_payroll"]');
+  const importForm = document.querySelector('form[action*="import_timesheet"]');
   if (importForm) {
     importForm.addEventListener('submit', function(e) {
       const submitBtn = this.querySelector('button[type="submit"]');
@@ -234,120 +353,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<style>
-/* Additional styles for the modal and summary */
-.timesheet-summary {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  border: 1px solid #e2e8f0;
-}
-
-.summary-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 1rem;
-}
-
-.summary-stat {
-  text-align: center;
-  font-size: 2rem
-}
-
-.summary-number {
-  font-size: 2rem;
-  font-weight: 50;
-  color: #2563eb;
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-
-.summary-label {
-  font-size: 0.9rem;
-  color: #64748b;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Employee detail modal styles */
-.employee-detail {
-  padding: 1rem 0;
-}
-
-.detail-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f1f5f9;
-}
-
-.detail-meta {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.detail-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 12px;
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-bottom: 0.25rem;
-}
-
-.stat-value {
-  display: block;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.day {
-  padding: 0.5rem;
-  border-radius: 6px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 0.8rem;
-}
-
-.day-present {
-  background: rgba(16, 185, 129, 0.1);
-  color: #065f46;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.day-absent {
-  background: rgba(239, 68, 68, 0.1);
-  color: #991b1b;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.day-late {
-  background: rgba(245, 158, 11, 0.1);
-  color: #92400e;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-}
-</style>
 {% endblock %}
+
