@@ -365,3 +365,58 @@
     }
 }
 
+/* CSS for simple icon version */
+.status-present,
+.status-absent,
+.status-halfday,
+.status-warning {
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    transition: all 0.2s ease;
+}
+
+.status-present {
+    background: rgba(16, 185, 129, 0.15);
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-absent {
+    background: rgba(239, 68, 68, 0.15);
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-halfday {
+    background: rgba(245, 158, 11, 0.15);
+    color: #92400e;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #92400e;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Hover effects */
+.status-present:hover,
+.status-absent:hover,
+.status-halfday:hover,
+.status-warning:hover {
+    transform: scale(1.1);
+}
+
+/* Ensure consistent icon size */
+.status-present i,
+.status-absent i,
+.status-halfday i,
+.status-warning i {
+    font-size: 1rem;
+}
