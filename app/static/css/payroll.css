@@ -15,8 +15,8 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
     margin: 2rem auto;
-    width: 1900px; /* SET CỨNG ĐỘ RỘNG */
-    max-width: 500vw; /* Giới hạn tối đa */
+    width: 1800px; /* SET CỨNG ĐỘ RỘNG */
+    max-width: 95vw; /* Giới hạn tối đa */
     display: block;
     position: relative;
     left: 50%;
