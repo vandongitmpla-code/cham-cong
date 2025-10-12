@@ -19,7 +19,16 @@
     max-width: 95vw;
     min-width: auto; /* QUAN TRỌNG: ĐỔI THÀNH auto */
 }
-
+/* SỬA TẤT CẢ CONTAINER SIZES */
+.payroll-container-sm,
+.payroll-container-md, 
+.payroll-container-lg,
+.payroll-container-xl,
+.payroll-container-full {
+    min-width: auto !important; /* BỎ min-width CỨNG */
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
 /* Container Sizes */
 
 .payroll-container-sm {
