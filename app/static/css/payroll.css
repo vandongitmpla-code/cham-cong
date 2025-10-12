@@ -595,7 +595,14 @@
 }
 
 /* ====== RESPONSIVE DESIGN ====== */
-
+/* THAY THẾ BẰNG */
+@media (max-width: 1800px) {
+    .payroll-container-xl {
+        width: 98%;
+        max-width: 1700px;
+        min-width: 1500px;
+    }
+}
 
 @media (max-width: 768px) {
     :root {
