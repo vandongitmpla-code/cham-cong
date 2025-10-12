@@ -45,8 +45,7 @@ def timesheet(filename):
         # Tạo mapping weekdays: key = day number (1..31) -> "Thứ 2"/.../"Chủ Nhật"
         from datetime import datetime, timedelta
         weekdays = {}
-        try:
-            
+    try:
         if period_str and "~" in period_str:
             start_s, end_s = period_str.split("~")
             start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
