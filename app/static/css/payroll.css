@@ -567,7 +567,8 @@
 .status-absent i,
 .status-halfday i,
 .status-warning i {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    line-height: 1;
 }
 .status-present:hover,
 .status-absent:hover,
