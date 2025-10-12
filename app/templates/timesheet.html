@@ -99,35 +99,35 @@
           
           <!-- Data Cells -->
           <!-- Trong phần table body - cập nhật cell rendering -->
-{% for cell in row %}
-<td class="{% if loop.index0 >= 3 %}day-cell{% endif %}">
-  {% if loop.index0 >= 3 %} {# Day columns start from index 3 #}
-    {% if cell %}
-      {% if '<br>' in cell %}
-        {# Multiple time entries - hiển thị nguyên bản với line breaks #}
-        <div class="time-entries" style="font-size: 0.8rem; line-height: 1.2;">
-          {{ cell|safe }}
-        </div>
-      {% elif cell in ['P', 'C', 'X'] %}
-        <span class="status-present">{{ cell }}</span>
-      {% elif cell in ['A', 'V', 'N'] %}
-        <span class="status-absent">V</span>
-      {% elif cell in ['L', 'D'] %}
-        <span class="status-late">{{ cell }}</span>
-      {% else %}
-        {# Hiển thị nguyên bản cho các giá trị khác #}
-        {{ cell|safe }}
-      {% endif %}
-    {% else %}
-      {# Empty cell - vắng #}
-      <span class="status-absent">V</span>
-    {% endif %}
-  {% else %}
-    {# Employee info columns #}
-    {{ cell|safe }}
-  {% endif %}
-</td>
-{% endfor %}
+          {% for cell in row %}
+          <td class="{% if loop.index0 >= 3 %}day-cell{% endif %}">
+            {% if loop.index0 >= 3 %} {# Day columns start from index 3 #}
+              {% if cell %}
+                {% if '<br>' in cell %}
+                  {# Multiple time entries - hiển thị nguyên bản với line breaks #}
+                  <div class="time-entries" style="font-size: 0.8rem; line-height: 1.2;">
+                    {{ cell|safe }}
+                  </div>
+                {% elif cell in ['P', 'C', 'X'] %}
+                  <span class="status-present">{{ cell }}</span>
+                {% elif cell in ['A', 'V', 'N'] %}
+                  <span class="status-absent">V</span>
+                {% elif cell in ['L', 'D'] %}
+                  <span class="status-late">{{ cell }}</span>
+                {% else %}
+                  {# Hiển thị nguyên bản cho các giá trị khác #}
+                  {{ cell|safe }}
+                {% endif %}
+              {% else %}
+                {# Empty cell - vắng #}
+                <span class="status-absent">V</span>
+              {% endif %}
+            {% else %}
+              {# Employee info columns #}
+              {{ cell|safe }}
+            {% endif %}
+          </td>
+          {% endfor %}
         </tr>
         {% endfor %}
       </tbody>
