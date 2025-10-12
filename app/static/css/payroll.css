@@ -409,7 +409,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    min-width: px;
+    min-width: 20px;
     justify-content: center;
 }
 
