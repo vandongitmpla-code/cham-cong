@@ -1,49 +1,46 @@
-/* payroll.css - Consistent with design system */
+/* payroll.css - Updated to match design system */
 
-/* ====== PAYROLL CONTAINER ====== */
-.payroll-container {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #f1f5f9;
-    margin: 2rem auto;
-    max-width: 95%;
+/* ====== PAYROLL WRAPPER ====== */
+.payroll-wrapper {
     width: 100%;
+    min-height: 94vh;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    font-family: 'Inter', sans-serif;
 }
 
 /* ====== PAYROLL HEADER ====== */
 .payroll-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid #f1f5f9;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .payroll-title {
-    font-size: 2.25rem;
-    font-weight: 800;
+    font-size: 1.75rem;
+    font-weight: 700;
     color: #0f172a;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
-}
-
-.payroll-subtitle {
-    font-size: 1.1rem;
-    color: #64748b;
     margin: 0;
-    font-weight: 400;
 }
 
 .payroll-period {
-    background: rgba(37, 99, 235, 0.1);
-    border: 1px solid rgba(37, 99, 235, 0.2);
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
     border-radius: 12px;
-    padding: 1rem 1.5rem;
-    margin-top: 1rem;
-    color: #1e40af;
+    padding: 0.75rem 1.25rem;
+    color: #0369a1;
     font-weight: 600;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 0.5rem;
 }
@@ -52,13 +49,12 @@
 .payroll-actions {
     display: flex;
     gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
 }
 
 .btn-payroll {
-    padding: 1rem 2rem;
+    padding: 0.875rem 1.5rem;
     border-radius: 16px;
     font-weight: 600;
     text-decoration: none;
@@ -68,12 +64,12 @@
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .btn-payroll-primary {
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .btn-payroll-primary:hover {
@@ -84,6 +80,7 @@
 .btn-payroll-success {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .btn-payroll-success:hover {
@@ -94,6 +91,7 @@
 .btn-payroll-warning {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
 }
 
 .btn-payroll-warning:hover {
@@ -103,10 +101,11 @@
 
 /* ====== HOLIDAYS SECTION ====== */
 .holidays-section {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: #ffffff;
     border-radius: 16px;
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     border: 1px solid #e2e8f0;
 }
 
@@ -122,41 +121,28 @@
 
 .holidays-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 0.75rem;
 }
 
 .holiday-item {
-    background: #ffffff;
+    background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.2s ease;
-}
-
-.holiday-item:hover {
-    border-color: #2563eb;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-}
-
-.holiday-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
 }
 
 .holiday-date {
     font-weight: 600;
     color: #0f172a;
-    font-size: 0.95rem;
 }
 
 .holiday-name {
     color: #64748b;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
 }
 
 .btn-holiday-delete {
@@ -164,68 +150,70 @@
     color: #dc2626;
     border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: 6px;
-    padding: 0.5rem 0.75rem;
+    padding: 0.375rem 0.75rem;
     font-size: 0.8rem;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
 }
 
 .btn-holiday-delete:hover {
     background: rgba(239, 68, 68, 0.2);
-    transform: scale(1.05);
 }
 
-/* ====== PAYROLL TABLE ====== */
+/* ====== PAYROLL TABLE CONTAINER ====== */
 .payroll-table-container {
+    flex: 1;
+    overflow: auto;
     background: #ffffff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
-    margin-bottom: 2rem;
+    position: relative;
 }
 
 .payroll-table {
-    width: 100%;
     border-collapse: collapse;
+    width: max-content;
+    min-width: 100%;
     font-size: 0.85rem;
     background: #ffffff;
 }
 
-/* Table Header */
+/* ====== TABLE HEADER ====== */
 .payroll-table thead {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .payroll-table thead tr:nth-child(1) th {
-    padding: 1.25rem 0.75rem;
-    color: white;
-    font-weight: 700;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #ffffff;
+    padding: 1rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
     z-index: 50;
 }
 
 .payroll-table thead tr:nth-child(2) th {
-    padding: 1rem 0.75rem;
-    color: white;
-    font-weight: 600;
-    font-size: 0.7rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #ffffff;
+    padding: 0.75rem 0.75rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 500;
+    font-size: 0.7rem;
     position: sticky;
-    top: 56px; /* Chiều cao hàng đầu */
+    top: 48px; /* Chiều cao hàng đầu */
     z-index: 49;
 }
 
-/* Table Body */
+/* ====== TABLE BODY ====== */
 .payroll-table tbody td {
-    padding: 0.875rem 0.75rem;
+    padding: 0.75rem 0.75rem;
     border: 1px solid #e2e8f0;
     text-align: center;
     white-space: nowrap;
@@ -250,62 +238,64 @@
     background: #fafbfc;
 }
 
-/* Sticky Columns */
-.payroll-table th:nth-child(1),
-.payroll-table td:nth-child(1),
-.payroll-table th:nth-child(2),
-.payroll-table td:nth-child(2),
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    position: sticky;
-    background: #ffffff;
-    z-index: 40;
+.payroll-table tbody tr:nth-child(even):hover {
+    background: #f1f5f9;
 }
 
+/* ====== STICKY COLUMNS ====== */
 .payroll-table th:nth-child(1),
 .payroll-table td:nth-child(1) {
+    position: sticky;
     left: 0;
     min-width: 60px;
     z-index: 41;
+    background: #ffffff;
     border-right: 2px solid #e2e8f0;
 }
 
 .payroll-table th:nth-child(2),
 .payroll-table td:nth-child(2) {
+    position: sticky;
     left: 60px;
     min-width: 120px;
     z-index: 41;
+    background: #ffffff;
     border-right: 2px solid #e2e8f0;
 }
 
 .payroll-table th:nth-child(3),
 .payroll-table td:nth-child(3) {
+    position: sticky;
     left: 180px;
     min-width: 150px;
     z-index: 41;
+    background: #ffffff;
     border-right: 2px solid #e2e8f0;
 }
 
-/* Highlight Styles */
+/* ====== HIGHLIGHT COLUMNS ====== */
 .highlight-col {
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
     font-weight: 700 !important;
     color: #92400e !important;
+    border-color: #f59e0b !important;
 }
 
 .highlight-sunday {
     background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%) !important;
     font-weight: 700 !important;
     color: #dc2626 !important;
+    border-color: #ef4444 !important;
 }
 
 .highlight-holiday {
     background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%) !important;
     font-weight: 700 !important;
     color: #7c3aed !important;
+    border-color: #8b5cf6 !important;
 }
 
-/* Status Indicators */
+/* ====== STATUS INDICATORS ====== */
 .blink-icon {
     animation: blink 1.2s infinite;
 }
@@ -315,157 +305,200 @@
     50% { opacity: 0.3; }
 }
 
+.blink-red {
+    color: #dc2626;
+}
+
+/* ====== SCROLLBAR STYLING ====== */
+.payroll-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.payroll-table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.payroll-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.payroll-table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
 /* ====== RESPONSIVE DESIGN ====== */
-@media (max-width: 768px) {
-    .payroll-container {
-        padding: 1.5rem;
-        margin: 1rem auto;
-        width: 98%;
+@media (max-width: 1024px) {
+    .payroll-wrapper {
+        padding: 1rem;
     }
     
-    .payroll-title {
-        font-size: 1.75rem;
+    .payroll-header {
+        padding: 1.25rem;
+        flex-direction: column;
+        align-items: flex-start;
     }
     
     .payroll-actions {
         flex-direction: column;
+        width: 100%;
     }
     
     .btn-payroll {
         width: 100%;
         justify-content: center;
     }
-    
-    .holidays-list {
-        grid-template-columns: 1fr;
-    }
-    
-    .payroll-table-container {
-        overflow-x: auto;
-    }
-    
-    .payroll-table {
-        min-width: 800px;
-    }
 }
 
-@media (max-width: 480px) {
-    .payroll-container {
-        padding: 1.25rem;
+@media (max-width: 768px) {
+    .payroll-wrapper {
+        padding: 0.75rem;
+    }
+    
+    .payroll-header {
+        padding: 1rem;
+        border-radius: 16px;
     }
     
     .payroll-title {
         font-size: 1.5rem;
     }
     
+    .payroll-table-container {
+        border-radius: 16px;
+    }
+    
     .payroll-table th,
     .payroll-table td {
-        padding: 0.75rem 0.5rem;
+        padding: 0.625rem 0.5rem;
         font-size: 0.8rem;
+    }
+    
+    .holidays-list {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Adjust sticky columns for mobile */
+    .payroll-table th:nth-child(1),
+    .payroll-table td:nth-child(1) {
+        left: 0;
+        min-width: 50px;
+    }
+    
+    .payroll-table th:nth-child(2),
+    .payroll-table td:nth-child(2) {
+        left: 50px;
+        min-width: 100px;
+    }
+    
+    .payroll-table th:nth-child(3),
+    .payroll-table td:nth-child(3) {
+        left: 150px;
+        min-width: 120px;
     }
 }
 
-/* Thêm vào payroll.css */
-
-/* ====== STATUS INDICATORS ====== */
-.status-present {
-    background: rgba(16, 185, 129, 0.15);
-    color: #065f46;
-    padding: 0.375rem 0.75rem;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    min-width: 32px;
-    justify-content: center;
+@media (max-width: 480px) {
+    .payroll-wrapper {
+        padding: 0.5rem;
+    }
+    
+    .payroll-header {
+        padding: 0.875rem;
+    }
+    
+    .payroll-table th,
+    .payroll-table td {
+        padding: 0.5rem 0.375rem;
+        font-size: 0.75rem;
+    }
 }
 
-.status-absent {
-    background: rgba(239, 68, 68, 0.15);
-    color: #991b1b;
-    padding: 0.375rem 0.75rem;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    min-width: 32px;
-    justify-content: center;
+/* ====== MODAL STYLES ====== */
+.holiday-modal .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.status-halfday {
-    background: rgba(245, 158, 11, 0.15);
-    color: #92400e;
-    padding: 0.375rem 0.75rem;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    min-width: 32px;
-    justify-content: center;
+.holiday-modal .modal-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 16px 16px 0 0;
+    padding: 1.25rem 1.5rem;
 }
 
-.status-warning {
-    background: rgba(245, 158, 11, 0.15);
-    color: #92400e;
-    padding: 0.375rem;
+.holiday-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.holiday-modal .input-group {
+    gap: 0.75rem;
+}
+
+.holiday-modal .form-control {
+    border: 2px solid #e2e8f0;
     border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.8rem;
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    display: inline-flex;
-    align-items: center;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.holiday-modal .form-control:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+.holiday-modal .modal-footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0 0 16px 16px;
+}
+
+/* ====== LOADING STATES ====== */
+.payroll-loading {
+    display: flex;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    align-items: center;
+    height: 200px;
+    color: #64748b;
+    font-size: 1.1rem;
 }
 
-/* Status with icons */
-.status-present.with-icon::before {
-    content: "✓";
-    font-weight: bold;
+.payroll-loading::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e2e8f0;
+    border-top: 2px solid #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 0.75rem;
 }
 
-.status-absent.with-icon::before {
-    content: "✕";
-    font-weight: bold;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.status-halfday.with-icon::before {
-    content: "½";
-    font-weight: bold;
+/* ====== EMPTY STATE ====== */
+.payroll-empty {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #64748b;
 }
 
-/* Hover effects */
-.status-present:hover {
-    background: rgba(16, 185, 129, 0.25);
-    transform: scale(1.05);
+.payroll-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
 
-.status-absent:hover {
-    background: rgba(239, 68, 68, 0.25);
-    transform: scale(1.05);
-}
-
-.status-halfday:hover {
-    background: rgba(245, 158, 11, 0.25);
-    transform: scale(1.05);
-}
-
-.status-warning:hover {
-    background: rgba(245, 158, 11, 0.25);
-    transform: scale(1.05);
-}
-
-/* Tooltip enhancements */
-.payroll-table [data-bs-toggle="tooltip"] {
-    cursor: help;
+.payroll-empty-text {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #374151;
 }
