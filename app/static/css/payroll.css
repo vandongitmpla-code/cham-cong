@@ -356,7 +356,8 @@
     background: #fafbfc;
 }
 
-/* ====== STICKY COLUMNS ====== */
+/* ====== STICKY COLUMNS 1-7 ====== */
+/* Cột 1: Mã */
 .payroll-table th:nth-child(1),
 .payroll-table td:nth-child(1) {
     position: sticky;
@@ -368,6 +369,7 @@
     border-right: 2px solid #e2e8f0;
 }
 
+/* Cột 2: Tên */
 .payroll-table th:nth-child(2),
 .payroll-table td:nth-child(2) {
     position: sticky;
@@ -379,6 +381,7 @@
     border-right: 2px solid #e2e8f0;
 }
 
+/* Cột 3: Phòng ban */
 .payroll-table th:nth-child(3),
 .payroll-table td:nth-child(3) {
     position: sticky;
@@ -389,6 +392,82 @@
     background: #ffffff;
     border-right: 2px solid #e2e8f0;
 }
+
+/* Cột 4: Ngày công */
+.payroll-table th:nth-child(4),
+.payroll-table td:nth-child(4) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width));
+    width: var(--sticky-col-4-width);
+    min-width: var(--sticky-col-4-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 5: Ngày vắng */
+.payroll-table th:nth-child(5),
+.payroll-table td:nth-child(5) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width));
+    width: var(--sticky-col-5-width);
+    min-width: var(--sticky-col-5-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 6: Chủ nhật */
+.payroll-table th:nth-child(6),
+.payroll-table td:nth-child(6) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width));
+    width: var(--sticky-col-6-width);
+    min-width: var(--sticky-col-6-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+}
+
+/* Cột 7: Lễ, tết */
+.payroll-table th:nth-child(7),
+.payroll-table td:nth-child(7) {
+    position: sticky;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width) + var(--sticky-col-6-width));
+    width: var(--sticky-col-7-width);
+    min-width: var(--sticky-col-7-width);
+    z-index: 41;
+    background: #ffffff;
+    border-right: 2px solid #e2e8f0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ====== STICKY ROWS 1-2 ====== */
+/* Hàng 1 - Tiêu đề cột */
+.payroll-table thead tr:nth-child(1) th {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+/* Hàng 2 - Thứ trong tuần */
+.payroll-table thead tr:nth-child(2) th {
+    position: sticky;
+    top: var(--header-row-1-height);
+    z-index: 49;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+/* Đảm bảo sticky columns cũng sticky theo header */
+.payroll-table thead tr:nth-child(1) th:nth-child(-n+7) {
+    z-index: 60; /* Cao hơn các header thông thường */
+}
+
+.payroll-table thead tr:nth-child(2) th:nth-child(-n+7) {
+    z-index: 59;
+}
+
 
 /* ====== HIGHLIGHT STYLES ====== */
 .highlight-col {
