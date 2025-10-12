@@ -15,9 +15,12 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
     margin: 2rem auto;
-    width: 95%;
-    max-width: 95vw;
-    min-width: auto; /* QUAN TRỌNG: ĐỔI THÀNH auto */
+    width: 1800px; /* SET CỨNG ĐỘ RỘNG */
+    max-width: 95vw; /* Giới hạn tối đa */
+    display: block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%); /* CĂN GIỮA HOÀN HẢO */
 }
 /* SỬA TẤT CẢ CONTAINER SIZES */
 .payroll-container,
