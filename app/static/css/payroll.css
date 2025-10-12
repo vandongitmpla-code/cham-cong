@@ -605,12 +605,16 @@
 /* ====== RESPONSIVE DESIGN ====== */
 @media (max-width: 1800px) {
     .payroll-container {
-        width: 100%;
-        padding: 1.5rem;
-        border-radius: 16px;
-        margin: 1rem auto;
-        min-width: unset;
-    }
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    margin: 2rem auto;
+    width: 99%; /* Tăng từ 98% lên 99% */
+    max-width: 98vw; /* Tăng từ 95vw lên 98vw */
+    min-width: 1400px; /* Tăng từ 1200px lên 1400px */
+}
     
     .payroll-table-container {
         max-height: 65vh;
