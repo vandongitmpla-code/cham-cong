@@ -47,7 +47,6 @@ def timesheet(filename):
         weekdays = {}
         try:
             
-            
         if period_str and "~" in period_str:
             start_s, end_s = period_str.split("~")
             start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
