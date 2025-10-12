@@ -60,8 +60,8 @@ def timesheet(filename):
 
         # Xác định các cột ngày (1..31) có trong df
         day_cols = [c for c in df.columns if str(c).strip().isdigit()]
-    :day_cols = sorted(day_cols, key=lambda x: int(str(x).strip())) if day_cols else []
-    if not day_cols
+    day_cols = sorted(day_cols, key=lambda x: int(str(x).strip())) if day_cols else []
+    if not day_cols:
         flash("Không tìm thấy cột ngày (1..31) trong file", "danger")
         return redirect(url_for("main.index"))
 
