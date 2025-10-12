@@ -126,7 +126,7 @@ class PayrollContainerManager {
                 this.optimizeForFullscreen();
             }
         });
-    }
+    
 
         // Window resize handling
         window.addEventListener('resize', () => {
