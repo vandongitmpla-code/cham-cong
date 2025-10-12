@@ -1,4 +1,11 @@
-/* payroll.css - Consistent with design system */
+/* payroll.css - Clean and Optimized */
+:root {
+    --sticky-col-1-width: 80px;
+    --sticky-col-2-width: 150px;
+    --sticky-col-3-width: 180px;
+    --header-row-1-height: 56px;
+    --header-row-2-height: 48px;
+}
 
 /* ====== PAYROLL CONTAINER ====== */
 .payroll-container {
@@ -8,11 +15,49 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
     margin: 2rem auto;
-    max-width: 100%;
-    width: 100%;
+    width: 98%;
+    max-width: 95vw;
+    min-width: 1200px;
 }
 
-/* ====== PAYROLL HEADER ====== */
+/* Container Sizes */
+.payroll-container-sm {
+    width: 90%;
+    max-width: 1000px;
+    min-width: 800px;
+}
+
+.payroll-container-md {
+    width: 95%;
+    max-width: 1200px;
+    min-width: 1000px;
+}
+
+.payroll-container-lg {
+    width: 98%;
+    max-width: 1400px;
+    min-width: 1200px;
+}
+
+.payroll-container-xl {
+    width: 99%;
+    max-width: 1600px;
+    min-width: 1400px;
+}
+
+.payroll-container-full {
+    width: 96%;
+    max-width: 98vw;
+    min-width: 100%;
+    height: auto;
+    border-radius: 24px;
+    margin: 1rem auto;
+    padding: 2rem;
+    position: relative;
+    background: white;
+}
+
+/* ====== HEADER SECTION ====== */
 .payroll-header {
     text-align: center;
     margin-bottom: 2.5rem;
@@ -48,7 +93,59 @@
     gap: 0.5rem;
 }
 
-/* ====== PAYROLL ACTIONS ====== */
+/* ====== CONTROLS SECTION ====== */
+.container-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.size-control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.size-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.size-buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.btn-size {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-size:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.btn-size.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+/* ====== ACTIONS SECTION ====== */
 .payroll-actions {
     display: flex;
     gap: 1rem;
@@ -177,1093 +274,27 @@
     transform: scale(1.05);
 }
 
-/* ====== PAYROLL TABLE ====== */
+/* ====== TABLE CONTAINER & SCROLL ====== */
 .payroll-table-container {
     background: #ffffff;
     border-radius: 16px;
-    overflow: hidden;
+    overflow: auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     border: 1px solid #f1f5f9;
     margin-bottom: 2rem;
+    max-height: 70vh;
+    min-height: 500px;
 }
 
 .payroll-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: collapse;
     font-size: 0.85rem;
     background: #ffffff;
 }
 
 /* Table Header */
-.payroll-table thead {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-}
-
-.payroll-table thead tr:nth-child(1) th {
-    padding: 1.25rem 0.75rem;
-    color: white;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
-
-.payroll-table thead tr:nth-child(2) th {
-    padding: 1rem 0.75rem;
-    color: white;
-    font-weight: 600;
-    font-size: 0.7rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky;
-    top: 56px; /* Chiều cao hàng đầu */
-    z-index: 49;
-}
-
-/* Table Body */
-.payroll-table tbody td {
-    padding: 0.875rem 0.75rem;
-    border: 1px solid #e2e8f0;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    color: #0f172a;
-    font-weight: 400;
-    transition: all 0.2s ease;
-}
-
-.payroll-table tbody tr {
-    background: #ffffff;
-    transition: all 0.2s ease;
-}
-
-.payroll-table tbody tr:hover {
-    background: #f8fafc;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.payroll-table tbody tr:nth-child(even) {
-    background: #fafbfc;
-}
-
-/* Sticky Columns */
-.payroll-table th:nth-child(1),
-.payroll-table td:nth-child(1),
-.payroll-table th:nth-child(2),
-.payroll-table td:nth-child(2),
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    position: sticky;
-    background: #ffffff;
-    z-index: 40;
-}
-
-.payroll-table th:nth-child(1),
-.payroll-table td:nth-child(1) {
-    left: 0;
-    min-width: 60px;
-    z-index: 41;
-    border-right: 2px solid #e2e8f0;
-}
-
-.payroll-table th:nth-child(2),
-.payroll-table td:nth-child(2) {
-    left: 60px;
-    min-width: 120px;
-    z-index: 41;
-    border-right: 2px solid #e2e8f0;
-}
-
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    left: 180px;
-    min-width: 150px;
-    z-index: 41;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Highlight Styles */
-.highlight-col {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
-    font-weight: 700 !important;
-    color: #92400e !important;
-}
-
-.highlight-sunday {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%) !important;
-    font-weight: 700 !important;
-    color: #dc2626 !important;
-}
-
-.highlight-holiday {
-    background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%) !important;
-    font-weight: 700 !important;
-    color: #7c3aed !important;
-}
-
-/* Status Indicators */
-.blink-icon {
-    animation: blink 1.2s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-/* ====== RESPONSIVE DESIGN ====== */
-@media (max-width: 768px) {
-    .payroll-container {
-        padding: 1.5rem;
-        margin: 1rem auto;
-        width: 98%;
-    }
-    
-    .payroll-title {
-        font-size: 1.75rem;
-    }
-    
-    .payroll-actions {
-        flex-direction: column;
-    }
-    
-    .btn-payroll {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .holidays-list {
-        grid-template-columns: 1fr;
-    }
-    
-    .payroll-table-container {
-        overflow-x: auto;
-    }
-    
-    .payroll-table {
-        min-width: 800px;
-    }
-}
-
-@media (max-width: 480px) {
-    .payroll-container {
-        padding: 1.25rem;
-    }
-    
-    .payroll-title {
-        font-size: 1.5rem;
-    }
-    
-    .payroll-table th,
-    .payroll-table td {
-        padding: 0.75rem 0.5rem;
-        font-size: 0.8rem;
-    }
-}
-/* CSS for simple icon version */
-.status-present,
-.status-absent,
-.status-halfday,
-.status-warning {
-    padding: 0.5rem;
-    border-radius: 6px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    transition: all 0.2s ease;
-}
-
-.status-present {
-    background: rgba(16, 185, 129, 0.15);
-    color: #065f46;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.status-absent {
-    background: rgba(239, 68, 68, 0.15);
-    color: #991b1b;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.status-halfday {
-    background: rgba(245, 158, 11, 0.15);
-    color: #92400e;
-    border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.status-warning {
-    background: rgba(245, 158, 11, 0.15);
-    color: #92400e;
-    border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-/* Hover effects */
-.status-present:hover,
-.status-absent:hover,
-.status-halfday:hover,
-.status-warning:hover {
-    transform: scale(1.1);
-}
-
-/* Ensure consistent icon size */
-.status-present i,
-.status-absent i,
-.status-halfday i,
-.status-warning i {
-    font-size: 1rem;
-}
-
-/* Thêm vào payroll.css */
-
-/* ====== PAYROLL TABLE CONTAINER WITH SCROLL ====== */
-.payroll-table-container {
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: auto; /* Quan trọng: thêm overflow */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f1f5f9;
-    margin-bottom: 2rem;
-    max-height: 70vh; /* Giới hạn chiều cao để scroll */
-    position: relative;
-}
-
-.payroll-table {
-    width: max-content; /* Quan trọng: để bảng có thể scroll ngang */
-    min-width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    background: #ffffff;
-}
-
-/* ====== SCROLLBAR STYLING ====== */
-.payroll-table-container::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-.payroll-table-container::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 6px;
-}
-
-.payroll-table-container::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 6px;
-    border: 2px solid #f1f5f9;
-}
-
-.payroll-table-container::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
-.payroll-table-container::-webkit-scrollbar-corner {
-    background: #f1f5f9;
-}
-
-/* ====== STICKY HEADER & COLUMNS FIX ====== */
-.payroll-table thead {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.payroll-table thead tr:nth-child(1) th {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
-
-.payroll-table thead tr:nth-child(2) th {
-    position: sticky;
-    top: 48px; /* Chiều cao hàng đầu */
-    z-index: 49;
-}
-
-/* Đảm bảo sticky columns hoạt động với scroll */
-.payroll-table th:nth-child(1),
-.payroll-table td:nth-child(1) {
-    position: sticky;
-    left: 0;
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-.payroll-table th:nth-child(2),
-.payroll-table td:nth-child(2) {
-    position: sticky;
-    left: 60px;
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    position: sticky;
-    left: 180px;
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Shadow effect for sticky columns */
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-/* payroll.css - Flexible sticky system */
-
-/* ====== VARIABLES FOR FLEXIBLE STICKY SYSTEM ====== */
-:root {
-    --sticky-col-1-width: 80px;   /* Mã */
-    --sticky-col-2-width: 120px;  /* Tên */
-    --sticky-col-3-width: 150px;  /* Phòng ban */
-    --sticky-col-4-width: 100px;  /* Ngày công */
-    --sticky-col-5-width: 100px;  /* Ngày vắng */
-    --sticky-col-6-width: 100px;  /* Chủ nhật */
-    --sticky-col-7-width: 100px;  /* Lễ, tết */
-    --header-row-1-height: 56px;
-    --header-row-2-height: 48px;
-}
-
-/* ====== FLEXIBLE STICKY COLUMNS ====== */
-/* Cột 1: Mã */
-.payroll-table th:nth-child(1),
-.payroll-table td:nth-child(1) {
-    position: sticky;
-    left: 0;
-    width: var(--sticky-col-1-width);
-    min-width: var(--sticky-col-1-width);
-    max-width: var(--sticky-col-1-width);
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Cột 2: Tên */
-.payroll-table th:nth-child(2),
-.payroll-table td:nth-child(2) {
-    position: sticky;
-    left: var(--sticky-col-1-width);
-    width: var(--sticky-col-2-width);
-    min-width: var(--sticky-col-2-width);
-    max-width: var(--sticky-col-2-width);
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Cột 3: Phòng ban */
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    position: sticky;
-    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width));
-    width: var(--sticky-col-3-width);
-    min-width: var(--sticky-col-3-width);
-    max-width: var(--sticky-col-3-width);
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Cột 4: Ngày công */
-.payroll-table th:nth-child(4),
-.payroll-table td:nth-child(4) {
-    position: sticky;
-    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width));
-    width: var(--sticky-col-4-width);
-    min-width: var(--sticky-col-4-width);
-    max-width: var(--sticky-col-4-width);
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Cột 5: Ngày vắng */
-.payroll-table th:nth-child(5),
-.payroll-table td:nth-child(5) {
-    position: sticky;
-    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width));
-    width: var(--sticky-col-5-width);
-    min-width: var(--sticky-col-5-width);
-    max-width: var(--sticky-col-5-width);
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Cột 6: Chủ nhật */
-.payroll-table th:nth-child(6),
-.payroll-table td:nth-child(6) {
-    position: sticky;
-    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width));
-    width: var(--sticky-col-6-width);
-    min-width: var(--sticky-col-6-width);
-    max-width: var(--sticky-col-6-width);
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* Cột 7: Lễ, tết */
-.payroll-table th:nth-child(7),
-.payroll-table td:nth-child(7) {
-    position: sticky;
-    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width) + var(--sticky-col-6-width));
-    width: var(--sticky-col-7-width);
-    min-width: var(--sticky-col-7-width);
-    max-width: var(--sticky-col-7-width);
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-/* ====== FLEXIBLE STICKY HEADERS ====== */
-.payroll-table thead tr:nth-child(1) th {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    height: var(--header-row-1-height);
-}
-
-.payroll-table thead tr:nth-child(2) th {
-    position: sticky;
-    top: var(--header-row-1-height);
-    z-index: 49;
-    height: var(--header-row-2-height);
-}
-
-/* Đảm bảo sticky columns cũng sticky theo header */
-.payroll-table thead tr:nth-child(1) th:nth-child(-n+7) {
-    z-index: 60; /* Cao hơn các header thông thường */
-}
-
-.payroll-table thead tr:nth-child(2) th:nth-child(-n+7) {
-    z-index: 59;
-}
-
-/* ====== DYNAMIC STICKY SYSTEM ====== */
-/* Class để tự động thêm sticky columns */
-.sticky-col {
-    position: sticky;
-    background: #ffffff;
-    z-index: 40;
-}
-
-/* Có thể thêm class này cho bất kỳ cột nào */
-.sticky-col-1 { left: 0; }
-.sticky-col-2 { left: 80px; }
-.sticky-col-3 { left: 200px; }
-.sticky-col-4 { left: 350px; }
-.sticky-col-5 { left: 450px; }
-.sticky-col-6 { left: 550px; }
-.sticky-col-7 { left: 650px; }
-
-/* Class để thêm sticky rows */
-.sticky-row {
-    position: sticky;
-    background: #ffffff;
-    z-index: 30;
-}
-
-.sticky-row-1 { top: 0; }
-.sticky-row-2 { top: 56px; }
-.sticky-row-3 { top: 104px; }
-
-/* payroll.css - Flexible container system */
-
-/* ====== FLEXIBLE PAYROLL CONTAINER ====== */
-.payroll-container {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #f1f5f9;
-    margin: 2rem auto;
-    width: 98%; /* Tăng từ 95% lên 98% */
-    max-width: 95vw; /* Giới hạn tối đa 95% viewport width */
-    min-width: 1200px; /* Đảm bảo container đủ rộng */
-}
-
-/* ====== RESPONSIVE CONTAINER SIZES ====== */
-/* Container size variants */
-.payroll-container-sm {
-    width: 90%;
-    max-width: 1000px;
-    min-width: 800px;
-}
-
-.payroll-container-md {
-    width: 95%;
-    max-width: 1200px;
-    min-width: 1000px;
-}
-
-.payroll-container-lg {
-    width: 98%;
-    max-width: 1400px;
-    min-width: 1200px;
-}
-
-.payroll-container-xl {
-    width: 99%;
-    max-width: 1600px;
-    min-width: 1400px;
-}
-
-.payroll-container-full {
-    width: 100%;
-    max-width: 100%;
-    min-width: 100%;
-    border-radius: 0;
-    margin: 0;
-    padding: 2rem;
-}
-
-/* ====== TABLE CONTAINER ADJUSTMENTS ====== */
-.payroll-table-container {
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f1f5f9;
-    margin-bottom: 2rem;
-    max-height: 75vh; /* Tăng chiều cao tối đa */
-    min-height: 500px; /* Đảm bảo chiều cao tối thiểu */
-}
-
-/* ====== TABLE WIDTH OPTIMIZATIONS ====== */
-.payroll-table {
-    width: max-content;
-    min-width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    background: #ffffff;
-}
-
-/* Điều chỉnh chiều rộng cột cho phù hợp */
-.payroll-table th:nth-child(1),
-.payroll-table td:nth-child(1) {
-    min-width: 80px; /* Mã */
-}
-
-.payroll-table th:nth-child(2),
-.payroll-table td:nth-child(2) {
-    min-width: 150px; /* Tên */
-}
-
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    min-width: 180px; /* Phòng ban */
-}
-
-.payroll-table th:nth-child(4),
-.payroll-table td:nth-child(4),
-.payroll-table th:nth-child(5),
-.payroll-table td:nth-child(5),
-.payroll-table th:nth-child(6),
-.payroll-table td:nth-child(6),
-.payroll-table th:nth-child(7),
-.payroll-table td:nth-child(7) {
-    min-width: 100px; /* Các cột thống kê */
-}
-
-/* Các cột ngày */
-.payroll-table th:nth-child(n+8),
-.payroll-table td:nth-child(n+8) {
-    min-width: 70px; /* Các cột ngày */
-}
-
-/* ====== LAYOUT OPTIMIZATIONS ====== */
-.payroll-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid #f1f5f9;
-}
-
-.payroll-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-}
-
-/* ====== CONTAINER CONTROLS ====== */
-.container-controls {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.size-control-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.size-label {
-    font-weight: 600;
-    color: #374151;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-.size-buttons {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.btn-size {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    background: white;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-size:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
-}
-
-.btn-size.active {
-    background: #2563eb;
-    color: white;
-    border-color: #2563eb;
-}
-
-/* ====== RESPONSIVE ADJUSTMENTS ====== */
-@media (max-width: 1400px) {
-    .payroll-container {
-        width: 99%;
-        padding: 2rem;
-    }
-    
-    .payroll-table-container {
-        max-height: 70vh;
-    }
-}
-
-@media (max-width: 1200px) {
-    .payroll-container {
-        width: 100%;
-        padding: 1.5rem;
-        border-radius: 16px;
-        margin: 1rem auto;
-    }
-    
-    .payroll-table-container {
-        max-height: 65vh;
-    }
-}
-
-@media (max-width: 768px) {
-    .payroll-container {
-        padding: 1rem;
-        border-radius: 12px;
-        min-width: unset;
-        width: 100%;
-    }
-    
-    .payroll-table-container {
-        max-height: 60vh;
-        min-height: 400px;
-    }
-    
-    .container-controls {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .size-control-group {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
-
-/* Print styles */
-@media print {
-    .payroll-container {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-        box-shadow: none;
-        border: none;
-        border-radius: 0;
-    }
-    
-    .payroll-table-container {
-        max-height: none;
-        box-shadow: none;
-        border: 1px solid #000;
-    }
-}
-
-/* Thêm vào payroll.css */
-
-/* Thêm vào payroll.css */
-
-/* ====== FULLSCREEN PERFECTION ====== */
-.payroll-container-full {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    min-width: 100vw !important;
-    height: 100vh !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    padding: 0.5rem !important;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-    background: white;
-    overflow: hidden;
-}
-
-/* Body adjustments for fullscreen */
-body.payroll-fullscreen-active {
-    overflow: hidden;
-    padding-right: 0 !important;
-}
-
-/* Table container chiếm toàn bộ không gian */
-.payroll-container-full .payroll-table-container {
-    flex: 1;
-    max-height: none !important;
-    min-height: auto;
-    margin-bottom: 0;
-    border-radius: 8px;
-    width: 100%;
-    overflow: auto;
-}
-
-/* Đảm bảo bảng sử dụng toàn bộ chiều rộng */
-.payroll-container-full .payroll-table {
-    width: max-content;
-    min-width: 100%;
-    font-size: 0.9rem;
-}
-
-/* Tối ưu header trong fullscreen */
-.payroll-container-full .payroll-header {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    flex-shrink: 0;
-}
-
-.payroll-container-full .payroll-title {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem;
-}
-
-.payroll-container-full .payroll-period {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.85rem;
-}
-
-/* Actions trong fullscreen */
-.payroll-container-full .payroll-actions {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    flex-shrink: 0;
-}
-
-.payroll-container-full .payroll-actions .btn-payroll {
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-}
-
-/* Holidays section trong fullscreen */
-.payroll-container-full .holidays-section {
-    margin-bottom: 0.5rem;
-    padding: 0.75rem;
-    flex-shrink: 0;
-}
-
-/* Controls trong fullscreen */
-.payroll-container-full .container-controls {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    flex-shrink: 0;
-    background: #f8fafc;
-    border-radius: 6px;
-}
-
-/* Compact mode enhancements */
-.payroll-container-full.compact .payroll-header,
-.payroll-container-full.compact .payroll-actions,
-.payroll-container-full.compact .holidays-section,
-.payroll-container-full.compact .container-controls {
-    display: none;
-}
-
-.payroll-container-full.compact .payroll-table-container {
-    border-radius: 0;
-}
-
-/* Tối ưu cho màn hình rất rộng */
-@media (min-width: 1920px) {
-    .payroll-container-full .payroll-table {
-        font-size: 1rem;
-    }
-    
-    .payroll-container-full .payroll-table th,
-    .payroll-container-full .payroll-table td {
-        padding: 1rem 0.75rem;
-    }
-}
-
-/* Compact mode cho fullscreen */
-.payroll-container-full.compact .payroll-header {
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.5rem;
-}
-
-.payroll-container-full.compact .payroll-title {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem;
-}
-
-.payroll-container-full.compact .payroll-subtitle {
-    display: none; /* Ẩn subtitle trong compact mode */
-}
-
-.payroll-container-full.compact .payroll-period {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.8rem;
-}
-
-/* CSS cho nút compact */
-#toggleCompact {
-    background: #f3f4f6;
-    border: 1px solid #d1d5db;
-}
-
-#toggleCompact.active {
-    background: #10b981;
-    color: white;
-    border-color: #10b981;
-}
-
-/* Tooltip */
-[data-tooltip] {
-    position: relative;
-}
-
-[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #374151;
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    z-index: 1000;
-}
-
-/* Thêm vào payroll.css */
-
-/* ====== SCROLLBAR FOR ALL MODES ====== */
-.payroll-table-container {
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: auto; /* QUAN TRỌNG: thêm overflow auto cho tất cả */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f1f5f9;
-    margin-bottom: 2rem;
-    max-height: 70vh; /* Giới hạn chiều cao để scroll */
-    min-height: 400px; /* Chiều cao tối thiểu */
-}
-
-/* Đảm bảo bảng đủ rộng để tạo scroll */
-.payroll-table {
-    width: max-content !important; /* QUAN TRỌNG: bắt buộc có scroll */
-    min-width: 100% !important;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    background: #ffffff;
-}
-
-/* ====== CONTAINER SIZES WITH SCROLL ====== */
-.payroll-container-sm .payroll-table-container {
-    max-height: 60vh;
-}
-
-.payroll-container-md .payroll-table-container {
-    max-height: 65vh;
-}
-
-.payroll-container-lg .payroll-table-container {
-    max-height: 70vh;
-}
-
-.payroll-container-xl .payroll-table-container {
-    max-height: 75vh;
-}
-
-.payroll-container-full .payroll-table-container {
-    max-height: none; /* Fullscreen không giới hạn */
-    height: calc(100vh - 200px); /* Trừ đi header và controls */
-}
-
-/* ====== SCROLLBAR STYLING ====== */
-.payroll-table-container::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-.payroll-table-container::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 6px;
-}
-
-.payroll-table-container::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 6px;
-    border: 2px solid #f1f5f9;
-}
-
-.payroll-table-container::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
-.payroll-table-container::-webkit-scrollbar-corner {
-    background: #f1f5f9;
-}
-
-/* ====== FIX TABLE WIDTH ISSUES ====== */
-/* Đảm bảo bảng luôn đủ rộng để scroll */
-.payroll-container {
-    overflow: visible !important;
-}
-
-/* Đảm bảo các container có đủ không gian */
-.payroll-container-sm {
-    min-width: 800px;
-}
-
-.payroll-container-md {
-    min-width: 1000px;
-}
-
-.payroll-container-lg {
-    min-width: 1200px;
-}
-
-.payroll-container-xl {
-    min-width: 1400px;
-}
-
-/* ====== DEBUG BORDER (có thể xóa sau) ====== */
-.payroll-table-container {
-    border: 2px solid #e2e8f0; /* Hiển thị rõ container */
-}
-
-/* payroll.css - Fixed with scrollbars */
-
-/* ====== PAYROLL CONTAINER ====== */
-.payroll-container {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #f1f5f9;
-    margin: 2rem auto;
-    width: 98%;
-    max-width: 95vw;
-    min-width: 1200px;
-}
-
-/* ====== CONTAINER SIZES ====== */
-.payroll-container-sm {
-    width: 90%;
-    max-width: 1000px;
-    min-width: 800px;
-}
-
-.payroll-container-md {
-    width: 95%;
-    max-width: 1200px;
-    min-width: 1000px;
-}
-
-.payroll-container-lg {
-    width: 98%;
-    max-width: 1400px;
-    min-width: 1200px;
-}
-
-.payroll-container-xl {
-    width: 99%;
-    max-width: 1600px;
-    min-width: 1400px;
-}
-
-.payroll-container-full {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    min-width: 100vw !important;
-    height: 100vh !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    padding: 1rem !important;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-    background: white;
-}
-
-/* ====== PAYROLL TABLE CONTAINER - FIXED SCROLL ====== */
-.payroll-table-container {
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: auto !important; /* QUAN TRỌNG: buộc có scroll */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f1f5f9;
-    margin-bottom: 2rem;
-    max-height: 70vh;
-    min-height: 500px;
-    width: 100%;
-}
-
-/* Đảm bảo bảng đủ rộng để tạo scroll */
-.payroll-table {
-    width: max-content !important; /* QUAN TRỌNG: bắt buộc scroll */
-    min-width: 100% !important;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    background: #ffffff;
-}
-
-/* ====== TABLE HEADER ====== */
 .payroll-table thead {
     position: sticky;
     top: 0;
@@ -1282,6 +313,7 @@ body.payroll-fullscreen-active {
     position: sticky;
     top: 0;
     z-index: 50;
+    height: var(--header-row-1-height);
 }
 
 .payroll-table thead tr:nth-child(2) th {
@@ -1292,11 +324,12 @@ body.payroll-fullscreen-active {
     font-weight: 500;
     font-size: 0.7rem;
     position: sticky;
-    top: 48px; /* Chiều cao hàng đầu */
+    top: var(--header-row-1-height);
     z-index: 49;
+    height: var(--header-row-2-height);
 }
 
-/* ====== TABLE BODY ====== */
+/* Table Body */
 .payroll-table tbody td {
     padding: 0.75rem 0.75rem;
     border: 1px solid #e2e8f0;
@@ -1328,7 +361,8 @@ body.payroll-fullscreen-active {
 .payroll-table td:nth-child(1) {
     position: sticky;
     left: 0;
-    min-width: 80px;
+    width: var(--sticky-col-1-width);
+    min-width: var(--sticky-col-1-width);
     z-index: 41;
     background: #ffffff;
     border-right: 2px solid #e2e8f0;
@@ -1337,8 +371,9 @@ body.payroll-fullscreen-active {
 .payroll-table th:nth-child(2),
 .payroll-table td:nth-child(2) {
     position: sticky;
-    left: 80px;
-    min-width: 150px;
+    left: var(--sticky-col-1-width);
+    width: var(--sticky-col-2-width);
+    min-width: var(--sticky-col-2-width);
     z-index: 41;
     background: #ffffff;
     border-right: 2px solid #e2e8f0;
@@ -1347,52 +382,15 @@ body.payroll-fullscreen-active {
 .payroll-table th:nth-child(3),
 .payroll-table td:nth-child(3) {
     position: sticky;
-    left: 230px;
-    min-width: 180px;
+    left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width));
+    width: var(--sticky-col-3-width);
+    min-width: var(--sticky-col-3-width);
     z-index: 41;
     background: #ffffff;
     border-right: 2px solid #e2e8f0;
 }
 
-.payroll-table th:nth-child(4),
-.payroll-table td:nth-child(4),
-.payroll-table th:nth-child(5),
-.payroll-table td:nth-child(5),
-.payroll-table th:nth-child(6),
-.payroll-table td:nth-child(6),
-.payroll-table th:nth-child(7),
-.payroll-table td:nth-child(7) {
-    position: sticky;
-    background: #ffffff;
-    z-index: 40;
-    border-right: 2px solid #e2e8f0;
-}
-
-.payroll-table th:nth-child(4),
-.payroll-table td:nth-child(4) {
-    left: 410px;
-    min-width: 100px;
-}
-
-.payroll-table th:nth-child(5),
-.payroll-table td:nth-child(5) {
-    left: 510px;
-    min-width: 100px;
-}
-
-.payroll-table th:nth-child(6),
-.payroll-table td:nth-child(6) {
-    left: 610px;
-    min-width: 100px;
-}
-
-.payroll-table th:nth-child(7),
-.payroll-table td:nth-child(7) {
-    left: 710px;
-    min-width: 100px;
-}
-
-/* ====== HIGHLIGHT COLUMNS ====== */
+/* ====== HIGHLIGHT STYLES ====== */
 .highlight-col {
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
     font-weight: 700 !important;
@@ -1493,58 +491,6 @@ body.payroll-fullscreen-active {
     background: #f1f5f9;
 }
 
-/* ====== CONTAINER CONTROLS ====== */
-.container-controls {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.size-control-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.size-label {
-    font-weight: 600;
-    color: #374151;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-.size-buttons {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.btn-size {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    background: white;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-size:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
-}
-
-.btn-size.active {
-    background: #2563eb;
-    color: white;
-    border-color: #2563eb;
-}
-
 /* ====== RESPONSIVE DESIGN ====== */
 @media (max-width: 1400px) {
     .payroll-container {
@@ -1590,6 +536,19 @@ body.payroll-fullscreen-active {
         justify-content: space-between;
     }
     
+    .payroll-actions {
+        flex-direction: column;
+    }
+    
+    .btn-payroll {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .holidays-list {
+        grid-template-columns: 1fr;
+    }
+    
     .payroll-table {
         font-size: 0.75rem;
     }
@@ -1600,433 +559,35 @@ body.payroll-fullscreen-active {
     }
 }
 
-/* ====== EMERGENCY SCROLL FIX ====== */
-/* Buộc hiển thị scrollbar nếu vẫn không thấy */
-.payroll-table-container {
-    overflow-x: auto !important;
-    overflow-y: auto !important;
-}
-
-.payroll-table {
-    min-width: max-content !important;
-}
-/* payroll.css - Keep beautiful container, add scroll to table only */
-
-/* ====== PAYROLL CONTAINER - GIỮ NGUYÊN FORM ĐẸP ====== */
-.payroll-container {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #f1f5f9;
-    margin: 2rem auto;
-    width: 98%;
-    max-width: 95vw;
-    min-width: 1200px;
-}
-
-/* ====== CONTAINER SIZES - GIỮ PADDING VÀ MARGIN ====== */
-.payroll-container-sm {
-    width: 90%;
-    max-width: 1000px;
-    min-width: 800px;
-}
-
-.payroll-container-md {
-    width: 95%;
-    max-width: 1200px;
-    min-width: 1000px;
-}
-
-.payroll-container-lg {
-    width: 98%;
-    max-width: 1400px;
-    min-width: 1200px;
-}
-
-.payroll-container-xl {
-    width: 99%;
-    max-width: 1600px;
-    min-width: 1400px;
-}
-
-/* TOÀN MÀN HÌNH NHƯNG VẪN GIỮ FORM CONTAINER */
-.payroll-container-full {
-    width: 96% !important; /* Vẫn có padding hai bên */
-    max-width: 98vw !important;
-    min-width: 100vw !important;
-    height: auto !important; /* Không chiếm toàn bộ chiều cao */
-    border-radius: 24px !important; /* Vẫn giữ bo góc */
-    margin: 1rem auto !important; /* Vẫn có margin */
-    padding: 2rem !important; /* Vẫn có padding */
-    position: relative !important; /* Không fixed */
-    top: auto !important;
-    left: auto !important;
-    z-index: auto !important;
-    background: white;
-}
-
-/* ====== PAYROLL HEADER - GIỮ NGUYÊN ĐẸP ====== */
-.payroll-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid #f1f5f9;
-}
-
-.payroll-title {
-    font-size: 2.25rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
-}
-
-.payroll-subtitle {
-    font-size: 1.1rem;
-    color: #64748b;
-    margin: 0;
-    font-weight: 400;
-}
-
-.payroll-period {
-    background: rgba(37, 99, 235, 0.1);
-    border: 1px solid rgba(37, 99, 235, 0.2);
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    margin-top: 1rem;
-    color: #1e40af;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* ====== PAYROLL ACTIONS - GIỮ NGUYÊN ĐẸP ====== */
-.payroll-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-}
-
-.btn-payroll {
-    padding: 1rem 2rem;
-    border-radius: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.btn-payroll-primary {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: white;
-}
-
-.btn-payroll-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
-}
-
-.btn-payroll-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-}
-
-.btn-payroll-success:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-}
-
-.btn-payroll-warning {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: white;
-}
-
-.btn-payroll-warning:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
-}
-
-/* ====== HOLIDAYS SECTION - GIỮ NGUYÊN ĐẸP ====== */
-.holidays-section {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    border: 1px solid #e2e8f0;
-}
-
-.holidays-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.holidays-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0.75rem;
-}
-
-.holiday-item {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.2s ease;
-}
-
-.holiday-item:hover {
-    border-color: #2563eb;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-}
-
-.holiday-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.holiday-date {
-    font-weight: 600;
-    color: #0f172a;
-    font-size: 0.95rem;
-}
-
-.holiday-name {
-    color: #64748b;
-    font-size: 0.85rem;
-}
-
-.btn-holiday-delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: #dc2626;
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 6px;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.btn-holiday-delete:hover {
-    background: rgba(239, 68, 68, 0.2);
-    transform: scale(1.05);
-}
-
-/* ====== PAYROLL TABLE CONTAINER - CHỈ CẦN SCROLL Ở ĐÂY ====== */
-.payroll-table-container {
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: auto !important; /* QUAN TRỌNG: chỉ cần scroll ở đây */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    border: 1px solid #f1f5f9;
-    margin-bottom: 2rem;
-    max-height: 600px; /* Giới hạn chiều cao để scroll */
-    min-height: 400px;
-}
-
-/* Đảm bảo bảng đủ rộng để tạo scroll */
-.payroll-table {
-    width: max-content !important;
-    min-width: 100% !important;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    background: #ffffff;
-}
-
-/* ====== TABLE STYLING - GIỮ NGUYÊN ĐẸP ====== */
-.payroll-table thead {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.payroll-table thead tr:nth-child(1) th {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: #ffffff;
-    padding: 1rem 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.75rem;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
-
-.payroll-table thead tr:nth-child(2) th {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    color: #ffffff;
-    padding: 0.75rem 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-weight: 500;
-    font-size: 0.7rem;
-    position: sticky;
-    top: 48px;
-    z-index: 49;
-}
-
-.payroll-table tbody td {
-    padding: 0.75rem 0.75rem;
-    border: 1px solid #e2e8f0;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    color: #0f172a;
-    font-weight: 400;
-    transition: all 0.2s ease;
-}
-
-.payroll-table tbody tr {
-    background: #ffffff;
-    transition: all 0.2s ease;
-}
-
-.payroll-table tbody tr:hover {
-    background: #f8fafc;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* ====== STICKY COLUMNS ====== */
-.payroll-table th:nth-child(1),
-.payroll-table td:nth-child(1) {
-    position: sticky;
-    left: 0;
-    min-width: 80px;
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-.payroll-table th:nth-child(2),
-.payroll-table td:nth-child(2) {
-    position: sticky;
-    left: 80px;
-    min-width: 150px;
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-.payroll-table th:nth-child(3),
-.payroll-table td:nth-child(3) {
-    position: sticky;
-    left: 230px;
-    min-width: 180px;
-    z-index: 41;
-    background: #ffffff;
-    border-right: 2px solid #e2e8f0;
-}
-
-/* ====== CONTAINER CONTROLS ====== */
-.container-controls {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.size-control-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.size-label {
-    font-weight: 600;
-    color: #374151;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-.size-buttons {
-    display: flex;
-    gap: 0.25rem;
-}
-
-.btn-size {
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    background: white;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-size:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
-}
-
-.btn-size.active {
-    background: #2563eb;
-    color: white;
-    border-color: #2563eb;
-}
-
-/* ====== SCROLLBAR STYLING ====== */
-.payroll-table-container::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-.payroll-table-container::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 6px;
-}
-
-.payroll-table-container::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 6px;
-    border: 2px solid #f1f5f9;
-}
-
-.payroll-table-container::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
-/* ====== RESPONSIVE DESIGN ====== */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .payroll-container {
-        padding: 1.5rem;
-        margin: 1rem auto;
-        width: 95%;
-        min-width: unset;
+        padding: 1.25rem;
+    }
+    
+    .payroll-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .payroll-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
     }
     
     .payroll-table-container {
-        max-height: 500px;
+        max-height: none;
+        box-shadow: none;
+        border: 1px solid #000;
     }
     
     .container-controls {
-        flex-direction: column;
-        align-items: flex-start;
+        display: none;
     }
 }
-
