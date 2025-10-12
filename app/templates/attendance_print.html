@@ -4,21 +4,31 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance_print.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications_system.css') }}">
 {% endblock %}
 
 {% block content %}
-  <!-- Nút in -->
-  <div class="mb-3 text-end">
-    <button class="btn btn-primary" onclick="window.print()">
-      <i class="bi bi-printer"></i> In bảng
-    </button>
+<div class="print-container">
+  <!-- Header Section - ĐỒNG BỘ VỚI HỆ THỐNG -->
+  <div class="print-header">
+    <h1 class="print-title">Bảng chấm công in ký</h1>
+    <p class="print-subtitle">Phiếu chấm công chính thức để trình ký</p>
+    <div class="print-period">
+      <i class="bi bi-calendar-week"></i>
+      <strong>Kỳ công:</strong> {{ period if period else "Chưa xác định" }}
+    </div>
   </div>
 
-<div class="print-container">
+  <!-- Actions Section - ĐỒNG BỘ VỚI HỆ THỐNG -->
+  <div class="print-actions">
+    <button class="btn-print btn-print-primary" onclick="window.print()">
+      <i class="bi bi-printer"></i> In bảng chấm công
+    </button>
+    <a href="{{ url_for('main.payroll', filename=filename) }}" class="btn-print" style="background: #6c757d; color: white;">
+      <i class="bi bi-arrow-left"></i> Quay lại Bảng công
+    </a>
+  </div>
 
-  <!-- Thông tin công ty -->
+  <!-- Thông tin công ty - GIỮ NGUYÊN CHUYÊN NGHIỆP -->
   <table class="table table-borderless w-100 mb-1">
     <tr>
       <td class="text-start"><strong>Tên công ty:</strong> {{ company.name }}</td>
@@ -34,207 +44,207 @@
     </tr>
   </table>
 
-<!-- Bảng chấm công -->
-<div class="table-responsive">
-  <table class="table table-bordered text-center align-middle">
-    <thead class="table-light">
-      <tr>
-        {% for col in cols %}
-        <th>{{ col }}</th>
-        {% endfor %}
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in rows %}
-      <tr>
-        {% for i in range(row|length - 1) %}
-          {% set colname = cols[i] %}
-          {% set cell = row[i] %}
+  <!-- Bảng chấm công - GIỮ NGUYÊN HOÀN TOÀN -->
+  <div class="print-table-container">
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table-light">
+        <tr>
+          {% for col in cols %}
+          <th>{{ col }}</th>
+          {% endfor %}
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          {% for i in range(row|length - 1) %}
+            {% set colname = cols[i] %}
+            {% set cell = row[i] %}
 
-          {% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
-          <td class="adjustable-cell position-relative" 
-              style="min-width: 120px; cursor: pointer;"
-              onmouseenter="showAdjustmentButtons(this)" 
-              onmouseleave="hideAdjustmentButtons(this)">
-            
-            {{ cell }}
-  
-            <div class="adjustment-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
+            {% if colname == "Số ngày/giờ làm việc thực tế trong tháng" %}
+            <td class="adjustable-cell position-relative" 
+                style="min-width: 120px; cursor: pointer;"
+                onmouseenter="showAdjustmentButtons(this)" 
+                onmouseleave="hideAdjustmentButtons(this)">
               
-              <!-- ✅ NÚT "+" - CHỈ HIỆN KHI CHƯA ĐIỀU CHỈNH VÀ CÓ TĂNG CA -->
-              {% if row[-1].has_overtime and not row[-1].has_adjustment %}
-              <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Gộp ngày tăng ca"
-                style="cursor:pointer; font-size: 16px;"
-                data-employee-code="{{ row[1] }}"
-                data-employee-name="{{ row[2] }}"
-                data-period="{{ period }}"
-                data-original-days="{{ row[-1].original_days }}"
-                data-actual-days="{{ row[8] }}"
-                data-overtime-hours="{{ row[-1].tang_ca_nghi_ban_dau }}"
-                data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
-                data-standard-days="{{ row[-1].standard_days or 26 }}"
-                data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}"
-                data-filename="{{ filename }}">  
-              </i>
-              {% endif %}
-              
-              <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ ĐIỀU CHỈNH -->
-              {% if row[-1].has_adjustment %}
-              <i class="bi bi-dash-circle-fill text-danger reset-icon"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Khôi phục dữ liệu gốc"
-                style="cursor:pointer; font-size: 16px;"
-                data-employee-code="{{ row[1] }}"
-                data-employee-name="{{ row[2] }}"
-                data-period="{{ period }}"
-                data-filename="{{ filename }}">
-              </i>
-              {% endif %}
-              
-            </div>
-          </td>
-
-          {% elif colname == "Số ngày nghỉ phép năm" %}
-          <td class="position-relative leave-cell" 
-              style="min-width: 120px; cursor: pointer;"
-              onmouseenter="showLeaveButtons(this)" 
-              onmouseleave="hideLeaveButtons(this)"
-              data-bs-toggle="tooltip" 
-              data-bs-placement="top"
-              data-bs-html="true"
-              data-bs-title="
-                  <div class='text-start small'>
-                      <strong>Chi tiết phép năm:</strong><br>
-                      - Đã dùng <strong class='text-primary'>{{ row[6] }}</strong> ngày phép năm<br>
-                      {% if row[-1].has_adjustment %}
-                      - Đã gộp <strong class='text-success'>{{ (row[-1].adjustment_info / 8) | round(1) }}</strong> ngày CN<br>
-                      {% else %}
-                      - Có thể gộp <strong class='text-warning'>{{ (row[-1].tang_ca_nghi_ban_dau / 8) | round(1) }}</strong> ngày CN<br>
-                      {% endif %}
-                      - Phép năm còn lại: <strong class='text-info'>{{ row[14] }}</strong> ngày
-                  </div>
-              ">
-            
-            <span class="leave-days">{{ cell }}</span>
-            
-            <div class="leave-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
-
-              <!-- ✅ NÚT "+" - LUÔN HIỆN KHI CÓ QUYỀN SỬ DỤNG PHÉP -->
-              {% if row[-1].so_thang_duoc_huong > 0 %}
-              <i class="bi bi-plus-circle-fill text-success me-1 leave-add-icon"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Thêm ngày phép năm"
-                style="cursor:pointer; font-size: 16px;"
-                data-employee-id="{{ row[-1].employee_id }}"
-                data-employee-name="{{ row[2] }}"
-                data-period="{{ period }}"
-                data-max-leave="{{ row[-1].so_thang_duoc_huong }}"
-                data-current-leave="{{ cell }}"
-                data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
-                data-filename="{{ filename }}">
-              </i>
-              {% endif %}
-              
-              <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ CÓ PHÉP NĂM -->
-              {% if cell > 0 %}
-              <i class="bi bi-dash-circle-fill text-danger leave-reset-icon"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Reset ngày phép năm"
-                style="cursor:pointer; font-size: 16px;"
-                data-employee-id="{{ row[-1].employee_id }}"
-                data-employee-name="{{ row[2] }}"
-                data-period="{{ period }}"
-                data-filename="{{ filename }}">
-              </i>
-              {% endif %}
-
-            </div>
-          </td>
-
-          {% elif colname == "Số ngày nghỉ không lương" %}
-          <td class="fw-bold absence-cell" 
-              data-bs-toggle="tooltip" 
-              data-bs-placement="top"
-              data-bs-html="true"
-              data-bs-title="
-                  <div class='text-start small'>
-                      <strong>Chi tiết ngày nghỉ không lương:</strong><br>
-                      - Ngày nghỉ gốc: <strong class='text-danger'>{{ row[-1].ngay_vang_ban_dau }}</strong> ngày<br>
-                      - Đã dùng phép năm: <strong class='text-primary'>{{ row[-1].ngay_nghi_phep_nam_da_dung }}</strong> ngày<br>
-                      {% if row[-1].has_adjustment %}
-                      - Đã bù bằng tăng ca: <strong class='text-success'>{{ (row[-1].adjustment_info / 8) | round(1) }}</strong> ngày<br>
-                      {% else %}
-                      - Có thể bù bằng tăng ca: <strong class='text-warning'>{{ (row[-1].tang_ca_nghi_ban_dau / 8) | round(1) }}</strong> ngày<br>
-                      {% endif %}
-                      - <strong>Ngày nghỉ cuối: {{ cell }} ngày</strong>
-                  </div>
-              ">
               {{ cell }}
-          </td>
 
-          {% elif colname == "Bắt đầu tính phép từ tháng" %}
-            <td class="text-info fw-bold">
-              {{ cell }}
-            </td>
-
-          {% elif colname == "Số ngày phép còn tồn" %}
-          {% with 
-              cell=cell,
-              metadata=row[-1],
-              employee_name=row[2],
-              period=period,
-              filename=filename
-          %}
-            {% include "_remaining_leave_cell.html" %}
-          {% endwith %}
-
-          {% elif colname in ["Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)", 
-                             "Số giờ làm việc tăng ca (ngày lễ)",
-                             "Số giờ làm việc tăng ca (ngày làm trong tuần)"] %}
-            <td class="fw-bold text-primary">
-              {{ cell }}
-            </td>
-
-          {% elif colname == "Ghi chú" %}
-            <td class="note-cell" data-emp="{{ row[1] }}">
-              {% if cell == "ICON_ONLY" or (cell is string and cell.endswith("|||ICON")) %}
-                {% if cell != "ICON_ONLY" %}
-                  {{ cell.replace("|||ICON", "") }}
+              <div class="adjustment-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
+                
+                <!-- ✅ NÚT "+" - CHỈ HIỆN KHI CHƯA ĐIỀU CHỈNH VÀ CÓ TĂNG CA -->
+                {% if row[-1].has_overtime and not row[-1].has_adjustment %}
+                <i class="bi bi-plus-circle-fill text-success me-1 adjustment-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Gộp ngày tăng ca"
+                  style="cursor:pointer; font-size: 16px;"
+                  data-employee-code="{{ row[1] }}"
+                  data-employee-name="{{ row[2] }}"
+                  data-period="{{ period }}"
+                  data-original-days="{{ row[-1].original_days }}"
+                  data-actual-days="{{ row[8] }}"
+                  data-overtime-hours="{{ row[-1].tang_ca_nghi_ban_dau }}"
+                  data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
+                  data-standard-days="{{ row[-1].standard_days or 26 }}"
+                  data-ngay-nghi-phep-nam="{{ row[-1].ngay_nghi_phep_nam_da_dung }}"
+                  data-filename="{{ filename }}">  
+                </i>
                 {% endif %}
-                <i class="bi bi-pencil-square text-primary ms-1 note-icon"
-                  title="Thêm ghi chú"
-                  style="cursor:pointer;"></i>
-                <input type="text"
-                      class="note-input form-control form-control-sm mt-1 d-none"
-                      placeholder="Nhập ghi chú...">
-              {% else %}
-                {{ cell }}
-              {% endif %}
+                
+                <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ ĐIỀU CHỈNH -->
+                {% if row[-1].has_adjustment %}
+                <i class="bi bi-dash-circle-fill text-danger reset-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Khôi phục dữ liệu gốc"
+                  style="cursor:pointer; font-size: 16px;"
+                  data-employee-code="{{ row[1] }}"
+                  data-employee-name="{{ row[2] }}"
+                  data-period="{{ period }}"
+                  data-filename="{{ filename }}">
+                </i>
+                {% endif %}
+                
+              </div>
             </td>
 
-          {% else %}
-            <td>{{ cell }}</td>
-          {% endif %}
-        {% endfor %}
+            {% elif colname == "Số ngày nghỉ phép năm" %}
+            <td class="position-relative leave-cell" 
+                style="min-width: 120px; cursor: pointer;"
+                onmouseenter="showLeaveButtons(this)" 
+                onmouseleave="hideLeaveButtons(this)"
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top"
+                data-bs-html="true"
+                data-bs-title="
+                    <div class='text-start small'>
+                        <strong>Chi tiết phép năm:</strong><br>
+                        - Đã dùng <strong class='text-primary'>{{ row[6] }}</strong> ngày phép năm<br>
+                        {% if row[-1].has_adjustment %}
+                        - Đã gộp <strong class='text-success'>{{ (row[-1].adjustment_info / 8) | round(1) }}</strong> ngày CN<br>
+                        {% else %}
+                        - Có thể gộp <strong class='text-warning'>{{ (row[-1].tang_ca_nghi_ban_dau / 8) | round(1) }}</strong> ngày CN<br>
+                        {% endif %}
+                        - Phép năm còn lại: <strong class='text-info'>{{ row[14] }}</strong> ngày
+                    </div>
+                ">
+              
+              <span class="leave-days">{{ cell }}</span>
+              
+              <div class="leave-buttons" style="display: none; position: absolute; top: 50%; right: 5px; transform: translateY(-50%);">
 
-        <td>
-          <i class="bi bi-eye text-info btn-detail"
-            style="cursor:pointer;"
-            data-emp='{{ row[-1] | tojson | safe }}'
-            title="Xem chi tiết"></i>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+                <!-- ✅ NÚT "+" - LUÔN HIỆN KHI CÓ QUYỀN SỬ DỤNG PHÉP -->
+                {% if row[-1].so_thang_duoc_huong > 0 %}
+                <i class="bi bi-plus-circle-fill text-success me-1 leave-add-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Thêm ngày phép năm"
+                  style="cursor:pointer; font-size: 16px;"
+                  data-employee-id="{{ row[-1].employee_id }}"
+                  data-employee-name="{{ row[2] }}"
+                  data-period="{{ period }}"
+                  data-max-leave="{{ row[-1].so_thang_duoc_huong }}"
+                  data-current-leave="{{ cell }}"
+                  data-current-absence="{{ row[-1].ngay_vang_ban_dau }}"
+                  data-filename="{{ filename }}">
+                </i>
+                {% endif %}
+                
+                <!-- ✅ NÚT "-" - CHỈ HIỆN KHI ĐÃ CÓ PHÉP NĂM -->
+                {% if cell > 0 %}
+                <i class="bi bi-dash-circle-fill text-danger leave-reset-icon"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Reset ngày phép năm"
+                  style="cursor:pointer; font-size: 16px;"
+                  data-employee-id="{{ row[-1].employee_id }}"
+                  data-employee-name="{{ row[2] }}"
+                  data-period="{{ period }}"
+                  data-filename="{{ filename }}">
+                </i>
+                {% endif %}
+
+              </div>
+            </td>
+
+            {% elif colname == "Số ngày nghỉ không lương" %}
+            <td class="fw-bold absence-cell" 
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top"
+                data-bs-html="true"
+                data-bs-title="
+                    <div class='text-start small'>
+                        <strong>Chi tiết ngày nghỉ không lương:</strong><br>
+                        - Ngày nghỉ gốc: <strong class='text-danger'>{{ row[-1].ngay_vang_ban_dau }}</strong> ngày<br>
+                        - Đã dùng phép năm: <strong class='text-primary'>{{ row[-1].ngay_nghi_phep_nam_da_dung }}</strong> ngày<br>
+                        {% if row[-1].has_adjustment %}
+                        - Đã bù bằng tăng ca: <strong class='text-success'>{{ (row[-1].adjustment_info / 8) | round(1) }}</strong> ngày<br>
+                        {% else %}
+                        - Có thể bù bằng tăng ca: <strong class='text-warning'>{{ (row[-1].tang_ca_nghi_ban_dau / 8) | round(1) }}</strong> ngày<br>
+                        {% endif %}
+                        - <strong>Ngày nghỉ cuối: {{ cell }} ngày</strong>
+                    </div>
+                ">
+                {{ cell }}
+            </td>
+
+            {% elif colname == "Bắt đầu tính phép từ tháng" %}
+              <td class="text-info fw-bold">
+                {{ cell }}
+              </td>
+
+            {% elif colname == "Số ngày phép còn tồn" %}
+            {% with 
+                cell=cell,
+                metadata=row[-1],
+                employee_name=row[2],
+                period=period,
+                filename=filename
+            %}
+              {% include "_remaining_leave_cell.html" %}
+            {% endwith %}
+
+            {% elif colname in ["Số giờ làm việc tăng ca (ngày nghỉ hàng tuần)", 
+                               "Số giờ làm việc tăng ca (ngày lễ)",
+                               "Số giờ làm việc tăng ca (ngày làm trong tuần)"] %}
+              <td class="fw-bold text-primary">
+                {{ cell }}
+              </td>
+
+            {% elif colname == "Ghi chú" %}
+              <td class="note-cell" data-emp="{{ row[1] }}">
+                {% if cell == "ICON_ONLY" or (cell is string and cell.endswith("|||ICON")) %}
+                  {% if cell != "ICON_ONLY" %}
+                    {{ cell.replace("|||ICON", "") }}
+                  {% endif %}
+                  <i class="bi bi-pencil-square text-primary ms-1 note-icon"
+                    title="Thêm ghi chú"
+                    style="cursor:pointer;"></i>
+                  <input type="text"
+                        class="note-input form-control form-control-sm mt-1 d-none"
+                        placeholder="Nhập ghi chú...">
+                {% else %}
+                  {{ cell }}
+                {% endif %}
+              </td>
+
+            {% else %}
+              <td>{{ cell }}</td>
+            {% endif %}
+          {% endfor %}
+
+          <td>
+            <i class="bi bi-eye text-info btn-detail"
+              style="cursor:pointer;"
+              data-emp='{{ row[-1] | tojson | safe }}'
+              title="Xem chi tiết"></i>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   <!-- ✅ THÊM: Phần giải thích công thức -->
   <div class="mt-3 p-3 bg-light border rounded">
@@ -247,8 +257,7 @@
   </div>
 </div>
 
-
-
+<!-- Các modal và form ẩn - GIỮ NGUYÊN HOÀN TOÀN -->
 <!-- Modal chi tiết -->
 <div id="detailModal" class="modal">
   <div class="modal-content">
@@ -258,7 +267,7 @@
   </div>
 </div>
 
-<!-- ✅ CẬP NHẬT: Modal xác nhận gộp tăng ca với thông tin đầy đủ -->
+<!-- Modal xác nhận gộp tăng ca -->
 <div class="modal fade" id="adjustmentModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -319,7 +328,7 @@
   </div>
 </div>
 
-<!-- ✅ BỔ SUNG: Modal xác nhận reset -->
+<!-- Modal xác nhận reset -->
 <div class="modal fade" id="resetModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -364,7 +373,7 @@
     </div>
 </div>
 
-<!-- ✅ SỬA LẠI: Modal điều chỉnh phép năm còn tồn - Dùng Bootstrap chuẩn -->
+<!-- Modal điều chỉnh phép năm còn tồn -->
 <div class="modal fade" id="remainingLeaveModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -391,7 +400,7 @@
   </div>
 </div>
 
-<!-- ✅ SỬA LẠI: Modal xác nhận reset phép năm còn tồn - Dùng Bootstrap chuẩn -->
+<!-- Modal xác nhận reset phép năm còn tồn -->
 <div class="modal fade" id="resetRemainingLeaveModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -411,30 +420,7 @@
   </div>
 </div>
 
-<!-- ✅ THÊM: Form ẩn cho phép năm còn tồn -->
-<form id="remainingLeaveForm" method="POST" action="{{ url_for('main.update_remaining_leave') }}" style="display: none;">
-    <input type="hidden" name="employee_id" id="formRemainingLeaveEmployeeId">
-    <input type="hidden" name="period" id="formRemainingLeavePeriod">
-    <input type="hidden" name="remaining_leave_days" id="formRemainingLeaveDays">
-    <input type="hidden" name="filename" value="{{ filename }}">
-</form>
-
-<!-- ✅ THÊM: Form ẩn reset phép năm còn tồn -->
-<form id="resetRemainingLeaveForm" method="POST" action="{{ url_for('main.reset_remaining_leave') }}" style="display: none;">
-    <input type="hidden" name="employee_id" id="resetRemainingLeaveEmployeeId">
-    <input type="hidden" name="period" id="resetRemainingLeavePeriod">
-    <input type="hidden" name="filename" value="{{ filename }}">
-</form>
-
-<!-- Form ẩn cho phép năm -->
-<form id="leaveForm" method="POST" action="{{ url_for('main.update_paid_leave') }}" style="display: none;">
-    <input type="hidden" name="employee_id" id="formEmployeeId">
-    <input type="hidden" name="period" id="formLeavePeriod">
-    <input type="hidden" name="leave_days" id="formLeaveDays">
-    <input type="hidden" name="filename" value="{{ filename }}">
-</form>
-
-<!-- ✅ THÊM: Modal xác nhận reset phép năm -->
+<!-- Modal xác nhận reset phép năm -->
 <div class="modal fade" id="resetLeaveModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -454,14 +440,33 @@
   </div>
 </div>
 
-<!-- ✅ THÊM: Form ẩn để reset phép năm -->
+<!-- Các form ẩn - GIỮ NGUYÊN HOÀN TOÀN -->
+<form id="remainingLeaveForm" method="POST" action="{{ url_for('main.update_remaining_leave') }}" style="display: none;">
+    <input type="hidden" name="employee_id" id="formRemainingLeaveEmployeeId">
+    <input type="hidden" name="period" id="formRemainingLeavePeriod">
+    <input type="hidden" name="remaining_leave_days" id="formRemainingLeaveDays">
+    <input type="hidden" name="filename" value="{{ filename }}">
+</form>
+
+<form id="resetRemainingLeaveForm" method="POST" action="{{ url_for('main.reset_remaining_leave') }}" style="display: none;">
+    <input type="hidden" name="employee_id" id="resetRemainingLeaveEmployeeId">
+    <input type="hidden" name="period" id="resetRemainingLeavePeriod">
+    <input type="hidden" name="filename" value="{{ filename }}">
+</form>
+
+<form id="leaveForm" method="POST" action="{{ url_for('main.update_paid_leave') }}" style="display: none;">
+    <input type="hidden" name="employee_id" id="formEmployeeId">
+    <input type="hidden" name="period" id="formLeavePeriod">
+    <input type="hidden" name="leave_days" id="formLeaveDays">
+    <input type="hidden" name="filename" value="{{ filename }}">
+</form>
+
 <form id="resetLeaveForm" method="POST" action="{{ url_for('main.reset_paid_leave') }}" style="display: none;">
     <input type="hidden" name="employee_id" id="resetLeaveEmployeeId">
     <input type="hidden" name="period" id="resetLeavePeriod">
     <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
-<!-- ✅ CẬP NHẬT: Form ẩn để submit điều chỉnh -->
 <form id="adjustmentForm" method="POST" action="{{ url_for('main.apply_adjustment') }}" style="display: none;">
   <input type="hidden" name="employee_code" id="formEmployeeCode">
   <input type="hidden" name="period" id="formPeriod">
@@ -471,18 +476,15 @@
   <input type="hidden" name="filename" id="formFilename" value="{{ filename }}">
 </form>
 
-<!-- ✅ Form reset -->
 <form id="resetForm" method="POST" action="{{ url_for('main.reset_adjustment_payroll') }}" style="display: none;">
   <input type="hidden" name="employee_code" id="resetEmployeeCode">
   <input type="hidden" name="period" id="resetPeriod">
   <input type="hidden" name="filename" value="{{ filename }}">
 </form>
 
-
-<!-- ✅ THAY ĐỔI: Đặt script TRƯỚC khi sử dụng trong HTML -->
+<!-- Scripts - GIỮ NGUYÊN HOÀN TOÀN -->
 <script src="{{ url_for('static', filename='js/attendance_print.js') }}"></script>
 <script src="{{ url_for('static', filename='js/remaining_leave.js') }}"></script>
-<script src="{{ url_for('static', filename='js/notifications_system.js') }}"></script>
 
 <!-- Xuất weekdays + day_count cho JS -->
 <script id="timesheet-data" type="application/json">
