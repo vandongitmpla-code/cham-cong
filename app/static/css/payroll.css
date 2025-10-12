@@ -707,3 +707,16 @@
         display: none;
     }
 }
+
+/* ====== BORDER OPTIMIZATIONS ====== */
+/* Đảm bảo border không bị overlap */
+.payroll-table th:nth-child(7),
+.payroll-table td:nth-child(7) {
+    border-right: 3px solid #e2e8f0; /* Border đậm hơn để phân biệt */
+}
+
+/* Shadow effect để thấy rõ sự phân cách */
+.payroll-table th:nth-child(7),
+.payroll-table td:nth-child(7) {
+    box-shadow: 3px 0 5px rgba(0, 0, 0, 0.08);
+}
