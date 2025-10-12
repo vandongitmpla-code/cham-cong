@@ -20,14 +20,18 @@
     min-width: auto; /* QUAN TRỌNG: ĐỔI THÀNH auto */
 }
 /* SỬA TẤT CẢ CONTAINER SIZES */
+.payroll-container,
 .payroll-container-sm,
-.payroll-container-md, 
+.payroll-container-md,
 .payroll-container-lg,
 .payroll-container-xl,
 .payroll-container-full {
-    min-width: auto !important; /* BỎ min-width CỨNG */
     margin-left: auto !important;
     margin-right: auto !important;
+    display: block !important;
+    position: relative !important;
+    left: 0 !important;
+    right: 0 !important;
 }
 /* Container Sizes */
 
