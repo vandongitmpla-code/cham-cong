@@ -328,4 +328,4 @@ setContainerSize(size) {
     setTimeout(() => {
         this.forceScrollableTable();
     }, 100);
-}
+};
