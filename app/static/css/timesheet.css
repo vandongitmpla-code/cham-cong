@@ -79,7 +79,8 @@
     min-width: 100%;
     font-size: 0.9rem;
     background: #ffffff;
-    
+    table-layout: auto; /* Cho phép cột co giãn */
+    white-space: nowrap; /* Ngăn text xuống dòng */
 }
 
 /* ====== TABLE HEADER ====== */
