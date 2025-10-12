@@ -15,9 +15,9 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 1px solid #f1f5f9;
     margin: 2rem auto;
-    width: 98%;
+    width: 95%;
     max-width: 95vw;
-    min-width: 1200px;
+    min-width: auto; /* QUAN TRỌNG: ĐỔI THÀNH auto */
 }
 
 /* Container Sizes */
