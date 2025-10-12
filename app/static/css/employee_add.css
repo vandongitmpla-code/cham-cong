@@ -1,0 +1,326 @@
+/* employee_add.css - Styles for add employee page */
+/* Thêm vào đầu file employee_add.css */
+.add-form-container,
+.add-form-header,
+.add-form-section {
+    font-family: 'Inter', sans-serif;
+}
+
+.form-control-add,
+.form-label-add {
+    font-family: 'Inter', sans-serif;
+}
+/* ====== ADD FORM CONTAINER ====== */
+.add-form-container {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    margin: 0 auto;
+    max-width: 800px;
+    width: 95%;
+}
+
+/* ====== ADD FORM HEADER ====== */
+.add-form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.add-form-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.add-form-subtitle {
+    font-size: 1.1rem;
+    color: #475569;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* ====== FORM SECTIONS ====== */
+.add-form-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.add-form-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid rgba(37, 99, 235, 0.1);
+    position: relative;
+}
+
+.add-form-section-title::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    border-radius: 2px;
+}
+
+/* ====== FORM GROUPS ====== */
+.form-group-add {
+    margin-bottom: 1.5rem;
+}
+
+.form-label-add {
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+}
+
+.form-control-add {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    width: 100%;
+    color: #0f172a;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-control-add:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+.form-control-add::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* ====== INSURANCE DISPLAY ====== */
+.insurance-display-add {
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    color: #1e40af;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.insurance-display-add i {
+    color: #2563eb;
+    margin-right: 0.5rem;
+}
+
+.insurance-display-empty {
+    background: rgba(100, 116, 139, 0.08);
+    border: 1px solid rgba(100, 116, 139, 0.2);
+    color: #64748b;
+}
+
+/* ====== FORM HELPER TEXT ====== */
+.form-helper-add {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.5rem;
+    display: block;
+    font-style: italic;
+}
+
+/* ====== FORM ACTIONS ====== */
+.form-actions-add {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btn-add-primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-add-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn-add-secondary {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-add-secondary:hover {
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+    transform: translateY(-2px);
+}
+
+/* ====== MONTH INPUT ====== */
+.month-input-wrapper-add {
+    position: relative;
+}
+
+.month-input-wrapper-add::after {
+    content: "📅";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 1.1rem;
+}
+
+/* ====== UPLOAD SECTION ====== */
+.upload-section-add {
+    background: rgba(139, 92, 246, 0.05);
+    border: 2px dashed rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    transition: all 0.3s ease;
+}
+
+.upload-section-add:hover {
+    background: rgba(139, 92, 246, 0.08);
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+.upload-icon-add {
+    font-size: 3rem;
+    color: #8b5cf6;
+    margin-bottom: 1rem;
+}
+
+.upload-title-add {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+.upload-description-add {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+
+.btn-upload-add {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-upload-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+/* ====== RESPONSIVE DESIGN ====== */
+@media (max-width: 768px) {
+    .add-form-container {
+        padding: 1.5rem;
+        border-radius: 20px;
+        margin: 0 auto 1.5rem auto;
+        width: 98%;
+    }
+    
+    .add-form-title {
+        font-size: 1.75rem;
+    }
+    
+    .add-form-section {
+        padding: 1.5rem;
+    }
+    
+    .form-actions-add {
+        flex-direction: column;
+    }
+    
+    .btn-add-primary,
+    .btn-add-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .form-control-add {
+        padding: 10px 14px;
+    }
+    
+    .upload-section-add {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .add-form-container {
+        padding: 1.25rem;
+    }
+    
+    .add-form-section {
+        padding: 1.25rem;
+    }
+    
+    .add-form-title {
+        font-size: 1.5rem;
+    }
+    
+    .btn-add-primary,
+    .btn-add-secondary {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
