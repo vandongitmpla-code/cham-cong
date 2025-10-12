@@ -613,7 +613,7 @@
     margin: 2rem auto;
     width: 99%; /* Tăng từ 98% lên 99% */
     max-width: 98vw; /* Tăng từ 95vw lên 98vw */
-    min-width: 1400px; /* Tăng từ 1200px lên 1400px */
+    min-width: 1800px; /* Tăng từ 1200px lên 1400px */
 }
     
     .payroll-table-container {
