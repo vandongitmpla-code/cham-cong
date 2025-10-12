@@ -528,14 +528,15 @@
 .status-absent,
 .status-halfday,
 .status-warning {
-    padding: 0.5rem;
-    border-radius: 8px;
+    padding: 0.25rem;
+    border-radius: 4px;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
     transition: all 0.2s ease;
 }
 
