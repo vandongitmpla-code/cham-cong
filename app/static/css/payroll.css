@@ -301,6 +301,7 @@
     z-index: 100;
 }
 
+
 .payroll-table thead tr:nth-child(1) th {
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     color: #ffffff;
