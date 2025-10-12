@@ -1,4 +1,4 @@
-<script>
+
 // payroll-container-manager.js
 class PayrollContainerManager {
     constructor() {
