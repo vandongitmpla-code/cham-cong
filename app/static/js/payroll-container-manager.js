@@ -329,3 +329,4 @@ setContainerSize(size) {
         this.forceScrollableTable();
     }, 100);
 }
+}Ư
