@@ -278,54 +278,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 });
 
-// Handle page load issues
-window.addEventListener('load', () => {
-    if (window.payrollContainerManager) {
-        window.payrollContainerManager.forceTableRedraw();
-    }
-});
+    // Handle page load issues
+    window.addEventListener('load', () => {
+        if (window.payrollContainerManager) {
+            window.payrollContainerManager.forceTableRedraw();
+        }
+    });
 
-// Thêm method này vào class PayrollContainerManager
-forceScrollableTable() {
-    const tableContainer = this.container.querySelector('.payroll-table-container');
-    const table = this.container.querySelector('.payroll-table');
-    
-    if (tableContainer && table) {
-        // Đảm bảo container có overflow
-        tableContainer.style.overflow = 'auto';
-        tableContainer.style.overflowX = 'auto';
-        tableContainer.style.overflowY = 'auto';
+    // Thêm method này vào class PayrollContainerManager
+    forceScrollableTable() {
+        const tableContainer = this.container.querySelector('.payroll-table-container');
+        const table = this.container.querySelector('.payroll-table');
         
-        // Đảm bảo bảng đủ rộng
-        table.style.width = 'max-content';
-        table.style.minWidth = '100%';
-        
-        console.log('Scroll forced for table container');
+        if (tableContainer && table) {
+            // Đảm bảo container có overflow
+            tableContainer.style.overflow = 'auto';
+            tableContainer.style.overflowX = 'auto';
+            tableContainer.style.overflowY = 'auto';
+            
+            // Đảm bảo bảng đủ rộng
+            table.style.width = 'max-content';
+            table.style.minWidth = '100%';
+            
+            console.log('Scroll forced for table container');
+        }
     }
-}
 
-// Trong method setContainerSize, thêm dòng này:
-setContainerSize(size) {
-    this.currentSize = size;
-    
-    // Remove all size classes
-    this.container.classList.remove(
-        'payroll-container-sm',
-        'payroll-container-md', 
-        'payroll-container-lg',
-        'payroll-container-xl',
-        'payroll-container-full'
-    );
-    
-    // Add new size class
-    this.container.classList.add(`payroll-container-${size}`);
-    
-    this.applyFullscreenOptimizations();
-    this.updateActiveButton();
-    this.saveSettings();
-    
-    // QUAN TRỌNG: Đảm bảo scroll hoạt động
-    setTimeout(() => {
-        this.forceScrollableTable();
-    }, 100);
-}
+    // Trong method setContainerSize, thêm dòng này:
+    setContainerSize(size) {
+        this.currentSize = size;
+        
+        // Remove all size classes
+        this.container.classList.remove(
+            'payroll-container-sm',
+            'payroll-container-md', 
+            'payroll-container-lg',
+            'payroll-container-xl',
+            'payroll-container-full'
+        );
+        
+        // Add new size class
+        this.container.classList.add(`payroll-container-${size}`);
+        
+        this.applyFullscreenOptimizations();
+        this.updateActiveButton();
+        this.saveSettings();
+        
+        // QUAN TRỌNG: Đảm bảo scroll hoạt động
+        setTimeout(() => {
+            this.forceScrollableTable();
+        }, 100);
+    }
