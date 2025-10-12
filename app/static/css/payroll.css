@@ -467,7 +467,18 @@
 .payroll-table thead tr:nth-child(2) th:nth-child(-n+7) {
     z-index: 59;
 }
-
+/* ====== CẬP NHẬT VARIABLES ====== */
+:root {
+    --sticky-col-1-width: 80px;   /* Mã */
+    --sticky-col-2-width: 150px;  /* Tên */
+    --sticky-col-3-width: 180px;  /* Phòng ban */
+    --sticky-col-4-width: 100px;  /* Ngày công */
+    --sticky-col-5-width: 100px;  /* Ngày vắng */
+    --sticky-col-6-width: 100px;  /* Chủ nhật */
+    --sticky-col-7-width: 100px;  /* Lễ, tết */
+    --header-row-1-height: 56px;  /* Chiều cao hàng 1 */
+    --header-row-2-height: 48px;  /* Chiều cao hàng 2 */
+}
 
 /* ====== HIGHLIGHT STYLES ====== */
 .highlight-col {
