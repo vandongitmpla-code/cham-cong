@@ -564,11 +564,6 @@
     border: 1px solid rgba(245, 158, 11, 0.3);
 }
 .status-present i,
-.status-absent i,
-.status-halfday i,
-.status-warning i {
-    font-size: 0.8rem;
-}
 .status-present:hover,
 .status-absent:hover,
 .status-halfday:hover,
