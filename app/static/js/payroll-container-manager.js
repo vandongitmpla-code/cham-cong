@@ -2,15 +2,17 @@
 // payroll-container-manager.js
 class PayrollContainerManager {
     constructor() {
-        this.currentSize = 'lg'; // default size
+        this.currentSize = 'lg';
+        this.compactMode = false;
         this.container = document.querySelector('.payroll-container');
         this.init();
     }
 
     init() {
-        this.loadSavedSize();
+        this.loadSavedSettings();
         this.updateContainerSize();
         this.addEventListeners();
+        this.applyFullscreenOptimizations();
     }
 
     setContainerSize(size) {
@@ -28,36 +30,70 @@ class PayrollContainerManager {
         // Add new size class
         this.container.classList.add(`payroll-container-${size}`);
         
+        this.applyFullscreenOptimizations();
         this.updateActiveButton();
-        this.saveSize();
+        this.saveSettings();
     }
 
-    updateContainerSize() {
-        this.setContainerSize(this.currentSize);
+    applyFullscreenOptimizations() {
+        if (this.currentSize === 'full') {
+            // Tự động áp dụng các tối ưu cho fullscreen
+            this.optimizeForFullscreen();
+        } else {
+            // Khôi phục về bình thường
+            this.container.classList.remove('compact');
+        }
     }
 
-    updateActiveButton() {
-        // Remove active class from all buttons
-        document.querySelectorAll('.btn-size').forEach(btn => {
-            btn.classList.remove('active');
-        });
+    optimizeForFullscreen() {
+        // Tự động bật compact mode nếu màn hình không đủ cao
+        if (window.innerHeight < 800) {
+            this.enableCompactMode();
+        } else {
+            this.disableCompactMode();
+        }
+    }
+
+    enableCompactMode() {
+        this.compactMode = true;
+        this.container.classList.add('compact');
         
-        // Add active class to current size button
-        const activeBtn = document.querySelector(`.btn-size[data-size="${this.currentSize}"]`);
-        if (activeBtn) {
-            activeBtn.classList.add('active');
-        }
+        // Ẩn các phần không cần thiết
+        const subtitle = this.container.querySelector('.payroll-subtitle');
+        if (subtitle) subtitle.style.display = 'none';
+        
+        console.log('Compact mode enabled for better fullscreen experience');
     }
 
-    saveSize() {
+    disableCompactMode() {
+        this.compactMode = false;
+        this.container.classList.remove('compact');
+        
+        // Hiện lại các phần đã ẩn
+        const subtitle = this.container.querySelector('.payroll-subtitle');
+        if (subtitle) subtitle.style.display = 'block';
+    }
+
+    toggleCompactMode() {
+        if (this.compactMode) {
+            this.disableCompactMode();
+        } else {
+            this.enableCompactMode();
+        }
+        this.saveSettings();
+    }
+
+    saveSettings() {
         localStorage.setItem('payrollContainerSize', this.currentSize);
+        localStorage.setItem('payrollCompactMode', this.compactMode);
     }
 
-    loadSavedSize() {
+    loadSavedSettings() {
         const savedSize = localStorage.getItem('payrollContainerSize');
-        if (savedSize) {
-            this.currentSize = savedSize;
-        }
+        const savedCompact = localStorage.getItem('payrollCompactMode');
+        
+        if (savedSize) this.currentSize = savedSize;
+        if (savedCompact === 'true') this.compactMode = true;
     }
 
     addEventListeners() {
