@@ -603,12 +603,7 @@
 }
 
 /* ====== RESPONSIVE DESIGN ====== */
-@media (max-width: 1400px) {
-    .payroll-container {
-        width: 99%;
-        padding: 2rem;
-    }
-}
+
 
 @media (max-width: 1200px) {
     .payroll-container {
