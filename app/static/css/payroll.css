@@ -370,7 +370,7 @@
 .status-halfday,
 .status-warning {
     padding: 0.5rem;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
