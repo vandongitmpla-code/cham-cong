@@ -624,13 +624,55 @@
     }
 }
 
+/* ====== RESPONSIVE ADJUSTMENTS ====== */
 @media (max-width: 768px) {
-    .payroll-container {
-        padding: 1rem;
-        border-radius: 12px;
-        min-width: unset;
-        width: 100%;
+    :root {
+        --sticky-col-1-width: 60px;
+        --sticky-col-2-width: 120px;
+        --sticky-col-3-width: 140px;
+        --sticky-col-4-width: 80px;
+        --sticky-col-5-width: 80px;
+        --sticky-col-6-width: 80px;
+        --sticky-col-7-width: 80px;
+        --header-row-1-height: 48px;
+        --header-row-2-height: 40px;
     }
+    
+    .payroll-table th:nth-child(1),
+    .payroll-table td:nth-child(1) {
+        left: 0;
+    }
+    
+    .payroll-table th:nth-child(2),
+    .payroll-table td:nth-child(2) {
+        left: var(--sticky-col-1-width);
+    }
+    
+    .payroll-table th:nth-child(3),
+    .payroll-table td:nth-child(3) {
+        left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width));
+    }
+    
+    .payroll-table th:nth-child(4),
+    .payroll-table td:nth-child(4) {
+        left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width));
+    }
+    
+    .payroll-table th:nth-child(5),
+    .payroll-table td:nth-child(5) {
+        left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width));
+    }
+    
+    .payroll-table th:nth-child(6),
+    .payroll-table td:nth-child(6) {
+        left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width));
+    }
+    
+    .payroll-table th:nth-child(7),
+    .payroll-table td:nth-child(7) {
+        left: calc(var(--sticky-col-1-width) + var(--sticky-col-2-width) + var(--sticky-col-3-width) + var(--sticky-col-4-width) + var(--sticky-col-5-width) + var(--sticky-col-6-width));
+    }
+}
     
     .payroll-table-container {
         max-height: 60vh;
