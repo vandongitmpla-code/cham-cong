@@ -573,9 +573,9 @@
 .status-absent:hover,
 .status-halfday:hover,
 .status-warning:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 /* ====== SCROLLBAR STYLING ====== */
 .payroll-table-container::-webkit-scrollbar {
     width: 12px;
