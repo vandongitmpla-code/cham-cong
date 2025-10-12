@@ -42,9 +42,19 @@ def timesheet(filename):
         if not period_str:
             period_str = ""  # nếu không có, để rỗng
 
-        # Tạo mapping weekdays: key = day number (1..31) -> "Thứ 2"/.../"Chủ Nhật"
+        # Xác định các cột ngày (1..31) có trong df
+        day_cols = [c for c in df.columns if str(c).strip().isdigit()]
+        day_cols = sorted(day_cols, key=lambda x: int(str(x).strip())) if day_cols else []
+        if not day_cols:
+            flash("Không tìm thấy cột ngày (1..31) trong file", "danger")
+            return redirect(url_for("main.index"))
+
+        # Tạo mapping weekdays và tính day_count theo số ngày trong tháng
         from datetime import datetime, timedelta
+        import calendar
         weekdays = {}
+        
+        # TÍNH day_count THEO SỐ NGÀY TRONG THÁNG
         try:
             if period_str and "~" in period_str:
                 start_s, end_s = period_str.split("~")
@@ -55,7 +65,6 @@ def timesheet(filename):
                 month = start_date.month
                 
                 # Tính số ngày trong tháng đó
-                import calendar
                 day_count = calendar.monthrange(year, month)[1]  # [1] trả về số ngày trong tháng
                 
                 # Cập nhật weekdays cho đủ tháng
@@ -67,29 +76,15 @@ def timesheet(filename):
             else:
                 # Fallback: dùng số ngày từ file như cũ
                 day_count = max(int(str(c)) for c in day_cols)
-        except Exception as e:
-            print("Lỗi tính day_count từ period:", e, flush=True)
-            # Fallback: dùng số ngày từ file
-            day_count = max(int(str(c)) for c in day_cols)
-
-        # Xác định các cột ngày (1..31) có trong df
-        day_cols = [c for c in df.columns if str(c).strip().isdigit()]
-        day_cols = sorted(day_cols, key=lambda x: int(str(x).strip())) if day_cols else []
-        if not day_cols:
-            flash("Không tìm thấy cột ngày (1..31) trong file", "danger")
-            return redirect(url_for("main.index"))
-
-        # SỬA PHẦN NÀY: Tính day_count theo period thực tế
-        try:
-            if period_str and "~" in period_str:
-                start_s, end_s = period_str.split("~")
-                start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
-                end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
-                # Tính số ngày thực tế từ period
-                day_count = (end_date - start_date).days + 1
-            else:
-                # Fallback: dùng số ngày từ file như cũ
-                day_count = max(int(str(c)) for c in day_cols)
+                # Tạo weekdays fallback
+                if day_cols:
+                    for day in day_cols:
+                        day_int = int(day)
+                        try:
+                            date_obj = datetime(start_date.year, start_date.month, day_int)
+                            weekdays[day_int] = weekday_names[date_obj.weekday()]
+                        except:
+                            weekdays[day_int] = ""
         except Exception as e:
             print("Lỗi tính day_count từ period:", e, flush=True)
             # Fallback: dùng số ngày từ file
@@ -116,7 +111,7 @@ def timesheet(filename):
                 "Tên": row.get("Tên", ""),
                 "Phòng ban": row.get("Phòng ban", "")
             }
-            # điền theo thứ tự day_cols (nếu thiếu ngày nào thì vẫn tạo key)
+            # điền theo day_count (số ngày trong tháng)
             for d in range(1, day_count + 1):
                 key = str(d)
                 rec[key] = normalize_cell(row.get(key, "")) if key in df.columns else ""
