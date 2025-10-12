@@ -100,36 +100,59 @@
         </tr>
       </thead>
 
-      <tbody>
-        {% for row in rows %}
-          <tr>
-            {% for i in range(cols|length) %}
-              {% set colname = cols[i] %}
-              {% set cell = row[i] %}
-              
-              {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
-                <td class="highlight-col">{{ cell }}</td>
-              {% elif colname.isdigit() %}
-                {% set d = colname|int %}
-                {% set wd = weekdays.get(d, "") %}
-                <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
-                  {% if cell == 'warn' %}
-                    <i class="bi bi-exclamation-triangle-fill blink-icon"
-                       style="color: #f59e0b;"
-                       data-bs-toggle="tooltip"
-                       data-bs-placement="top"
-                       title="Chỉ có 1 lần chấm công, cần kiểm tra lại"></i>
-                  {% else %}
-                    {{ cell }}
-                  {% endif %}
-                </td>
-              {% else %}
-                <td>{{ cell }}</td>
-              {% endif %}
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      </tbody>
+      <!-- Trong phần table body - cập nhật cell rendering -->
+<tbody>
+  {% for row in rows %}
+    <tr>
+      {% for i in range(cols|length) %}
+        {% set colname = cols[i] %}
+        {% set cell = row[i] %}
+        
+        {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
+          <td class="highlight-col fw-bold">{{ cell }}</td>
+        {% elif colname.isdigit() %}
+          {% set d = colname|int %}
+          {% set wd = weekdays.get(d, "") %}
+          <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
+            {% if cell == 'warn' %}
+              <div class="status-warning blink-icon"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Chỉ có 1 lần chấm công, cần kiểm tra lại">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+            {% elif cell == 'x' %}
+              <div class="status-present with-icon"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Làm đủ ngày">
+                ✓
+              </div>
+            {% elif cell == 'v' %}
+              <div class="status-absent with-icon"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Vắng">
+                ✕
+              </div>
+            {% elif cell == '0.5' %}
+              <div class="status-halfday with-icon"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Làm nửa ngày">
+                ½
+              </div>
+            {% else %}
+              {{ cell }}
+            {% endif %}
+          </td>
+        {% else %}
+          <td>{{ cell }}</td>
+        {% endif %}
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</tbody>
     </table>
   </div>
 </div>
