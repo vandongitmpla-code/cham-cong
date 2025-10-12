@@ -48,7 +48,7 @@
 
 .payroll-container-full {
     width: 99%; /* Tăng từ 96% */
-    max-width: 99vw; /* Tăng từ 98vw */
+    max-width: vw; /* Tăng từ 98vw */
     min-width: 100%;
 }
 
