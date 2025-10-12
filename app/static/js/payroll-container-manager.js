@@ -284,3 +284,4 @@ window.addEventListener('load', () => {
         window.payrollContainerManager.forceTableRedraw();
     }
 });
+
