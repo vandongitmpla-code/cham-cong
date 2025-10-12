@@ -680,3 +680,242 @@
 .sticky-row-2 { top: 56px; }
 .sticky-row-3 { top: 104px; }
 
+/* payroll.css - Flexible container system */
+
+/* ====== FLEXIBLE PAYROLL CONTAINER ====== */
+.payroll-container {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    margin: 2rem auto;
+    width: 98%; /* Tăng từ 95% lên 98% */
+    max-width: 95vw; /* Giới hạn tối đa 95% viewport width */
+    min-width: 1200px; /* Đảm bảo container đủ rộng */
+}
+
+/* ====== RESPONSIVE CONTAINER SIZES ====== */
+/* Container size variants */
+.payroll-container-sm {
+    width: 90%;
+    max-width: 1000px;
+    min-width: 800px;
+}
+
+.payroll-container-md {
+    width: 95%;
+    max-width: 1200px;
+    min-width: 1000px;
+}
+
+.payroll-container-lg {
+    width: 98%;
+    max-width: 1400px;
+    min-width: 1200px;
+}
+
+.payroll-container-xl {
+    width: 99%;
+    max-width: 1600px;
+    min-width: 1400px;
+}
+
+.payroll-container-full {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    border-radius: 0;
+    margin: 0;
+    padding: 2rem;
+}
+
+/* ====== TABLE CONTAINER ADJUSTMENTS ====== */
+.payroll-table-container {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 2rem;
+    max-height: 75vh; /* Tăng chiều cao tối đa */
+    min-height: 500px; /* Đảm bảo chiều cao tối thiểu */
+}
+
+/* ====== TABLE WIDTH OPTIMIZATIONS ====== */
+.payroll-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background: #ffffff;
+}
+
+/* Điều chỉnh chiều rộng cột cho phù hợp */
+.payroll-table th:nth-child(1),
+.payroll-table td:nth-child(1) {
+    min-width: 80px; /* Mã */
+}
+
+.payroll-table th:nth-child(2),
+.payroll-table td:nth-child(2) {
+    min-width: 150px; /* Tên */
+}
+
+.payroll-table th:nth-child(3),
+.payroll-table td:nth-child(3) {
+    min-width: 180px; /* Phòng ban */
+}
+
+.payroll-table th:nth-child(4),
+.payroll-table td:nth-child(4),
+.payroll-table th:nth-child(5),
+.payroll-table td:nth-child(5),
+.payroll-table th:nth-child(6),
+.payroll-table td:nth-child(6),
+.payroll-table th:nth-child(7),
+.payroll-table td:nth-child(7) {
+    min-width: 100px; /* Các cột thống kê */
+}
+
+/* Các cột ngày */
+.payroll-table th:nth-child(n+8),
+.payroll-table td:nth-child(n+8) {
+    min-width: 70px; /* Các cột ngày */
+}
+
+/* ====== LAYOUT OPTIMIZATIONS ====== */
+.payroll-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.payroll-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+/* ====== CONTAINER CONTROLS ====== */
+.container-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.size-control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.size-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.size-buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.btn-size {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-size:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.btn-size.active {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+/* ====== RESPONSIVE ADJUSTMENTS ====== */
+@media (max-width: 1400px) {
+    .payroll-container {
+        width: 99%;
+        padding: 2rem;
+    }
+    
+    .payroll-table-container {
+        max-height: 70vh;
+    }
+}
+
+@media (max-width: 1200px) {
+    .payroll-container {
+        width: 100%;
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin: 1rem auto;
+    }
+    
+    .payroll-table-container {
+        max-height: 65vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .payroll-container {
+        padding: 1rem;
+        border-radius: 12px;
+        min-width: unset;
+        width: 100%;
+    }
+    
+    .payroll-table-container {
+        max-height: 60vh;
+        min-height: 400px;
+    }
+    
+    .container-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .size-control-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* Print styles */
+@media print {
+    .payroll-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+    }
+    
+    .payroll-table-container {
+        max-height: none;
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+}
