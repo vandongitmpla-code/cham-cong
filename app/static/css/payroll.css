@@ -576,8 +576,6 @@
     transform: scale(1.1);
 }
 
-
-
 /* ====== SCROLLBAR STYLING ====== */
 .payroll-table-container::-webkit-scrollbar {
     width: 12px;
