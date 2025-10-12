@@ -625,11 +625,16 @@
 }
 
 @media (max-width: 768px) {
-    .payroll-container {
-        padding: 1rem;
-        border-radius: 12px;
-        min-width: unset;
-        width: 100%;
+    :root {
+        --sticky-col-1-width: 60px;
+        --sticky-col-2-width: 120px;
+        --sticky-col-3-width: 140px;
+        --sticky-col-4-width: 80px;
+        --sticky-col-5-width: 80px;
+        --sticky-col-6-width: 80px;
+        --sticky-col-7-width: 80px;
+        --header-row-1-height: 48px;
+        --header-row-2-height: 40px;
     }
     
     .payroll-table-container {
