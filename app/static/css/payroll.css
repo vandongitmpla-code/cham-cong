@@ -41,10 +41,10 @@
 }
 
 .payroll-container-xl {
-    width: 100%; /* Tăng từ 99% */
-    max-width: 1800px; /* Tăng từ 1600px */
-    min-width: 1600px; /* Tăng từ 1400px */
-    
+    width: 95%; /* GIẢM từ 100% xuống 95% */
+    max-width: 1800px;
+    min-width: 1600px;
+    margin: 0 auto;
 }
 
 
