@@ -114,9 +114,19 @@ class PayrollContainerManager {
                     case '3': this.setContainerSize('lg'); break;
                     case '4': this.setContainerSize('xl'); break;
                     case '5': this.setContainerSize('full'); break;
+                    case 'c': this.toggleCompactMode(); break; // Ctrl+Alt+C để toggle compact
                 }
             }
         });
+
+        // Tự động tối ưu khi resize window
+        window.addEventListener('resize', () => {
+            this.handleResize();
+            if (this.currentSize === 'full') {
+                this.optimizeForFullscreen();
+            }
+        });
+    }
 
         // Window resize handling
         window.addEventListener('resize', () => {
