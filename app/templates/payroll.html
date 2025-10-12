@@ -5,7 +5,233 @@
 {% endblock %}
 
 {% block content %}
+{% extends "base.html" %}
+{% block title %}Bảng công tính lương{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/payroll.css') }}">
+{% endblock %}
+
+{% block content %}
 <div class="payroll-container payroll-container-lg">
+  <!-- Container Size Controls -->
+  <div class="container-controls">
+    <div class="size-control-group">
+        <span class="size-label">Kích thước bảng:</span>
+        <div class="size-buttons">
+            <button class="btn-size" data-size="sm">Nhỏ</button>
+            <button class="btn-size" data-size="md">Vừa</button>
+            <button class="btn-size active" data-size="lg">Lớn</button>
+            <button class="btn-size" data-size="xl">Rất lớn</button>
+            <button class="btn-size" data-size="full">Toàn màn hình</button>
+        </div>
+    </div>
+    
+    <div class="size-control-group">
+        <span class="size-label">Phím tắt:</span>
+        <div class="size-buttons">
+            <button class="btn-size" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">Ctrl+Alt+ [1-5]</button>
+        </div>
+    </div>
+</div>
+
+  <!-- Header -->
+  <div class="payroll-header">
+    <h1 class="payroll-title">Bảng công tính lương</h1>
+    <p class="payroll-subtitle">Quản lý và tính toán công chuẩn cho nhân viên</p>
+    <div class="payroll-period">
+      <i class="bi bi-calendar-week"></i>
+      <strong>Kỳ công:</strong> {{ period if period else "Chưa xác định" }}
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="payroll-actions">
+    <!-- Nút Ngày Lễ Tết -->
+    <button id="btnHolidays" class="btn-payroll btn-payroll-warning" data-bs-toggle="modal" data-bs-target="#holidayModal">
+      <i class="bi bi-calendar-event"></i> Ngày Lễ tết
+    </button>
+
+    <!-- Nút Chấm công in ký -->
+    <a href="{{ url_for('main.attendance_print', filename=filename) }}" class="btn-payroll btn-payroll-success">
+      <i class="bi bi-printer"></i> Chấm công in ký
+    </a>
+
+    <!-- Nút Import Database -->
+    <form method="POST" action="{{ url_for('main.import_payroll', filename=filename) }}">
+      <button type="submit" class="btn-payroll btn-payroll-primary">
+        <i class="bi bi-database-add"></i> Import vào Database
+      </button>
+    </form>
+  </div>
+
+  <!-- Holidays Section -->
+  {% if holidays %}
+  <div class="holidays-section">
+    <h6 class="holidays-title">
+      <i class="bi bi-calendar-check"></i> Danh sách ngày lễ đã nhập
+    </h6>
+    <div class="holidays-list">
+      {% for h in holidays %}
+        <div class="holiday-item">
+          <div class="holiday-info">
+            <span class="holiday-date">{{ h.date.strftime("%d/%m/%Y") }}</span>
+            <span class="holiday-name">{{ h.name or "Không tên" }}</span>
+          </div>
+          <form method="POST" action="{{ url_for('main.delete_holiday', holiday_id=h.id, filename=filename) }}" style="display: inline;">
+            <button type="submit" class="btn-holiday-delete">
+              <i class="bi bi-trash"></i> Xóa
+            </button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="holidays-section">
+    <h6 class="holidays-title">
+      <i class="bi bi-calendar-event"></i> Danh sách ngày lễ
+    </h6>
+    <p class="text-muted mb-0">Chưa có ngày lễ nào được thêm vào.</p>
+  </div>
+  {% endif %}
+
+  <!-- Payroll Table -->
+  <div class="payroll-table-container">
+    <table class="payroll-table">
+      <thead>
+        <!-- Header: tên cột -->
+        <tr>
+          {% for col in cols %}
+            {% if col in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
+              <th class="highlight-col">{{ col }}</th>
+            {% else %}
+              <th>{{ col }}</th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+
+        <!-- Header: thứ -->
+        <tr>
+          {% for col in cols %}
+            {% if col.isdigit() %}
+              {% set d = col|int %}
+              {% set wd = weekdays.get(d, "") %}
+              <th class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
+                {{ wd }}
+              </th>
+            {% elif col in ["Ngày công","Ngày vắng","Chủ nhật","Lễ, tết"] %}
+              <th class="highlight-col"></th>
+            {% else %}
+              <th></th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+
+      <!-- Phiên bản icon đơn giản -->
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            {% for i in range(cols|length) %}
+              {% set colname = cols[i] %}
+              {% set cell = row[i] %}
+              
+              {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
+                <td class="highlight-col fw-bold">{{ cell }}</td>
+              {% elif colname.isdigit() %}
+                {% set d = colname|int %}
+                {% set wd = weekdays.get(d, "") %}
+                <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
+                  {% if cell == 'warn' %}
+                    <div class="status-warning"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Chỉ có 1 lần chấm công, cần kiểm tra lại">
+                      <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                  {% elif cell == 'x' or cell == 'xx' %}
+                    <div class="status-present"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Làm đủ ngày">
+                      <i class="bi bi-check-lg"></i>
+                    </div>
+                  {% elif cell == 'v' or cell == 'vv' %}
+                    <div class="status-absent"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Vắng">
+                      <i class="bi bi-x-lg"></i>
+                    </div>
+                  {% elif cell == '0.5' %}
+                    <div class="status-halfday"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Làm nửa ngày">
+                      <i class="bi bi-dash-lg"></i>
+                    </div>
+                  {% else %}
+                    {{ cell }}
+                  {% endif %}
+                </td>
+              {% else %}
+                <td>{{ cell }}</td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Holiday Modal -->
+<div class="modal fade" id="holidayModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm ngày lễ mới</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="{{ url_for('main.add_holiday') }}?filename={{ filename }}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Ngày lễ</label>
+            <input type="date" name="holiday_date" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tên ngày lễ</label>
+            <input type="text" name="holiday_name" class="form-control" placeholder="Ví dụ: Quốc khánh, Tết Dương lịch...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu ngày lễ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  // Tooltip initialization
+  const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltips.forEach(tooltip => new bootstrap.Tooltip(tooltip, {container: 'body'}));
+  
+  // Loading state for import button
+  const importForm = document.querySelector('form[action*="import_payroll"]');
+  if (importForm) {
+    importForm.addEventListener('submit', function(e) {
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang import...';
+      submitBtn.disabled = true;
+    });
+  }
+});
+</script>
+<script src="{{ url_for('static', filename='js/payroll-container-manager.js') }}"></script>
+{% endblock %}
   <!-- Container Size Controls -->
   <div class="container-controls">
     <div class="size-control-group">
