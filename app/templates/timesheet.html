@@ -98,6 +98,7 @@
           </td>
           
           <!-- Data Cells -->
+          <!-- Trong phần table body - cập nhật cell rendering -->
           {% for cell in row %}
           <td class="{% if loop.index0 >= 3 %}day-cell{% endif %}">
             {% if loop.index0 >= 3 %} {# Day columns start from index 3 #}
@@ -110,7 +111,7 @@
                 {% elif cell in ['P', 'C', 'X'] %}
                   <span class="status-present">{{ cell }}</span>
                 {% elif cell in ['A', 'V', 'N'] %}
-                  <span class="status-absent">V</span>
+                  <span class="status-absent">{{ cell }}</span>
                 {% elif cell in ['L', 'D'] %}
                   <span class="status-late">{{ cell }}</span>
                 {% else %}
@@ -118,8 +119,8 @@
                   {{ cell|safe }}
                 {% endif %}
               {% else %}
-                {# Empty cell - vắng #}
-                <span class="status-absent">V</span>
+                {# Empty cell - absent #}
+                <span class="status-absent">A</span>
               {% endif %}
             {% else %}
               {# Employee info columns #}
@@ -190,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
       const empData = JSON.parse(this.getAttribute('data-emp'));
       
       // Calculate statistics
-      // Tính toán statistics trong modal
       const totalDays = empData.days.length;
       const presentDays = empData.days.filter(day => day && day !== '' && !day.includes('A') && !day.includes('V')).length;
       const absentDays = empData.days.filter(day => day && (day.includes('A') || day.includes('V'))).length;
@@ -231,59 +231,53 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="days-grid">
       `;
       
-      // Trong phần modal - cập nhật hiển thị chi tiết
       empData.days.forEach((day, index) => {
-          const dayNumber = index + 1;
-          const weekday = empData.weekdays && empData.weekdays[dayNumber] ? empData.weekdays[dayNumber] : '';
-          
-          let dayClass = 'day-absent';
-          let dayIcon = '❌';
-          let dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
-          let dayContent = 'V';
-          
-          if (day && day !== '') {
-              if (day.includes('A') || day.includes('V')) {
-                  dayClass = 'day-absent';
-                  dayIcon = '❌';
-                  dayContent = 'V';
-                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
-              } else if (day.includes('L') || day.includes('D')) {
-                  dayClass = 'day-late';
-                  dayIcon = '⚠️';
-                  dayContent = day;
-                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Đi muộn`;
-              } else if (day.includes('<br>')) {
-                  dayClass = 'day-present';
-                  dayIcon = '✅';
-                  dayContent = day.replace(/<br>/g, '\n');
-                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt`;
-              } else {
-                  dayClass = 'day-present';
-                  dayIcon = '✅';
-                  dayContent = day;
-                  dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt`;
-              }
+        const dayNumber = index + 1;
+        const weekday = empData.weekdays && empData.weekdays[dayNumber] ? empData.weekdays[dayNumber] : '';
+        
+        let dayClass = 'day-absent';
+        let dayIcon = '❌';
+        let dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
+        
+        if (day && day !== '') {
+          if (day.includes('A') || day.includes('V')) {
+            dayClass = 'day-absent';
+            dayIcon = '❌';
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng (${day})`;
+          } else if (day.includes('L') || day.includes('D')) {
+            dayClass = 'day-late';
+            dayIcon = '⚠️';
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Đi muộn (${day})`;
+          } else if (day.includes('<br>')) {
+            dayClass = 'day-present';
+            dayIcon = '✅';
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt - ${day.replace(/<br>/g, ', ')}`;
+          } else {
+            dayClass = 'day-present';
+            dayIcon = '✅';
+            dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Có mặt (${day})`;
           }
-          
-          content += `
-            <div class="day ${dayClass}" title="${dayTitle}">
-              <div class="day-number">${dayNumber}</div>
-              <div class="day-icon">${dayIcon}</div>
-              <div class="day-content">${dayContent}</div>
-            </div>
-          `;
+        }
+        
+        content += `
+          <div class="day ${dayClass}" title="${dayTitle}">
+            <div class="day-number">${dayNumber}</div>
+            <div class="day-icon">${dayIcon}</div>
+            <div class="day-status">${day || 'A'}</div>
+          </div>
+        `;
       });
-            
-            content += `
-                  </div>
-                </div>
-              </div>
-            `;
-            
-            detailContent.innerHTML = content;
-            employeeModal.show();
-          });
-        });
+      
+      content += `
+            </div>
+          </div>
+        </div>
+      `;
+      
+      detailContent.innerHTML = content;
+      employeeModal.show();
+    });
+  });
 
   // Search functionality
   const searchInput = document.getElementById('searchInput');
