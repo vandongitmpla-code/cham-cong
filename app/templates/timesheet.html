@@ -98,36 +98,34 @@
           </td>
           
           <!-- Data Cells -->
-          <!-- Trong phần table body - cập nhật cell rendering -->
-        {% for cell in row %}
-        <td class="{% if loop.index0 >= 3 %}day-cell{% endif %}">
-          {% if loop.index0 >= 3 %} {# Day columns start from index 3 #}
-            {% if cell %}
-              {% if '<br>' in cell %}
-                {# Multiple time entries - hiển thị nguyên bản với line breaks #}
-                <div class="time-entries" style="font-size: 0.8rem; line-height: 1.2;">
+          {% for cell in row %}
+          <td class="{% if loop.index0 >= 3 %}day-cell{% endif %}">
+            {% if loop.index0 >= 3 %} {# Day columns start from index 3 #}
+              {% if cell %}
+                {% if '<br>' in cell %}
+                  {# Multiple time entries - mark as present with times #}
+                  <span class="status-present" title="Có mặt: {{ cell }}">
+                    <i class="bi bi-check-circle"></i>
+                  </span>
+                {% elif cell in ['P', 'C', 'X'] %}
+                  <span class="status-present">{{ cell }}</span>
+                {% elif cell in ['A', 'V', 'N'] %}
+                  <span class="status-absent">{{ cell }}</span>
+                {% elif cell in ['L', 'D'] %}
+                  <span class="status-late">{{ cell }}</span>
+                {% else %}
                   {{ cell|safe }}
-                </div>
-              {% elif cell in ['P', 'C', 'X'] %}
-                <span class="status-present">{{ cell }}</span>
-              {% elif cell in ['A', 'V', 'N'] %}
-                <span class="status-absent">{{ cell }}</span>
-              {% elif cell in ['L', 'D'] %}
-                <span class="status-late">{{ cell }}</span>
+                {% endif %}
               {% else %}
-                {# Hiển thị nguyên bản cho các giá trị khác #}
-                {{ cell|safe }}
+                {# Empty cell - absent #}
+                <span class="status-absent">A</span>
               {% endif %}
             {% else %}
-              {# Empty cell - absent #}
-              <span class="status-absent">A</span>
+              {# Employee info columns #}
+              {{ cell|safe }}
             {% endif %}
-          {% else %}
-            {# Employee info columns #}
-            {{ cell|safe }}
-          {% endif %}
-        </td>
-        {% endfor %}
+          </td>
+          {% endfor %}
         </tr>
         {% endfor %}
       </tbody>
@@ -240,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
         
         if (day && day !== '') {
-          if (day.includes('A') || day.includes('V')) {
+          if (day.includes('') || day.includes('V')) {
             dayClass = 'day-absent';
             dayIcon = '❌';
             dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng (${day})`;
