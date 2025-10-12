@@ -510,17 +510,17 @@
 }
 
 .highlight-sunday {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%) !important;
-    font-weight: 700 !important;
+    background: rgba(248, 113, 113, 0.08) !important;
+    font-weight: 600 !important;
     color: #dc2626 !important;
-    border-color: #ef4444 !important;
+    border-color: #fecaca !important;
 }
 
 .highlight-holiday {
     background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%) !important;
     font-weight: 700 !important;
-    color: #7c3aed !important;
-    border-color: #8b5cf6 !important;
+    color: #fecaca !important;
+    border-color: #fecaca !important;
 }
 
 /* ====== STATUS INDICATORS ====== */
