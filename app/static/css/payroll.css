@@ -52,8 +52,7 @@
 .payroll-container-xl {
     width: 95%;
     max-width: 1900px;
-    min-width: auto; /* THAY ĐỔI TỪ 1600px thành auto */
-    margin: 2rem auto;
+   
 }
 
 
