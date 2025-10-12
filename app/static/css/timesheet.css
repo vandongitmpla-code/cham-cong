@@ -69,6 +69,7 @@
     position: relative;
     max-height: 85vh; /* Tăng chiều cao tối đa */
     min-height: 600px; /* Chiều cao tối thiểu */
+    
 }
 
 .timesheet-table {
