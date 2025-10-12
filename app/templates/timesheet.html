@@ -192,15 +192,15 @@ document.addEventListener('DOMContentLoaded', function() {
       // Calculate statistics
       // Tính toán statistics trong modal
       const totalDays = empData.days.length;
-const presentDays = empData.days.filter(day => 
-    day && day !== '' && !day.includes('A') && !day.includes('V')
-).length;
-const absentDays = empData.days.filter(day => 
-    (day && (day.includes('A') || day.includes('V'))) || day === ''
-).length;
-const lateDays = empData.days.filter(day => 
-    day && (day.includes('L') || day.includes('D'))
-).length;
+      const presentDays = empData.days.filter(day => 
+          day && day !== '' && !day.includes('A') && !day.includes('V')
+      ).length;
+      const absentDays = empData.days.filter(day => 
+          (day && (day.includes('A') || day.includes('V'))) || day === ''
+      ).length;
+      const lateDays = empData.days.filter(day => 
+          day && (day.includes('L') || day.includes('D'))
+      ).length;
       
       // Create modal content
       let content = `
