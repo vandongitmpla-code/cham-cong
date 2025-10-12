@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng`;
         
         if (day && day !== '') {
-          if (day.includes('A') || day.includes('V')) {
+          if (day.includes('') || day.includes('V')) {
             dayClass = 'day-absent';
             dayIcon = '❌';
             dayTitle = `Ngày ${dayNumber}${weekday ? ' - ' + weekday : ''}: Vắng (${day})`;
