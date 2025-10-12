@@ -1088,3 +1088,104 @@ body.payroll-fullscreen-active {
     z-index: 1000;
 }
 
+/* Thêm vào payroll.css */
+
+/* ====== SCROLLBAR FOR ALL MODES ====== */
+.payroll-table-container {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: auto; /* QUAN TRỌNG: thêm overflow auto cho tất cả */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 2rem;
+    max-height: 70vh; /* Giới hạn chiều cao để scroll */
+    min-height: 400px; /* Chiều cao tối thiểu */
+}
+
+/* Đảm bảo bảng đủ rộng để tạo scroll */
+.payroll-table {
+    width: max-content !important; /* QUAN TRỌNG: bắt buộc có scroll */
+    min-width: 100% !important;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background: #ffffff;
+}
+
+/* ====== CONTAINER SIZES WITH SCROLL ====== */
+.payroll-container-sm .payroll-table-container {
+    max-height: 60vh;
+}
+
+.payroll-container-md .payroll-table-container {
+    max-height: 65vh;
+}
+
+.payroll-container-lg .payroll-table-container {
+    max-height: 70vh;
+}
+
+.payroll-container-xl .payroll-table-container {
+    max-height: 75vh;
+}
+
+.payroll-container-full .payroll-table-container {
+    max-height: none; /* Fullscreen không giới hạn */
+    height: calc(100vh - 200px); /* Trừ đi header và controls */
+}
+
+/* ====== SCROLLBAR STYLING ====== */
+.payroll-table-container::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.payroll-table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 6px;
+}
+
+.payroll-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 6px;
+    border: 2px solid #f1f5f9;
+}
+
+.payroll-table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.payroll-table-container::-webkit-scrollbar-corner {
+    background: #f1f5f9;
+}
+
+/* ====== FIX TABLE WIDTH ISSUES ====== */
+/* Đảm bảo bảng luôn đủ rộng để scroll */
+.payroll-container {
+    overflow: visible !important;
+}
+
+/* Đảm bảo các container có đủ không gian */
+.payroll-container-sm {
+    min-width: 800px;
+}
+
+.payroll-container-md {
+    min-width: 1000px;
+}
+
+.payroll-container-lg {
+    min-width: 1200px;
+}
+
+.payroll-container-xl {
+    min-width: 1400px;
+}
+
+/* ====== DEBUG BORDER (có thể xóa sau) ====== */
+.payroll-table-container {
+    border: 2px solid #e2e8f0; /* Hiển thị rõ container */
+}
+
+.payroll-table {
+    /* border: 1px solid #f97316;  Hiển thị rõ bảng */
+}
