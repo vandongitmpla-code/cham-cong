@@ -1,42 +1,134 @@
-/* ===== Attendance Print ===== */
+/* attendance_print.css - Consistent design but keep professional print layout */
+
+/* ===== PRINT CONTAINER - ĐỒNG BỘ VỚI HỆ THỐNG ===== */
 .print-container {
-  font-size: 14px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    margin: 2rem auto;
+    width: 1800px;
+    max-width: 95vw;
+    display: block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* ===== PRINT HEADER - ĐỒNG BỘ ===== */
+.print-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.print-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.print-subtitle {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin: 0;
+    font-weight: 400;
+}
+
+.print-period {
+    background: rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+    color: #1e40af;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ===== PRINT ACTIONS - ĐỒNG BỘ ===== */
+.print-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn-print {
+    padding: 1rem 2rem;
+    border-radius: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-print-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.btn-print-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+}
+
+/* ===== BẢNG IN - GIỮ NGUYÊN CHUYÊN NGHIỆP ===== */
+.print-table-container {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid #f1f5f9;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-height: 70vh;
+    min-height: 500px;
 }
 
 .print-container table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 13px;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+    background: #ffffff;
 }
+
 .print-container th,
 .print-container td {
-  border: 1px solid #dee2e6;
-  padding: 6px 10px;
-  text-align: center;
-  vertical-align: middle;
+    border: 1px solid #dee2e6;
+    padding: 6px 10px;
+    text-align: center;
+    vertical-align: middle;
 }
+
 .print-container thead th {
-  background: #f97316;
-  color: #fff;
-  font-weight: 600;
+    background: #f97316;
+    color: #fff;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-/* Khi in */
-@media print {
-  .btn { display: none !important; }
-  body { background: #fff !important; margin: 20px; }
-  .print-container { box-shadow: none; padding: 0; }
-}
+/* Highlight các cột quan trọng */
 .table td.fw-bold.text-primary {
-  background-color: #e7f3ff !important;
-  border: 1px solid #b6d4fe !important;
+    background-color: #e7f3ff !important;
+    border: 1px solid #b6d4fe !important;
 }
 
-
-/* ===== ADJUSTMENT BUTTONS STYLING ===== */
+/* ===== ADJUSTMENT & LEAVE BUTTONS - GIỮ NGUYÊN ===== */
 .adjustable-cell {
     position: relative;
     transition: background-color 0.3s ease;
@@ -62,24 +154,6 @@
     transition: transform 0.2s;
 }
 
-/* Đảm bảo nút không bị ẩn khi hover */
-.adjustable-cell:hover .adjustment-buttons {
-    display: block !important;
-}
-
-/* Khi in - ẩn nút điều chỉnh */
-@media print {
-    .adjustment-buttons {
-        display: none !important;
-    }
-    
-    .adjustable-cell:hover {
-        background-color: transparent !important;
-        box-shadow: none !important;
-    }
-}
-
-/* ===== LEAVE BUTTONS STYLING ===== */
 .leave-cell {
     position: relative;
     transition: background-color 0.3s ease;
@@ -106,19 +180,66 @@
 }
 
 /* Đảm bảo nút không bị ẩn khi hover */
+.adjustable-cell:hover .adjustment-buttons,
 .leave-cell:hover .leave-buttons {
     display: block !important;
 }
 
-/* Khi in - ẩn nút phép năm */
+/* ===== KHI IN - GIỮ NGUYÊN CHUYÊN NGHIỆP ===== */
 @media print {
+    .btn { 
+        display: none !important; 
+    }
+    
+    body { 
+        background: #fff !important; 
+        margin: 20px;
+    }
+    
+    .print-container { 
+        box-shadow: none; 
+        padding: 0;
+        border-radius: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+    }
+    
+    .print-table-container {
+        box-shadow: none;
+        border: 1px solid #000;
+        max-height: none;
+        min-height: auto;
+    }
+    
+    .adjustment-buttons,
     .leave-buttons {
         display: none !important;
     }
     
+    .adjustable-cell:hover,
     .leave-cell:hover {
         background-color: transparent !important;
         box-shadow: none !important;
+    }
+    
+    /* Đảm bảo bảng in đẹp */
+    .print-container table {
+        font-size: 12px;
+    }
+    
+    .print-container th,
+    .print-container td {
+        padding: 4px 8px;
+    }
+    
+    .print-container thead th {
+        background: #f97316 !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
 
@@ -133,4 +254,26 @@
     text-align: left;
     padding: 8px 12px;
     border-radius: 6px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .print-container {
+        width: 95% !important;
+        padding: 1.5rem;
+        margin: 1rem auto;
+    }
+    
+    .print-title {
+        font-size: 1.75rem;
+    }
+    
+    .print-actions {
+        flex-direction: column;
+    }
+    
+    .btn-print {
+        width: 100%;
+        justify-content: center;
+    }
 }
