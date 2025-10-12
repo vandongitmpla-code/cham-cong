@@ -100,60 +100,59 @@
         </tr>
       </thead>
 
-      <!-- Trong phần table body - cập nhật cell rendering -->
-      <!-- Trong phần table body - cập nhật cell rendering -->
-      <tbody>
-        {% for row in rows %}
-          <tr>
-            {% for i in range(cols|length) %}
-              {% set colname = cols[i] %}
-              {% set cell = row[i] %}
-              
-              {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
-                <td class="highlight-col fw-bold">{{ cell }}</td>
-              {% elif colname.isdigit() %}
-                {% set d = colname|int %}
-                {% set wd = weekdays.get(d, "") %}
-                <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
-                  {% if cell == 'warn' %}
-                    <div class="status-warning blink-icon"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        data-bs-title="Chỉ có 1 lần chấm công, cần kiểm tra lại">
-                      <i class="bi bi-exclamation-triangle-fill"></i>
-                    </div>
-                  {% elif cell == 'x' or cell == 'xx' %}
-                    <div class="status-present"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        data-bs-title="Làm đủ ngày">
-                      <i class="bi bi-check-circle me-1"></i>Có mặt
-                    </div>
-                  {% elif cell == 'v' or cell == 'vv' %}
-                    <div class="status-absent"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        data-bs-title="Vắng">
-                      <i class="bi bi-x-circle me-1"></i>Vắng
-                    </div>
-                  {% elif cell == '0.5' %}
-                    <div class="status-halfday"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        data-bs-title="Làm nửa ngày">
-                      <i class="bi bi-clock me-1"></i>Nửa ngày
-                    </div>
-                  {% else %}
-                    {{ cell }}
-                  {% endif %}
-                </td>
-              {% else %}
-                <td>{{ cell }}</td>
-              {% endif %}
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      </tbody>
+      <!-- Phiên bản icon đơn giản -->
+<tbody>
+  {% for row in rows %}
+    <tr>
+      {% for i in range(cols|length) %}
+        {% set colname = cols[i] %}
+        {% set cell = row[i] %}
+        
+        {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
+          <td class="highlight-col fw-bold">{{ cell }}</td>
+        {% elif colname.isdigit() %}
+          {% set d = colname|int %}
+          {% set wd = weekdays.get(d, "") %}
+          <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
+            {% if cell == 'warn' %}
+              <div class="status-warning"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Chỉ có 1 lần chấm công, cần kiểm tra lại">
+                <i class="bi bi-exclamation-triangle"></i>
+              </div>
+            {% elif cell == 'x' or cell == 'xx' %}
+              <div class="status-present"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Làm đủ ngày">
+                <i class="bi bi-check-lg"></i>
+              </div>
+            {% elif cell == 'v' or cell == 'vv' %}
+              <div class="status-absent"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Vắng">
+                <i class="bi bi-x-lg"></i>
+              </div>
+            {% elif cell == '0.5' %}
+              <div class="status-halfday"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top"
+                   data-bs-title="Làm nửa ngày">
+                <i class="bi bi-dash-lg"></i>
+              </div>
+            {% else %}
+              {{ cell }}
+            {% endif %}
+          </td>
+        {% else %}
+          <td>{{ cell }}</td>
+        {% endif %}
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</tbody>
     </table>
   </div>
 </div>
