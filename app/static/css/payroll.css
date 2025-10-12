@@ -617,7 +617,7 @@
 }
     
     .payroll-table-container {
-        max-height: vh;
+        max-height: 65vh;
     }
 }
 
