@@ -5,26 +5,18 @@
 {% endblock %}
 
 {% block content %}
-<div class="payroll-wrapper">
-  <!-- Header Section -->
+<div class="payroll-container">
+  <!-- Header -->
   <div class="payroll-header">
-    <div class="payroll-header-content">
-      <h1 class="payroll-title">Bảng công tính lương</h1>
-      <div class="payroll-period">
-        <i class="bi bi-calendar-week"></i>
-        <strong>Kỳ công:</strong> {{ period if period else "Chưa xác định" }}
-      </div>
-    </div>
-    
-    <div class="payroll-info">
-      <div class="timesheet-filename">
-        <i class="bi bi-file-earmark-excel"></i>
-        {{ filename }}
-      </div>
+    <h1 class="payroll-title">Bảng công tính lương</h1>
+    <p class="payroll-subtitle">Quản lý và tính toán công chuẩn cho nhân viên</p>
+    <div class="payroll-period">
+      <i class="bi bi-calendar-week"></i>
+      <strong>Kỳ công:</strong> {{ period if period else "Chưa xác định" }}
     </div>
   </div>
 
-  <!-- Actions Section -->
+  <!-- Actions -->
   <div class="payroll-actions">
     <!-- Nút Ngày Lễ Tết -->
     <button id="btnHolidays" class="btn-payroll btn-payroll-warning" data-bs-toggle="modal" data-bs-target="#holidayModal">
@@ -48,14 +40,14 @@
   {% if holidays %}
   <div class="holidays-section">
     <h6 class="holidays-title">
-      <i class="bi bi-calendar-event"></i> Danh sách ngày lễ đã nhập:
+      <i class="bi bi-calendar-check"></i> Danh sách ngày lễ đã nhập
     </h6>
     <div class="holidays-list">
       {% for h in holidays %}
         <div class="holiday-item">
-          <div>
+          <div class="holiday-info">
             <span class="holiday-date">{{ h.date.strftime("%d/%m/%Y") }}</span>
-            <span class="holiday-name"> - {{ h.name or "Không tên" }}</span>
+            <span class="holiday-name">{{ h.name or "Không tên" }}</span>
           </div>
           <form method="POST" action="{{ url_for('main.delete_holiday', holiday_id=h.id, filename=filename) }}" style="display: inline;">
             <button type="submit" class="btn-holiday-delete">
@@ -71,11 +63,11 @@
     <h6 class="holidays-title">
       <i class="bi bi-calendar-event"></i> Danh sách ngày lễ
     </h6>
-    <p class="text-muted mb-0">Chưa có ngày lễ nào.</p>
+    <p class="text-muted mb-0">Chưa có ngày lễ nào được thêm vào.</p>
   </div>
   {% endif %}
 
-  <!-- Table Container -->
+  <!-- Payroll Table -->
   <div class="payroll-table-container">
     <table class="payroll-table">
       <thead>
@@ -100,7 +92,7 @@
                 {{ wd }}
               </th>
             {% elif col in ["Ngày công","Ngày vắng","Chủ nhật","Lễ, tết"] %}
-              <th></th>
+              <th class="highlight-col"></th>
             {% else %}
               <th></th>
             {% endif %}
@@ -114,17 +106,19 @@
             {% for i in range(cols|length) %}
               {% set colname = cols[i] %}
               {% set cell = row[i] %}
+              
               {% if colname in ["Ngày công", "Ngày vắng", "Chủ nhật", "Lễ, tết"] %}
-                <td class="highlight-col fw-bold">{{ cell }}</td>
+                <td class="highlight-col">{{ cell }}</td>
               {% elif colname.isdigit() %}
                 {% set d = colname|int %}
                 {% set wd = weekdays.get(d, "") %}
                 <td class="{% if d in holiday_days %}highlight-holiday{% elif wd and ('chủ' in wd|lower or 'cn' in wd|lower) %}highlight-sunday{% endif %}">
                   {% if cell == 'warn' %}
-                    <i class="bi bi-exclamation-triangle-fill text-warning blink-icon blink-red"
+                    <i class="bi bi-exclamation-triangle-fill blink-icon"
+                       style="color: #f59e0b;"
                        data-bs-toggle="tooltip"
                        data-bs-placement="top"
-                       data-bs-title="Chỉ có 1 lần chấm công, cần kiểm tra lại"></i>
+                       title="Chỉ có 1 lần chấm công, cần kiểm tra lại"></i>
                   {% else %}
                     {{ cell }}
                   {% endif %}
@@ -141,35 +135,40 @@
 </div>
 
 <!-- Holiday Modal -->
-<div class="modal fade holiday-modal" id="holidayModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="holidayModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Thêm ngày lễ</h5>
+        <h5 class="modal-title">Thêm ngày lễ mới</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <form method="POST" action="{{ url_for('main.add_holiday') }}?filename={{ filename }}">
         <div class="modal-body">
-          <div class="input-group">
+          <div class="mb-3">
+            <label class="form-label">Ngày lễ</label>
             <input type="date" name="holiday_date" class="form-control" required>
-            <input type="text" name="holiday_name" class="form-control" placeholder="Tên ngày lễ (VD: Quốc khánh)">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Tên ngày lễ</label>
+            <input type="text" name="holiday_name" class="form-control" placeholder="Ví dụ: Quốc khánh, Tết Dương lịch...">
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn-payroll btn-payroll-primary">Lưu ngày lễ</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu ngày lễ</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<!-- Tooltip khởi tạo -->
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-  const els = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  els.forEach(e => new bootstrap.Tooltip(e, {container: 'body'}));
+  // Tooltip initialization
+  const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltips.forEach(tooltip => new bootstrap.Tooltip(tooltip, {container: 'body'}));
   
-  // Add loading state when importing
+  // Loading state for import button
   const importForm = document.querySelector('form[action*="import_payroll"]');
   if (importForm) {
     importForm.addEventListener('submit', function(e) {
