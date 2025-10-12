@@ -114,4 +114,3 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Payroll Container Manager initialized');
     console.log('Container info:', window.payrollContainerManager.getContainerInfo());
 });
-</script>
