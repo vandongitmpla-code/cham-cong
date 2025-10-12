@@ -45,20 +45,18 @@ def timesheet(filename):
         # Tạo mapping weekdays: key = day number (1..31) -> "Thứ 2"/.../"Chủ Nhật"
         from datetime import datetime, timedelta
         weekdays = {}
-    try:
-        if period_str and "~" in period_str:
-            start_s, end_s = period_str.split("~")
-            start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
-            end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
-            # Tính số ngày thực tế từ period
-            day_count = (end_date - start_date).days + 1
-        else:
-            # Fallback: dùng số ngày từ file như cũ
-            day_count = max(int(str(c)) for c in day_cols)
-    except Exception as e:
-        print("Lỗi tính day_count từ period:", e, flush=True)
-        # Fallback: dùng số ngày từ file
-        day_count = max(int(str(c)) for c in day_cols)
+        try:
+            if period_str and "~" in period_str:
+                start_s, end_s = period_str.split("~")
+                start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
+                end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
+                current = start_date
+                weekday_names = ["Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7","Chủ Nhật"]
+                while current <= end_date:
+                    weekdays[current.day] = weekday_names[current.weekday()]
+                    current += timedelta(days=1)
+        except Exception as e:
+            print("Lỗi tạo weekdays:", e, flush=True)
 
         # Xác định các cột ngày (1..31) có trong df
         day_cols = [c for c in df.columns if str(c).strip().isdigit()]
@@ -67,8 +65,21 @@ def timesheet(filename):
             flash("Không tìm thấy cột ngày (1..31) trong file", "danger")
             return redirect(url_for("main.index"))
 
-        # day_count = số ngày hiển thị (dựa vào day_cols)
-        day_count = max(int(str(c)) for c in day_cols)
+        # SỬA PHẦN NÀY: Tính day_count theo period thực tế
+        try:
+            if period_str and "~" in period_str:
+                start_s, end_s = period_str.split("~")
+                start_date = datetime.strptime(start_s.strip(), "%Y-%m-%d")
+                end_date = datetime.strptime(end_s.strip(), "%Y-%m-%d")
+                # Tính số ngày thực tế từ period
+                day_count = (end_date - start_date).days + 1
+            else:
+                # Fallback: dùng số ngày từ file như cũ
+                day_count = max(int(str(c)) for c in day_cols)
+        except Exception as e:
+            print("Lỗi tính day_count từ period:", e, flush=True)
+            # Fallback: dùng số ngày từ file
+            day_count = max(int(str(c)) for c in day_cols)
 
         # Chuẩn hoá ô ngày -> chuỗi (các giờ nối bằng "<br>")
         def normalize_cell(val):
