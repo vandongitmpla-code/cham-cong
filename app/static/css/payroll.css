@@ -24,7 +24,7 @@
 .payroll-container-md, 
 .payroll-container-lg,
 .payroll-container-xl,
-.payroll-container-full {
+ {
     margin: 2rem auto !important; /* ĐẢM BẢO CĂN GIỮA CHO TẤT CẢ */
 }
 /* Container Sizes */
