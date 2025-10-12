@@ -603,8 +603,6 @@
 }
 
 /* ====== RESPONSIVE DESIGN ====== */
-
-
 @media (max-width: 1200px) {
     .payroll-container {
         width: 100%;
