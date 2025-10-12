@@ -365,3 +365,107 @@
     }
 }
 
+/* Thêm vào payroll.css */
+
+/* ====== STATUS INDICATORS ====== */
+.status-present {
+    background: rgba(16, 185, 129, 0.15);
+    color: #065f46;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 32px;
+    justify-content: center;
+}
+
+.status-absent {
+    background: rgba(239, 68, 68, 0.15);
+    color: #991b1b;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 32px;
+    justify-content: center;
+}
+
+.status-halfday {
+    background: rgba(245, 158, 11, 0.15);
+    color: #92400e;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 32px;
+    justify-content: center;
+}
+
+.status-warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #92400e;
+    padding: 0.375rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+/* Status with icons */
+.status-present.with-icon::before {
+    content: "✓";
+    font-weight: bold;
+}
+
+.status-absent.with-icon::before {
+    content: "✕";
+    font-weight: bold;
+}
+
+.status-halfday.with-icon::before {
+    content: "½";
+    font-weight: bold;
+}
+
+/* Hover effects */
+.status-present:hover {
+    background: rgba(16, 185, 129, 0.25);
+    transform: scale(1.05);
+}
+
+.status-absent:hover {
+    background: rgba(239, 68, 68, 0.25);
+    transform: scale(1.05);
+}
+
+.status-halfday:hover {
+    background: rgba(245, 158, 11, 0.25);
+    transform: scale(1.05);
+}
+
+.status-warning:hover {
+    background: rgba(245, 158, 11, 0.25);
+    transform: scale(1.05);
+}
+
+/* Tooltip enhancements */
+.payroll-table [data-bs-toggle="tooltip"] {
+    cursor: help;
+}
