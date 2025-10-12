@@ -376,8 +376,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 3px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     transition: all 0.2s ease;
 }
 
