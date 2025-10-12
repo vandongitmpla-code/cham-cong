@@ -553,13 +553,13 @@
 }
 
 .status-halfday {
-    background: rgba(245, 158, 11, 0.15);
+    background: rgba(245, 158, 11, 0.1);
     color: #92400e;
     border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .status-warning {
-    background: rgba(245, 158, 11, 0.15);
+    background: rgba(245, 158, 11, 0.1);
     color: #92400e;
     border: 1px solid rgba(245, 158, 11, 0.3);
 }
