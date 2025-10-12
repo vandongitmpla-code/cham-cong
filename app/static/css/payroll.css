@@ -576,12 +576,7 @@
     transform: scale(1.1);
 }
 
-.status-present i,
-.status-absent i,
-.status-halfday i,
-.status-warning i {
-    font-size: 1rem;
-}
+
 
 /* ====== SCROLLBAR STYLING ====== */
 .payroll-table-container::-webkit-scrollbar {
